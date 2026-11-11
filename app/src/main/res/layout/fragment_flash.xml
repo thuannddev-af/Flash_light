@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/size16"
+        android:paddingTop="@dimen/size16"
+        android:paddingEnd="@dimen/size16"
+        android:paddingBottom="@dimen/size24">
+
+        <LinearLayout
+            android:id="@+id/light_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size250">
+
+                <FrameLayout
+                    android:id="@+id/fl_light"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/size272">
+
+                    <View
+                        android:id="@+id/lamp_glow"
+                        android:layout_width="@dimen/size272"
+                        android:layout_height="@dimen/size272"
+                        android:layout_gravity="center"
+                        android:background="@drawable/bg_lamp_glow"
+                        android:importantForAccessibility="no"
+                        android:visibility="invisible" />
+
+                    <LinearLayout
+                        android:id="@+id/lamp_button"
+                        android:layout_width="@dimen/size152"
+                        android:layout_height="@dimen/size152"
+                        android:layout_gravity="center"
+                        android:background="@drawable/bg_lamp"
+                        android:clickable="true"
+                        android:contentDescription="@string/turn_on"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/size70"
+                            android:duplicateParentState="true"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_flashlight"
+                            app:tint="@color/white" />
+
+                        <TextView
+                            android:id="@+id/lamp_status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/size10"
+                            android:duplicateParentState="true"
+                            android:fontFamily="@font/plusjakartasans_semibold"
+                            android:text="@string/off"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/text_size_17"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/sos_light"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/size272"
+                    android:visibility="gone">
+
+                    <View
+                        android:id="@+id/sos_glow"
+                        android:layout_width="@dimen/size272"
+                        android:layout_height="@dimen/size272"
+                        android:layout_gravity="center"
+                        android:background="@drawable/bg_sos_glow"
+                        android:importantForAccessibility="no"
+                        android:visibility="invisible" />
+
+                    <LinearLayout
+                        android:id="@+id/sos_button"
+                        android:layout_width="@dimen/size152"
+                        android:layout_height="@dimen/size152"
+                        android:layout_gravity="center"
+                        android:background="@drawable/bg_sos_button"
+                        android:clickable="true"
+                        android:contentDescription="@string/turn_on"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:layout_width="@dimen/size70"
+                            android:layout_height="@dimen/size70"
+                            android:duplicateParentState="true"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_sos"
+                            app:tint="@color/white" />
+
+                        <TextView
+                            android:id="@+id/sos_status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/size10"
+                            android:duplicateParentState="true"
+                            android:text="@string/off"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/text_size_17"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/dj_mode"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/size272"
+                    android:visibility="gone">
+
+                    <View
+                        android:id="@+id/dj_glow"
+                        android:layout_width="@dimen/size272"
+                        android:layout_height="@dimen/size272"
+                        android:layout_gravity="center"
+                        android:background="@drawable/bg_sos_glow"
+                        android:importantForAccessibility="no"
+                        android:visibility="invisible" />
+
+                    <LinearLayout
+                        android:id="@+id/dj_button"
+                        android:layout_width="@dimen/size152"
+                        android:layout_height="@dimen/size152"
+                        android:layout_gravity="center"
+                        android:background="@drawable/dj_sos_button"
+                        android:clickable="true"
+                        android:contentDescription="@string/turn_on"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:layout_width="@dimen/size70"
+                            android:layout_height="@dimen/size70"
+                            android:duplicateParentState="true"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_sos"
+                            app:tint="@color/white" />
+
+                        <TextView
+                            android:id="@+id/dj_status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/size10"
+                            android:duplicateParentState="true"
+                            android:text="@string/off"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/text_size_17"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </FrameLayout>
+            </FrameLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:id="@+id/mode_row"
+            android:layout_height="@dimen/size88">
+
+            <LinearLayout
+                android:id="@+id/mode_flash"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_mode"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/size26"
+                    android:layout_height="@dimen/size26"
+                    android:duplicateParentState="true"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_flashlight"
+                    app:tint="@color/control_tint" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size8"
+                    android:duplicateParentState="true"
+                    android:fontFamily="@font/plusjakartasans_medium"
+                    android:gravity="center"
+                    android:text="@string/flash_light"
+                    android:textColor="@color/control_tint"
+                    android:textSize="@dimen/text_size_14" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/mode_sos"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/size10"
+                android:layout_weight="1"
+                android:background="@drawable/bg_mode"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/size26"
+                    android:layout_height="@dimen/size26"
+                    android:duplicateParentState="true"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_sos"
+                    app:tint="@color/control_tint" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size8"
+                    android:duplicateParentState="true"
+                    android:fontFamily="@font/plusjakartasans_medium"
+                    android:gravity="center"
+                    android:text="@string/sos_light"
+                    android:textColor="@color/control_tint"
+                    android:textSize="@dimen/text_size_14" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/mode_dj"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/size10"
+                android:layout_weight="1"
+                android:background="@drawable/bg_mode"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/size26"
+                    android:layout_height="@dimen/size26"
+                    android:duplicateParentState="true"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_dj"
+                    app:tint="@color/control_tint" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size8"
+                    android:duplicateParentState="true"
+                    android:fontFamily="@font/plusjakartasans_medium"
+                    android:gravity="center"
+                    android:text="@string/dj_mode"
+                    android:textColor="@color/control_tint"
+                    android:textSize="@dimen/text_size_14" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!--            <LinearLayout-->
+        <!--                android:layout_width="match_parent"-->
+        <!--                android:layout_height="@dimen/size190"-->
+        <!--                android:layout_marginTop="@dimen/size32"-->
+        <!--                android:background="@drawable/bg_ad"-->
+        <!--                android:orientation="vertical"-->
+        <!--                android:padding="@dimen/size12">-->
+
+        <!--                <TextView-->
+        <!--                    android:layout_width="wrap_content"-->
+        <!--                    android:layout_height="wrap_content"-->
+        <!--                    android:text="@string/ad_label"-->
+        <!--                    android:textColor="#FFD54F"-->
+        <!--                    android:textSize="@dimen/text_size_10" />-->
+
+        <!--                <TextView-->
+        <!--                    android:layout_width="match_parent"-->
+        <!--                    android:layout_height="0dp"-->
+        <!--                    android:layout_weight="1"-->
+        <!--                    android:gravity="center"-->
+        <!--                    android:text="@string/ad_placeholder"-->
+        <!--                    android:textColor="#C1C7D0"-->
+        <!--                    android:textSize="@dimen/text_size_16" />-->
+
+        <!--                <TextView-->
+        <!--                    android:layout_width="match_parent"-->
+        <!--                    android:layout_height="@dimen/size42"-->
+        <!--                    android:background="@drawable/bg_install"-->
+        <!--                    android:gravity="center"-->
+        <!--                    android:text="@string/install"-->
+        <!--                    android:textColor="#FFFFFF"-->
+        <!--                    android:textSize="@dimen/text_size_14" />-->
+        <!--            </LinearLayout>-->
+    </LinearLayout>
+</ScrollView>

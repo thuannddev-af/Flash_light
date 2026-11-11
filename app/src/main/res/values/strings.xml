@@ -1,3 +1,29 @@
 <resources>
     <string name="app_name">Flashlight</string>
+    <string name="flash_light">Flash Light</string>
+    <string name="sos_light">SOS Light</string>
+    <string name="dj_mode">DJ Mode</string>
+    <string name="flashlight_tab">Flashlight</string>
+    <string name="edge_lighting">Edge Lighting</string>
+    <string name="led">LED</string>
+    <string name="flash_alert">Flash Alert</string>
+    <string name="on">ON</string>
+    <string name="off">OFF</string>
+    <string name="turn_on">Turn flashlight on</string>
+    <string name="turn_off">Turn flashlight off</string>
+    <string name="ad_label">Ad</string>
+    <string name="ad_placeholder">Advertisement</string>
+    <string name="install">Install</string>
+    <string name="coming_soon">Coming soon</string>
+    <string name="screen_light">ScreenLight</string>
+    <string name="brightness">Brightness</string>
+    <string name="pick_color">Choose screen color</string>
+    <string name="full_screen">Open full screen light</string>
+    <string name="color_plane">Color saturation and brightness</string>
+    <string name="hue">Hue</string>
+    <string name="color_value">Color value</string>
+    <string name="choose">Choose</string>
+    <string name="close">Close full screen light</string>
+    <string name="invalid_color">Use HEX #RRGGBB or RGB values from 0 to 255</string>
+    <string name="brightness_percent">%1$d%%</string>
 </resources>
