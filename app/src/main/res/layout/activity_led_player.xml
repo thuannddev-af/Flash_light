@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000">
+    <com.kt.flash.light.led.banner.customview.LedBannerView
+        android:id="@+id/led_banner"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+    <ImageButton
+        android:id="@+id/close_player"
+        android:layout_width="@dimen/size48"
+        android:layout_height="@dimen/size48"
+        android:layout_margin="@dimen/size8"
+        android:src="@android:drawable/ic_menu_close_clear_cancel"
+        android:tint="#FFD54F"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/close"/>
+</FrameLayout>

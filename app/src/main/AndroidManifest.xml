@@ -11,6 +11,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Flashlight">
+        <activity android:name=".component.ledfragment.LedPlayerActivity"
+            android:exported="false"
+            android:screenOrientation="sensorLandscape" />
         <activity android:name=".component.edgefragment.ScreenLight.ScreenLightActivity"
             android:exported="false"
             android:screenOrientation="sensorLandscape" />

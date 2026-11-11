@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Flashlight</string>
+    <string name="app_name">Flash Light</string>
     <string name="flash_light">Flash Light</string>
     <string name="sos_light">SOS Light</string>
     <string name="dj_mode">DJ Mode</string>
@@ -15,15 +15,37 @@
     <string name="ad_placeholder">Advertisement</string>
     <string name="install">Install</string>
     <string name="coming_soon">Coming soon</string>
-    <string name="screen_light">ScreenLight</string>
+    <string name="screen_light">Screen Light</string>
     <string name="brightness">Brightness</string>
     <string name="pick_color">Choose screen color</string>
     <string name="full_screen">Open full screen light</string>
     <string name="color_plane">Color saturation and brightness</string>
     <string name="hue">Hue</string>
-    <string name="color_value">Color value</string>
+    <string name="opacity">Opacity</string>
     <string name="choose">Choose</string>
     <string name="close">Close full screen light</string>
     <string name="invalid_color">Use HEX #RRGGBB or RGB values from 0 to 255</string>
     <string name="brightness_percent">%1$d%%</string>
+<string name="led_text">Text</string>
+<string name="hello_world">HELLO WORLD</string>
+<string name="font_size">Font Size</string>
+<string name="scroll_speed">Scroll Speed</string>
+<string name="led_color">Color</string>
+<string name="direction">Direction</string>
+<string name="visual_effects">Visual Effects</string>
+<string name="glow">Glow</string>
+<string name="blink">Blink</string>
+<string name="neon">Neon</string>
+<string name="direction_right">Scroll right</string>
+<string name="direction_left">Scroll left</string>
+<string name="direction_down">Scroll down</string>
+<string name="direction_up">Scroll up</string>
+<string name="font_px">%1$dpx</string>
+<string name="speed_seconds">%1$ds</string>
+<string name="color_cyan">Cyan</string>
+<string name="color_white">White</string>
+<string name="color_yellow">Yellow</string>
+<string name="color_green">Green</string>
+<string name="color_purple">Purple</string>
+<string name="color_red">Red</string>
 </resources>

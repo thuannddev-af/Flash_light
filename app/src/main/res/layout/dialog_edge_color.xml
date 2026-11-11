@@ -24,13 +24,13 @@
             android:splitTrack="false"
             android:contentDescription="@string/hue"/>
         <SeekBar
-            android:id="@+id/value_slider"
+            android:id="@+id/opacity_slider"
             android:layout_width="match_parent"
             android:layout_height="@dimen/size40"
             android:max="100"
             android:thumb="@drawable/ic_control"
             android:splitTrack="false"
-            android:contentDescription="@string/color_value"/>
+            android:contentDescription="@string/opacity"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -44,6 +44,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="HEX"
+                    android:fontFamily="@font/plusjakartasans_regular"
                     android:textColor="#333333"
                     android:textSize="@dimen/text_size_12"/>
                 <EditText
@@ -70,6 +71,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="R"
+                    android:fontFamily="@font/plusjakartasans_regular"
                     android:textColor="#333333"
                     android:textSize="@dimen/text_size_12"/>
                 <EditText
@@ -96,6 +98,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="G"
+                    android:fontFamily="@font/plusjakartasans_regular"
                     android:textColor="#333333"
                     android:textSize="@dimen/text_size_12"/>
                 <EditText
@@ -122,6 +125,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="B"
+                    android:fontFamily="@font/plusjakartasans_regular"
                     android:textColor="#333333"
                     android:textSize="@dimen/text_size_12"/>
                 <EditText
@@ -145,7 +149,8 @@
             android:layout_height="@dimen/size48"
             android:layout_marginTop="@dimen/size12"
             android:gravity="center"
-            android:background="@drawable/bg_install"
+            android:fontFamily="@font/plusjakartasans_semibold"
+            android:background="@drawable/bg_button"
             android:text="@string/choose"
             android:textColor="#FFFFFF"
             android:textSize="@dimen/text_size_16"

@@ -23,7 +23,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             mainPager.registerOnPageChangeCallback(pageCallback)
             tabFlash.setOnClickListener { mainPager.currentItem = MainPagerAdapter.FLASH_PAGE }
             tabEdge.setOnClickListener { mainPager.currentItem = MainPagerAdapter.EDGE_PAGE }
-            listOf(tabLed, tabAlert).forEach { tab ->
+            tabLed.setOnClickListener { mainPager.currentItem = MainPagerAdapter.LED_PAGE }
+            listOf(tabAlert).forEach { tab ->
                 tab.setOnClickListener {
                     Toast.makeText(this@MainActivity, R.string.coming_soon, Toast.LENGTH_SHORT).show()
                 }
@@ -36,7 +37,12 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         with(viewBaseActivity) {
             tabFlash.isSelected = position == MainPagerAdapter.FLASH_PAGE
             tabEdge.isSelected = position == MainPagerAdapter.EDGE_PAGE
-            screenTitle.setText(if (position == MainPagerAdapter.EDGE_PAGE) R.string.screen_light else R.string.app_name)
+            tabLed.isSelected = position == MainPagerAdapter.LED_PAGE
+            screenTitle.setText(when (position) {
+                MainPagerAdapter.EDGE_PAGE -> R.string.screen_light
+                MainPagerAdapter.LED_PAGE -> R.string.led
+                else -> R.string.app_name
+            })
         }
     }
 

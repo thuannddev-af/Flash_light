@@ -46,7 +46,6 @@ class EdgeFragment : BaseFragment<FragmentEdgeBinding>() {
     override fun onDestroyView() {
         controller?.apply {
             saveState(edgeState)
-            setActive(false)
             destroy()
         }
         controller = null
