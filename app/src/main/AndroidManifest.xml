@@ -13,7 +13,7 @@
         android:theme="@style/Theme.Flashlight">
         <activity android:name=".component.ledfragment.LedPlayerActivity"
             android:exported="false"
-            android:screenOrientation="sensorLandscape" />
+            android:screenOrientation="fullUser" />
         <activity android:name=".component.edgefragment.ScreenLight.ScreenLightActivity"
             android:exported="false"
             android:screenOrientation="sensorLandscape" />

@@ -85,7 +85,7 @@
                 android:layout_height="@dimen/size26"
                 android:duplicateParentState="true"
                 android:importantForAccessibility="no"
-                android:src="@drawable/ic_conect"
+                android:src="@drawable/ic_edge_off"
                 app:tint="@color/control_tint" />
 
             <TextView
@@ -117,7 +117,7 @@
                 android:layout_height="@dimen/size26"
                 android:duplicateParentState="true"
                 android:importantForAccessibility="no"
-                android:src="@drawable/ic_permission"
+                android:src="@drawable/ic_led_off"
                 app:tint="@color/control_tint" />
 
             <TextView
