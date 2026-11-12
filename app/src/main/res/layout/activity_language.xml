@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/color_bg"
+    tools:context=".component.language.LanguageActivity">
+    <include
+        android:id="@+id/toolBar"
+        layout="@layout/tool_bar"
+        />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rcl_language"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/size16"
+        android:layout_marginTop="@dimen/size10"
+        android:layout_weight="1"
+        android:background="@color/color_bg"
+        android:orientation="vertical"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+    <FrameLayout
+        android:id="@+id/frAdsNative"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginHorizontal="10dp">
+        <include
+            android:id="@+id/shimmerContainerNative"
+            layout="@layout/loading_native_ad_view_type1" />
+    </FrameLayout>
+</LinearLayout>

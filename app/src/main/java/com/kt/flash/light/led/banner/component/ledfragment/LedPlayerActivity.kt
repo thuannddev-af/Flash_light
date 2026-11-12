@@ -6,7 +6,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import com.kt.flash.light.led.banner.base.BaseActivity
+import com.kt.flash.light.led.banner.base.activity.BaseActivity
 import com.kt.flash.light.led.banner.databinding.ActivityLedPlayerBinding
 
 class LedPlayerActivity : BaseActivity<ActivityLedPlayerBinding>() {

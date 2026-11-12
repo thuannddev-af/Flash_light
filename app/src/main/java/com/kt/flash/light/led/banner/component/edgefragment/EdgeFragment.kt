@@ -3,7 +3,7 @@ package com.kt.flash.light.led.banner.component.edgefragment
 import android.os.Bundle
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import com.kt.flash.light.led.banner.base.BaseFragment
+import com.kt.flash.light.led.banner.base.fragment.BaseFragment
 import com.kt.flash.light.led.banner.component.edgefragment.ScreenLight.ScreenLightController
 import com.kt.flash.light.led.banner.databinding.FragmentEdgeBinding
 

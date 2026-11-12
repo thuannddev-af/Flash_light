@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.core.widget.doAfterTextChanged
 import com.kt.flash.light.led.banner.R
-import com.kt.flash.light.led.banner.base.BaseFragment
+import com.kt.flash.light.led.banner.base.fragment.BaseFragment
 import com.kt.flash.light.led.banner.component.colorpicker.showColorPickerDialog
 import com.kt.flash.light.led.banner.databinding.FragmentLedBinding
 import kotlin.math.roundToInt

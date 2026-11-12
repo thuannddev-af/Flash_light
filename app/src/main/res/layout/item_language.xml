@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/size56"
+    android:layout_marginTop="@dimen/size6"
+    android:layout_marginBottom="@dimen/size6"
+    android:orientation="vertical"
+    android:background="@drawable/bg_item_settings"
+    android:tag="layout/item_language_0">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        >
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imgLanguage"
+            android:layout_width="@dimen/size40"
+            android:layout_height="@dimen/size40"
+            android:scaleType="centerCrop"
+            android:layout_marginStart="@dimen/size10"
+            android:src="@drawable/ic_english"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size16"
+            android:text="@string/english"
+            android:textColor="@color/white"
+            android:textSize="@dimen/size16"
+            app:layout_constraintBottom_toBottomOf="@+id/imgLanguage"
+            app:layout_constraintEnd_toStartOf="@+id/swLanguage"
+            app:layout_constraintStart_toEndOf="@+id/imgLanguage"
+            app:layout_constraintTop_toTopOf="@+id/imgLanguage" />
+
+        <androidx.appcompat.widget.AppCompatRadioButton
+            android:id="@+id/swLanguage"
+            android:layout_width="@dimen/size30"
+            android:layout_height="@dimen/size30"
+            android:layout_marginEnd="@dimen/size10"
+            android:checked="false"
+            android:clickable="false"
+            android:focusable="false"
+            app:buttonTint="@color/language_radio_tint"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/tvTitle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tvTitle" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

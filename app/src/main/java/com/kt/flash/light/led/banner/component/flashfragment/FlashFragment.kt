@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.kt.flash.light.led.banner.R
-import com.kt.flash.light.led.banner.base.BaseFragment
+import com.kt.flash.light.led.banner.base.fragment.BaseFragment
 import com.kt.flash.light.led.banner.databinding.FragmentFlashBinding
 
 class FlashFragment : BaseFragment<FragmentFlashBinding>() {

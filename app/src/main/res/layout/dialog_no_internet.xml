@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:padding="@dimen/size16"
+    android:background="@drawable/bg_no_internet_dialog">
+
+    <ImageView
+        android:layout_width="@dimen/size96"
+        android:layout_height="@dimen/size96"
+        android:layout_marginTop="@dimen/size8"
+        android:src="@drawable/ic_no_internet"
+        android:importantForAccessibility="no" />
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size24"
+        android:gravity="center"
+        android:fontFamily="@font/plusjakartasans_semibold"
+        android:text="@string/no_internet_title"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_size_16" />
+
+    <TextView
+        android:id="@+id/tvMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size8"
+        android:gravity="center"
+        android:fontFamily="@font/plusjakartasans_regular"
+        android:text="@string/no_internet_message"
+        android:textColor="#AEB3BD"
+        android:textSize="@dimen/text_size_12" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/btnSettings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/size48"
+        android:layout_marginTop="@dimen/size16"
+        android:padding="@dimen/size8"
+        android:gravity="center"
+        android:background="@drawable/bg_button"
+        android:fontFamily="@font/plusjakartasans_semibold"
+        android:text="@string/no_internet_settings"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_size_16"
+        android:clickable="true"
+        android:focusable="true" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/btnCancel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/size48"
+        android:layout_marginTop="@dimen/size4"
+        android:padding="@dimen/size8"
+        android:gravity="center"
+        android:background="?attr/selectableItemBackground"
+        android:fontFamily="@font/plusjakartasans_medium"
+        android:text="@string/no_internet_cancel"
+        android:textColor="#C1C7D0"
+        android:textSize="@dimen/text_size_16"
+        android:clickable="true"
+        android:focusable="true" />
+</LinearLayout>
