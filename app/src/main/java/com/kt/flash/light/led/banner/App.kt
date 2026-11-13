@@ -3,10 +3,14 @@ package com.kt.flash.light.led.banner
 import android.app.Activity
 import android.app.Application
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
+import androidx.compose.ui.text.intl.Locale
 import com.ads.admob.helper.appoppen.AppResumeAdHelper
 import com.kt.flash.light.led.banner.component.main.MainActivity
+import com.kt.flash.light.led.banner.utils.LocaleHelper
 import com.kt.flash.light.led.banner.utils.SpManager
+import com.kt.flash.light.led.banner.utils.getDeviceLanguage
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -48,6 +52,16 @@ class App : Application(), Application.ActivityLifecycleCallbacks {
 //        )
 //    }
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+    val locale = getDeviceLanguage()
+    val language = spManager.getLanguage()
+    LocaleHelper.onAttach(this, language.languageCode)
+    super.onConfigurationChanged(newConfig)
+}
+    override fun attachBaseContext(base: Context?) {
+        val context = LocaleHelper.onAttach(base, java.util.Locale.getDefault().language)
+        super.attachBaseContext(context)
+    }
     fun destroyAppOpenAd() {
         appResumeAdHelper?.unregisterAllAdListener()
         appResumeAdHelper?.destroyAds()

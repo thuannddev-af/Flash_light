@@ -4,7 +4,6 @@ import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.view.WindowManager
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import com.kt.flash.light.led.banner.R
@@ -22,52 +21,29 @@ class ScreenLightController(private val activity: AppCompatActivity, private val
         this[1] = state?.getFloat("edge_saturation", this[1]) ?: this[1]
     }
     private var picker: Dialog? = null
-    private var active = false
-    private var previousWindowBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
+    private var previewColor = color
 
     init {
         binding.colorPreview.setOnClickListener { showPicker() }
         binding.fullScreen.setOnClickListener {
             activity.startActivity(Intent(activity, ScreenLightActivity::class.java)
-                .putExtra("color", color)
-                .putExtra("brightness", brightness))
+                .putExtra("color", previewColor))
         }
         binding.brightnessSlider.progress = brightness
         binding.brightnessSlider.onProgress {
             brightness = it
-            binding.brightnessValue.text = activity.getString(R.string.brightness_percent, brightness)
-            applyWindowBrightness()
+            render()
         }
         render()
     }
 
-    fun setActive(value: Boolean) {
-        if (active == value) return
-        if (value) previousWindowBrightness = activity.window.attributes.screenBrightness
-        active = value
-        if (value) {
-            applyWindowBrightness()
-        } else {
-            activity.window.attributes = activity.window.attributes.apply {
-                screenBrightness = previousWindowBrightness
-            }
-        }
-    }
-
-    private fun applyWindowBrightness() {
-        if (!active) return
-        val level = (brightness / 100f).coerceIn(0f, 1f)
-        activity.window.attributes = activity.window.attributes.apply {
-            screenBrightness = level
-        }
-        picker?.window?.let { window ->
-            window.attributes = window.attributes.apply { screenBrightness = level }
-        }
-    }
-
     private fun render() {
         color = Color.HSVToColor((opacity * 255f / 100).toInt(), selectedHsv)
-        binding.colorPreview.background.mutate().setTint(color)
+        // Scale a copy so restoring state or dragging repeatedly never compounds the dimming.
+        val previewHsv = selectedHsv.copyOf()
+        previewHsv[2] *= brightness / 100f
+        previewColor = Color.HSVToColor((opacity * 255f / 100).toInt(), previewHsv)
+        binding.colorPreview.background.mutate().setTint(previewColor)
         binding.brightnessValue.text = activity.getString(R.string.brightness_percent, brightness)
         if (binding.brightnessSlider.progress != brightness) binding.brightnessSlider.progress = brightness
     }
@@ -80,7 +56,7 @@ class ScreenLightController(private val activity: AppCompatActivity, private val
         out.putFloat("edge_saturation", selectedHsv[1])
     }
 
-    fun destroy() { setActive(false); picker?.dismiss(); picker = null }
+    fun destroy() { picker?.dismiss(); picker = null }
 
     private fun showPicker() {
         if (picker?.isShowing == true) return
@@ -89,7 +65,6 @@ class ScreenLightController(private val activity: AppCompatActivity, private val
             opacity = selectedOpacity
             render()
         }
-        applyWindowBrightness()
     }
 }
 

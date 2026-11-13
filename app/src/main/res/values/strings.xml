@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Flash Light</string>
+    <string name="app_name" translatable="false">Flash Light</string>
     <string name="flash_light">Flash Light</string>
     <string name="sos_light">SOS Light</string>
     <string name="dj_mode">DJ Mode</string>

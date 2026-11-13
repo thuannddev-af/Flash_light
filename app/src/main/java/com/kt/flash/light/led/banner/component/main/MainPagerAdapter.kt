@@ -9,7 +9,7 @@ import com.kt.flash.light.led.banner.component.flashfragment.FlashFragment
 import com.kt.flash.light.led.banner.component.ledfragment.LedFragment
 
 class MainPagerAdapter(activity: FragmentActivity) : FragmentStateAdapter(activity) {
-    override fun getItemCount() = 4
+    override fun getItemCount() = PAGE_COUNT
 
     override fun createFragment(position: Int): Fragment = when (position) {
         FLASH_PAGE -> FlashFragment()
@@ -20,6 +20,7 @@ class MainPagerAdapter(activity: FragmentActivity) : FragmentStateAdapter(activi
     }
 
     companion object {
+        const val PAGE_COUNT = 4
         const val FLASH_PAGE = 0
         const val EDGE_PAGE = 1
         const val LED_PAGE = 2

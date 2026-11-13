@@ -1,15 +1,24 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.Flashlight" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="android:fontFamily">@font/plusjakartasans_regular</item>
-        <item name="colorAccent">@color/color_main</item>
-        <item name="android:windowLightStatusBar">false</item>
-        <item name="android:windowLightNavigationBar">true</item>
+        <item name="colorPrimaryDark">@color/color_bg</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="colorAccent">@color/black</item>
+        <item name="android:splitMotionEvents">false</item>
+        <item name="android:windowEnableSplitTouch">false</item>
+
     </style>
 
     <style name="Theme.Flashlight" parent="Base.Theme.Flashlight">
-        <item name="colorAccent">@color/color_main</item>
-        <item name="android:windowLightStatusBar">false</item>
-        <item name="android:windowLightNavigationBar">true</item>
+        <item name="colorPrimaryDark">@color/color_bg</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="colorAccent">@color/black</item>
+        <item name="android:splitMotionEvents">false</item>
+        <item name="android:windowEnableSplitTouch">false</item>
     </style>
+
+    <style name="Theme.Lovetest" parent="android:Theme.Material.Light.NoActionBar" />
+
 </resources>

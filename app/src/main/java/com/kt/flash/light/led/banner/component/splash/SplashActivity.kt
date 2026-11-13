@@ -33,6 +33,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         updateProgress(savedInstanceState?.getInt(KEY_PROGRESS) ?: 0)
+        //setFullscreen()
     }
 
 //    override fun initViews() {

@@ -1,0 +1,117 @@
+<resources>
+    <string name="app_name" translatable="false">Flash Light</string>
+    <string name="flash_light">Linterna</string>
+    <string name="sos_light">Luz SOS</string>
+    <string name="dj_mode">Modo DJ</string>
+    <string name="flashlight_tab">Linterna</string>
+    <string name="edge_lighting">Iluminación de bordes</string>
+    <string name="led">LED</string>
+    <string name="flash_alert">Alerta con flash</string>
+    <string name="setting">Configuración</string>
+    <string name="on">ENCENDIDO</string>
+    <string name="off">APAGADO</string>
+    <string name="turn_on">Encender linterna</string>
+    <string name="turn_off">Apagar linterna</string>
+    <string name="ad_label">Anuncio</string>
+    <string name="ad_placeholder">Publicidad</string>
+    <string name="install">Instalar</string>
+    <string name="coming_soon">Próximamente</string>
+    <string name="screen_light">Luz de pantalla</string>
+    <string name="brightness">Brillo</string>
+    <string name="pick_color">Elegir color de pantalla</string>
+    <string name="full_screen">Abrir luz a pantalla completa</string>
+    <string name="color_plane">Saturación y brillo del color</string>
+    <string name="hue">Tono</string>
+    <string name="opacity">Opacidad</string>
+    <string name="choose">Elegir</string>
+    <string name="close">Cerrar luz de pantalla completa</string>
+    <string name="invalid_color">Usa HEX #RRGGBB o valores RGB de 0 a 255</string>
+    <string name="brightness_percent">%1$d%%</string>
+
+    <string name="led_text">Texto</string>
+    <string name="hello_world">HOLA MUNDO</string>
+    <string name="font_size">Tamaño de fuente</string>
+    <string name="scroll_speed">Velocidad de desplazamiento</string>
+    <string name="led_color">Color</string>
+    <string name="direction">Dirección</string>
+    <string name="visual_effects">Efectos visuales</string>
+    <string name="glow">Resplandor</string>
+    <string name="blink">Parpadeo</string>
+    <string name="neon">Neón</string>
+    <string name="direction_right">Desplazar a la derecha</string>
+    <string name="direction_left">Desplazar a la izquierda</string>
+    <string name="direction_down">Desplazar hacia abajo</string>
+    <string name="direction_up">Desplazar hacia arriba</string>
+    <string name="font_px">%1$dpx</string>
+    <string name="speed_seconds">%1$ds</string>
+
+    <string name="color_cyan">Cian</string>
+    <string name="color_white">Blanco</string>
+    <string name="color_yellow">Amarillo</string>
+    <string name="color_green">Verde</string>
+    <string name="color_purple">Morado</string>
+    <string name="color_red">Rojo</string>
+
+    <string name="settings_language">Idioma</string>
+    <string name="language_english">Inglés</string>
+    <string name="settings_share">Compartir</string>
+    <string name="settings_rate">Calificar aplicación</string>
+    <string name="settings_privacy">Política de privacidad</string>
+    <string name="settings_policy">Configuración de políticas</string>
+    <string name="settings_share_message">Prueba %1$s: %2$s</string>
+    <string name="settings_share_chooser">Compartir aplicación</string>
+    <string name="settings_unavailable">Esta página aún no está configurada.</string>
+    <string name="settings_link_unavailable">No hay ninguna aplicación disponible para abrir este enlace.</string>
+
+    <string name="english">Inglés</string>
+    <string name="spanish">Español</string>
+    <string name="hindi">Hindi</string>
+    <string name="korea">Coreano</string>
+    <string name="japan">Japonés</string>
+    <string name="german">Alemán</string>
+    <string name="portuguese">Portugués</string>
+    <string name="french">Francés</string>
+    <string name="italian">Italiano</string>
+    <string name="indonesia">Indonesio</string>
+    <string name="vi_t_nam">Vietnamita</string>
+    <string name="russian">Ruso</string>
+    <string name="turkish">Turco</string>
+    <string name="chinese">Chino</string>
+
+    <string name="splash_progress_initial">0%</string>
+    <string name="splash_progress_percent">%1$d%%</string>
+    <string name="this_action_may_container_advertisement">Esta acción puede contener anuncios</string>
+    <string name="save">Guardar</string>
+
+    <string name="allow_notification_title">Permitir notificaciones</string>
+    <string name="allow_notification_content">Recibe notificaciones con información de la aplicación</string>
+    <string name="allow_camera_title">Acceso a la cámara</string>
+    <string name="allow_camera_content">Permitir acceso a la cámara</string>
+    <string name="allow_record_audio_title">Grabar audio</string>
+    <string name="allow_record_audio_content">Permitir que la aplicación grabe audio</string>
+
+    <string name="bright_flashlight">Linterna potente</string>
+    <string name="sos_dj_flash"><![CDATA[Flash SOS y DJ]]></string>
+    <string name="led_banner">Letrero LED</string>
+    <string name="turn_your_phone_into_a_powerful_flashlight_anytime">Convierte tu teléfono en una potente linterna en cualquier momento.</string>
+
+    <string name="next">Siguiente</string>
+    <string name="try_again">Ir a Configuración</string>
+    <string name="network_error">Error de red</string>
+    <string name="network_error_message">Sin conexión a Internet. ¡Inténtalo de nuevo!</string>
+    <string name="exit">Salir</string>
+    <string name="no_internet_title">Vaya, no hay conexión a Internet</string>
+    <string name="no_internet_message">Asegúrate de que el Wi-Fi o los datos móviles estén activados e inténtalo de nuevo.</string>
+    <string name="no_internet_settings">Ir a Configuración</string>
+    <string name="no_internet_cancel">Cancelar</string>
+    <string name="no_internet_settings_unavailable">No se puede abrir la configuración de red.</string>
+
+    <string name="camera">Cámara</string>
+    <string name="continue_1">Continuar</string>
+    <string name="flash_not_supported">Este dispositivo no tiene un flash de cámara disponible.</string>
+    <string name="flash_unavailable">El flash de la cámara no está disponible. Cierra otras aplicaciones que estén usando la cámara e inténtalo de nuevo.</string>
+    <string name="flash_camera_permission">Permite el acceso a la cámara para usar la linterna. Si las solicitudes están bloqueadas, activa el permiso en la configuración de la aplicación.</string>
+    <string name="camera_permission_required_to_continue">Permite el acceso a la cámara antes de continuar.</string>
+    <string name="camera_permission_settings_message">El permiso de la cámara está bloqueado. Abre Configuración, selecciona Permisos → Cámara y permite el acceso. Luego vuelve aquí y pulsa Continuar.</string>
+
+</resources>

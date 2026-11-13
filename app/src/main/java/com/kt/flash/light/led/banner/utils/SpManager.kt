@@ -74,8 +74,9 @@ class SpManager(private val preferences: SharedPreferences) {
     }
 
     fun getLanguage(): Language {
-        return preferences.getString(Constant.KEY_SP_CURRENT_LANGUAGE, "")?.toLanguageModel()
+        val language = preferences.getString(Constant.KEY_SP_CURRENT_LANGUAGE, "")?.toLanguageModel()
             ?: Language("en", R.drawable.ic_english, R.string.english)
+        return language.copy(languageCode = LocaleHelper.normalizeLanguageCode(language.languageCode))
     }
 
     fun setLanguageChosen() {

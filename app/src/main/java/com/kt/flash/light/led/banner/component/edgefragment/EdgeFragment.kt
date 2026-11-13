@@ -27,16 +27,6 @@ class EdgeFragment : BaseFragment<FragmentEdgeBinding>() {
         )
     }
 
-    override fun onResume() {
-        super.onResume()
-        controller?.setActive(true)
-    }
-
-    override fun onPause() {
-        controller?.setActive(false)
-        super.onPause()
-    }
-
     override fun onSaveInstanceState(outState: Bundle) {
         controller?.saveState(edgeState)
         outState.putBundle(KEY_STATE, Bundle(edgeState))

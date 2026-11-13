@@ -15,7 +15,7 @@ import com.kt.flash.light.led.banner.data.model.Language
 import com.kt.flash.light.led.banner.databinding.ActivityLanguageBinding
 import com.kt.flash.light.led.banner.utils.Constant
 import com.kt.flash.light.led.banner.utils.SpManager
-import com.kt.flash.light.led.banner.utils.setAppLanguage
+import com.kt.flash.light.led.banner.utils.LocaleHelper
 import com.kt.flash.light.led.banner.utils.setOnSingleClickListener
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -66,12 +66,14 @@ class LanguageActivity : BaseActivity<ActivityLanguageBinding>() {
         if (saving || isFinishing || isDestroyed) return
         saving = true
 
-        spManager.saveLanguage(language)
+        spManager.saveLanguage(language.copy(languageCode = LocaleHelper.normalizeLanguageCode(language.languageCode)))
         spManager.setLanguageChosen()
-        setAppLanguage(language.languageCode)
 
         if (intent.getBooleanExtra(Constant.KEY_INTENT_FROM_SPLASH, false)) {
             OnboardingActivity.start(this@LanguageActivity)
+        } else {
+            // Recreate the whole Main task so every Fragment inflates with the saved locale.
+            MainActivity.startNewTask(this)
         }
         finish()
     }
@@ -84,6 +86,8 @@ class LanguageActivity : BaseActivity<ActivityLanguageBinding>() {
     override fun initObserver() {
         viewModel.listLanguage.onEach {
             languageAdapter.setData(ArrayList(it))
+            val savedCode = spManager.getLanguage().languageCode
+            languageAdapter.selectLanguage(selectLanguageModel?.languageCode ?: savedCode)
         }.flowWithLifecycle(lifecycle, Lifecycle.State.CREATED).launchIn(lifecycleScope)
     }
 

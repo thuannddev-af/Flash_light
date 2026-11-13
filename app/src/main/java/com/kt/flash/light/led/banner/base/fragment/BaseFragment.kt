@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
+import com.kt.flash.light.led.banner.base.activity.BaseActivity
 
 abstract class BaseFragment <V : ViewBinding>: Fragment(){
     private var binding: V? = null
@@ -26,6 +27,14 @@ abstract class BaseFragment <V : ViewBinding>: Fragment(){
         initViews()
         initData()
         initObserver()
+    }
+
+    fun addFragment(id: Int, fragment: Fragment) {
+        (activity as? BaseActivity<*>)?.addFragment(id, fragment)
+    }
+
+    fun replaceFragment(id: Int, fragment: Fragment) {
+        (activity as? BaseActivity<*>)?.replaceFragment(id, fragment)
     }
     abstract fun provideViewBinding(container: ViewGroup?): V
     open fun initViews() {}

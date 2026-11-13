@@ -9,4 +9,5 @@
     <color name="transparent_50">#80000000</color>
     <color name="gray_transparent">#1A747172</color>
     <color name="yellow">#FFC81A</color>
+    <color name="tab_glow_shadow">#26FFD54F</color>
 </resources>

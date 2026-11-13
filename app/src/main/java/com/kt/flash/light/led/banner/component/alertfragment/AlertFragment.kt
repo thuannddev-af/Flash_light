@@ -5,10 +5,12 @@ import android.content.Intent
 import android.net.Uri
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatDelegate
+import com.kt.flash.light.led.banner.utils.SpManager
 import com.kt.flash.light.led.banner.R
 import com.kt.flash.light.led.banner.base.fragment.BaseFragment
+import com.kt.flash.light.led.banner.component.language.LanguageActivity
 import com.kt.flash.light.led.banner.databinding.FragmentAlertBinding
+import com.kt.flash.light.led.banner.utils.setOnClickWithPressEffect
 import com.kt.flash.light.led.banner.utils.setOnSingleClickListener
 import java.util.Locale
 
@@ -17,11 +19,12 @@ class AlertFragment : BaseFragment<FragmentAlertBinding>() {
         FragmentAlertBinding.inflate(layoutInflater, container, false)
 
     override fun initViews() = with(viewBaseFragment) {
-        val locale = AppCompatDelegate.getApplicationLocales().get(0) ?: Locale.ENGLISH
+        val locale = Locale.forLanguageTag(SpManager.getInstance(requireContext()).getLanguage().languageCode)
         currentLanguage.text = locale.getDisplayLanguage(locale).replaceFirstChar { it.titlecase(locale) }
-        itemLanguage.setOnSingleClickListener {
-            showUnconfigured()
+        itemLanguage.setOnClickWithPressEffect {
+            LanguageActivity.start(requireActivity(), isFromSplash = false)
         }
+
         itemShare.setOnSingleClickListener {
             val storeUrl = "https://play.google.com/store/apps/details?id=${requireContext().packageName}"
             val intent = Intent(Intent.ACTION_SEND).apply {

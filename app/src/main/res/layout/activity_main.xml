@@ -3,6 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
+    android:clipChildren="false"
+    android:clipToPadding="false"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#111111"
@@ -27,10 +29,11 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <LinearLayout
+    <com.kt.flash.light.led.banner.customview.GlowTabBar
+        android:id="@+id/bottom_tabs"
         android:layout_width="match_parent"
         android:layout_height="@dimen/size72"
-        android:background="#202020"
+        android:background="#1A1919"
         android:paddingStart="@dimen/size6"
         android:paddingTop="@dimen/size8"
         android:paddingEnd="@dimen/size6"
@@ -163,6 +166,6 @@
                 android:textColor="@color/control_tint"
                 android:textSize="@dimen/text_size_12" />
         </LinearLayout>
-    </LinearLayout>
+    </com.kt.flash.light.led.banner.customview.GlowTabBar>
 </LinearLayout>
 

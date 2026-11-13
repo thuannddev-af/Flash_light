@@ -32,7 +32,7 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>() {
     override fun provideViewBinding() = ActivityOnboardingBinding.inflate(layoutInflater)
 
     override fun initViews() = with(viewBaseActivity) {
-        setFullscreen()
+        //setFullscreen()
         vpOnBoarding.adapter = onBoardingAdapter
         tabMediator = TabLayoutMediator(tabDots, vpOnBoarding) { _, _ -> }.also { it.attach() }
         vpOnBoarding.registerOnPageChangeCallback(pageCallback)

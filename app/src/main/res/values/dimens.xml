@@ -753,4 +753,5 @@
     <dimen name="text_size_11">@dimen/size11</dimen>
     <dimen name="text_size_10">10sp</dimen>
     <dimen name="text_size_9">@dimen/size9</dimen>
+    <dimen name="tab_glow_blur">13.85dp</dimen>
 </resources>

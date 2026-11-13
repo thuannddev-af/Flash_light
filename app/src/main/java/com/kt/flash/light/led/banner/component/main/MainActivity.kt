@@ -14,18 +14,22 @@ import com.kt.flash.light.led.banner.component.permission.PermissionActivity
 
 class MainActivity : BaseActivity<ActivityMainBinding>() {
     private var redirectingForPermission = false
+    private var tabHistory = TabHistory()
     override fun provideViewBinding() = ActivityMainBinding.inflate(layoutInflater)
 
     private val pageCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
+            tabHistory.visit(position)
             updateTab(position)
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        tabHistory = TabHistory(savedInstanceState?.getIntArray(KEY_TAB_HISTORY)?.toList().orEmpty())
         with(viewBaseActivity) {
             mainPager.adapter = MainPagerAdapter(this@MainActivity)
+            mainPager.setCurrentItem(tabHistory.current, false)
             mainPager.registerOnPageChangeCallback(pageCallback)
             tabFlash.setOnClickListener { mainPager.currentItem = MainPagerAdapter.FLASH_PAGE }
             tabEdge.setOnClickListener { mainPager.currentItem = MainPagerAdapter.EDGE_PAGE }
@@ -33,6 +37,24 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             tabAlert.setOnClickListener { mainPager.currentItem = MainPagerAdapter.ALERT_PAGE }
             updateTab(mainPager.currentItem)
         }
+    }
+
+    override fun onBack() {
+        if (supportFragmentManager.backStackEntryCount > 0) {
+            supportFragmentManager.popBackStackImmediate()
+            return
+        }
+        val previousPage = tabHistory.previous()
+        if (previousPage == null) {
+            finish()
+        } else {
+            viewBaseActivity.mainPager.setCurrentItem(previousPage, false)
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putIntArray(KEY_TAB_HISTORY, tabHistory.snapshot())
+        super.onSaveInstanceState(outState)
     }
 
     override fun onResume() {
@@ -51,6 +73,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             tabEdge.isSelected = position == MainPagerAdapter.EDGE_PAGE
             tabLed.isSelected = position == MainPagerAdapter.LED_PAGE
             tabAlert.isSelected = position == MainPagerAdapter.ALERT_PAGE
+            bottomTabs.invalidate()
             screenTitle.setText(when (position) {
                 MainPagerAdapter.EDGE_PAGE -> R.string.screen_light
                 MainPagerAdapter.LED_PAGE -> R.string.led
@@ -66,6 +89,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         super.onDestroy()
     }
     companion object {
+        private const val KEY_TAB_HISTORY = "main_tab_history"
         fun startNewTask(activity: Activity) {
             val intent = Intent(activity, MainActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)

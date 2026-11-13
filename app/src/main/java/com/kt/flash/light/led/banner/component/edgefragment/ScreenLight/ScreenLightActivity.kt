@@ -24,10 +24,6 @@ class ScreenLightActivity : BaseActivity<ActivityScreenLightBinding>() {
             hide(WindowInsetsCompat.Type.systemBars())
         }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        // Full-screen light inherits the Edge slider's per-window brightness.
-        window.attributes = window.attributes.apply {
-            screenBrightness = (intent.getIntExtra("brightness", 80) / 100f).coerceIn(0f, 1f)
-        }
         viewBaseActivity.screenColor.setBackgroundColor(intent.getIntExtra("color", Color.CYAN))
         viewBaseActivity.closeScreen.setOnClickListener { finish() }
     }
