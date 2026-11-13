@@ -51,36 +51,12 @@ class LocalDataSource @Inject constructor(private val appDatabase: AppDatabase) 
     fun delete(tableTest: TableTest) {
         appDatabase.tableTestDao().delete(tableTest)
     }
-    fun getListPermission(): List<PermissionModel> =
-        buildList {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-//                add(
-//                    PermissionModel(
-//                        R.drawable.ic_launcher_background,
-//                        R.string.allow_notification_title,
-//                        R.string.allow_notification_content,
-//                        listOf(PermissionRequest.POST_NOTIFICATIONS),
-//                    ),
-//                )
-//            }
-//            add(
-//                PermissionModel(
-//                    R.drawable.ic_launcher_background,
-//                    R.string.allow_record_audio_title,
-//                    R.string.allow_record_audio_content,
-//                    listOf(
-//                        PermissionRequest.RECORD_AUDIO,
-//                    ),
-//                ),
-//            )
-                add(
-                    PermissionModel(
-                        R.drawable.ic_launcher_background,
-                        R.string.allow_camera_title,
-                        R.string.allow_camera_content,
-                        listOf(PermissionRequest.CAMERA),
-                    ),
-                )
-            }
-        }
+    fun getListPermission(): List<PermissionModel> = listOf(
+        PermissionModel(
+            R.drawable.ic_permission,
+            R.string.allow_camera_title,
+            R.string.allow_camera_content,
+            listOf(PermissionRequest.CAMERA)
+        )
+    )
 }

@@ -7,5 +7,9 @@
         <item name="android:windowLightNavigationBar">true</item>
     </style>
 
-    <style name="Theme.Flashlight" parent="Base.Theme.Flashlight" />
+    <style name="Theme.Flashlight" parent="Base.Theme.Flashlight">
+        <item name="colorAccent">@color/color_main</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">true</item>
+    </style>
 </resources>

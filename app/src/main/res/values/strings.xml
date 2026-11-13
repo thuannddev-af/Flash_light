@@ -102,4 +102,9 @@
     <string name="no_internet_settings_unavailable">Unable to open network settings.</string>
     <string name="camera">Camera</string>
     <string name="continue_1">Continue</string>
+    <string name="flash_not_supported">This device does not have an available camera flash.</string>
+    <string name="flash_unavailable">Camera flash is unavailable. Close other apps using the camera and try again.</string>
+    <string name="flash_camera_permission">Allow Camera permission to use the flashlight. If requests are blocked, enable it in app settings.</string>
+    <string name="camera_permission_required_to_continue">Please allow Camera access before continuing.</string>
+    <string name="camera_permission_settings_message">Camera permission is blocked. Open Settings, choose Permissions → Camera, and allow access. Then return here and tap Continue.</string>
 </resources>

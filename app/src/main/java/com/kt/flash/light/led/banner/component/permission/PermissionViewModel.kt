@@ -1,7 +1,8 @@
 package com.kt.flash.light.led.banner.component.permission
 
 import androidx.lifecycle.viewModelScope
-import com.kt.flash.light.led.banner.App
+import android.content.Context
+import dagger.hilt.android.qualifiers.ApplicationContext
 import com.kt.flash.light.led.banner.base.viewmodel.BaseViewModel
 import com.kt.flash.light.led.banner.data.model.PermissionModel
 import com.kt.flash.light.led.banner.domain.usecase.GetListPermissionUseCase
@@ -21,6 +22,7 @@ import javax.inject.Inject
 class PermissionViewModel
 @Inject
 constructor(
+    @ApplicationContext private val context: Context,
     private val getListPermissionUseCase: GetListPermissionUseCase,
 ) : BaseViewModel() {
 
@@ -28,7 +30,7 @@ constructor(
     var listPermission = listPermissionFlow.asStateFlow()
 
     val isEnableDone: StateFlow<Boolean> = listPermissionFlow
-        .map { list -> list.all { it.isAllowed } }
+        .map { list -> list.isNotEmpty() && list.all { it.isAllowed } }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
@@ -42,13 +44,17 @@ constructor(
                     getListPermissionUseCase.execute(
                         GetListPermissionUseCase.Param(),
                     ).map {
-                        it.apply {
-                            isAllowed = App.context?.isPermissionsGranted(it.permissions) ?: false
-                        }
+                        it.copy(isAllowed = context.isPermissionsGranted(it.permissions))
                     }
             }.onFailure { error ->
                 Logger.e("getListPermission $error")
             }
+        }
+    }
+
+    fun refreshPermissionState() {
+        listPermissionFlow.value = listPermissionFlow.value.map {
+            it.copy(isAllowed = context.isPermissionsGranted(it.permissions))
         }
     }
 

@@ -7,16 +7,18 @@
     android:layout_marginHorizontal="@dimen/size16"
     android:layout_marginVertical="@dimen/size5"
     android:gravity="center_vertical"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:background="@drawable/bg_item_settings">
 
     <ImageView
         android:id="@+id/imgPermission"
         android:layout_width="@dimen/size40"
         android:layout_height="@dimen/size40"
+        android:visibility="gone"
         tools:src="@drawable/ic_launcher_background" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/size10"
         android:layout_weight="1"
@@ -40,10 +42,16 @@
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <androidx.appcompat.widget.SwitchCompat
+    <ImageView
         android:id="@+id/swAllow"
-        android:layout_width="@dimen/size40"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/size48"
+        android:layout_height="@dimen/size48"
+        android:scaleType="centerInside"
+        android:clickable="true"
+        android:focusable="true"
+        android:contentDescription="@string/off"
+        android:layout_marginEnd="20dp"
         android:drawablePadding="@dimen/size22"
-        android:hapticFeedbackEnabled="true" />
+        android:hapticFeedbackEnabled="true"
+        android:src="@drawable/ic_off"/>
 </androidx.appcompat.widget.LinearLayoutCompat>

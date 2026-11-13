@@ -1,14 +1,19 @@
 package com.kt.flash.light.led.banner.component.main
 
 import android.app.Activity
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
 import android.content.Intent
 import android.os.Bundle
 import androidx.viewpager2.widget.ViewPager2
 import com.kt.flash.light.led.banner.R
 import com.kt.flash.light.led.banner.base.activity.BaseActivity
 import com.kt.flash.light.led.banner.databinding.ActivityMainBinding
+import com.kt.flash.light.led.banner.component.permission.PermissionActivity
 
 class MainActivity : BaseActivity<ActivityMainBinding>() {
+    private var redirectingForPermission = false
     override fun provideViewBinding() = ActivityMainBinding.inflate(layoutInflater)
 
     private val pageCallback = object : ViewPager2.OnPageChangeCallback() {
@@ -27,6 +32,16 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             tabLed.setOnClickListener { mainPager.currentItem = MainPagerAdapter.LED_PAGE }
             tabAlert.setOnClickListener { mainPager.currentItem = MainPagerAdapter.ALERT_PAGE }
             updateTab(mainPager.currentItem)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (!redirectingForPermission &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            redirectingForPermission = true
+            PermissionActivity.start(this)
+            finish()
         }
     }
 

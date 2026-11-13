@@ -15,14 +15,15 @@
         android:layout_gravity="center"
         android:layout_marginTop="@dimen/size50"
         android:adjustViewBounds="true"
-        android:src="@drawable/ic_launcher_background" />
+        android:src="@drawable/ic_permission" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:gravity="center"
         android:layout_marginTop="@dimen/size16"
-        android:text="Flash Light is requesting access to provide you with "
+        android:text="Flash light is requesting access to provide you with the best service possible"
+        android:fontFamily="@font/plusjakartasans_regular"
         android:textColor="@color/white"
         android:textSize="14sp" />
 

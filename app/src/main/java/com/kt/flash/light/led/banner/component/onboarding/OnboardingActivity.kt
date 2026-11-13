@@ -10,6 +10,7 @@ import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.google.android.material.tabs.TabLayoutMediator
 import com.kt.flash.light.led.banner.base.activity.BaseActivity
 import com.kt.flash.light.led.banner.component.main.MainActivity
+import com.kt.flash.light.led.banner.component.permission.PermissionActivity
 import com.kt.flash.light.led.banner.databinding.ActivityOnboardingBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
@@ -63,7 +64,7 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>() {
             viewBaseActivity.vpOnBoarding.setCurrentItem(currentPage + 1, true)
         } else {
             navigating = true
-            MainActivity.startNewTask(this)
+            PermissionActivity.start(this)
             finish()
         }
     }

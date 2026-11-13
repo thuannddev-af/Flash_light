@@ -16,24 +16,27 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Flashlight">
+        <activity android:name=".component.permission.PermissionActivity" android:exported="false" />
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="${ad_app_id}" />
 
         <activity
             android:name=".component.ledfragment.LedPlayerActivity"
-            android:exported="false"
-            android:screenOrientation="fullSensor" />
+            android:exported="true"
+            android:screenOrientation="sensorLandscape" />
         <activity
             android:name=".component.edgefragment.ScreenLight.ScreenLightActivity"
-            android:exported="false"
+            android:exported="true"
             android:screenOrientation="sensorLandscape" />
         <activity
             android:name=".component.main.MainActivity"
-            android:exported="true"
+            android:screenOrientation="portrait"
+            android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".component.splash.SplashActivity"
+            android:screenOrientation="portrait"
             android:exported="true"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
