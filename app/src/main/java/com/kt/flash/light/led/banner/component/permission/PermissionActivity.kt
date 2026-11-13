@@ -3,7 +3,6 @@ package com.kt.flash.light.led.banner.component.permission
 import android.content.Context
 import android.content.Intent
 import android.Manifest
-import android.content.pm.PackageManager
 import android.widget.Toast
 import android.app.Dialog
 import android.net.Uri
@@ -11,6 +10,7 @@ import android.provider.Settings
 import android.content.ActivityNotFoundException
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import android.content.pm.PackageManager
 import androidx.core.content.ContextCompat
 import com.kt.flash.light.led.banner.R
 import androidx.activity.viewModels
@@ -65,7 +65,7 @@ class PermissionActivity : BaseActivity<ActivityPermissionBinding>() {
     private fun requestCameraPermission() {
         if (requestingPermission || isFinishing || isDestroyed) return
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-            permissionViewModel.refreshPermissionState()
+            showCameraSettingsDialog()
             return
         }
         val preferences = getPreferences(Context.MODE_PRIVATE)
@@ -81,9 +81,10 @@ class PermissionActivity : BaseActivity<ActivityPermissionBinding>() {
 
     private fun showCameraSettingsDialog() {
         if (isFinishing || isDestroyed || settingsDialog?.isShowing == true) return
+        val granted = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
         settingsDialog = AlertDialog.Builder(this)
             .setTitle(R.string.allow_camera_title)
-            .setMessage(R.string.camera_permission_settings_message)
+            .setMessage(if (granted) R.string.camera_permission_disable_message else R.string.camera_permission_settings_message)
             .setPositiveButton(R.string.no_internet_settings) { _, _ ->
                 try {
                     startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$packageName")))

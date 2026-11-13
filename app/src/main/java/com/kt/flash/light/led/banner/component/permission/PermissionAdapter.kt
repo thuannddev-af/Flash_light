@@ -28,7 +28,7 @@ class PermissionAdapter : ListAdapter<PermissionModel, PermissionAdapter.Permiss
             val granted = root.context.isPermissionsGranted(item.permissions)
             swAllow.setImageResource(if (granted) R.drawable.ic_on else R.drawable.ic_off)
             swAllow.contentDescription = root.context.getString(if (granted) R.string.on else R.string.off)
-            swAllow.isEnabled = !granted
+            swAllow.isEnabled = true
             swAllow.setOnSingleClickListener { requestPermission() }
             root.setOnSingleClickListener { requestPermission() }
         }
@@ -37,7 +37,7 @@ class PermissionAdapter : ListAdapter<PermissionModel, PermissionAdapter.Permiss
             val position = bindingAdapterPosition
             if (position == RecyclerView.NO_POSITION) return
             val item = getItem(position)
-            if (!binding.root.context.isPermissionsGranted(item.permissions)) onAllowClick?.invoke(position, item)
+            onAllowClick?.invoke(position, item)
         }
     }
 

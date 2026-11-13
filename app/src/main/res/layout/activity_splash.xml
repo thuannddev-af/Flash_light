@@ -47,7 +47,7 @@
         android:layout_marginBottom="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/frAdsNative">
+        app:layout_constraintBottom_toTopOf="@+id/frAdsBanner">
 
         <TextView
             android:id="@+id/progress_percent"
@@ -97,16 +97,15 @@
     </LinearLayout>
 
     <FrameLayout
-        android:id="@+id/frAdsNative"
+        android:id="@+id/frAdsBanner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/size16"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
         <include
-            android:id="@+id/shimmerContainerNative"
-            layout="@layout/loading_native_small" />
+            android:id="@+id/shimmer_container_banner"
+            layout="@layout/layout_banner_control" />
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

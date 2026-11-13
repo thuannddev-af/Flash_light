@@ -107,4 +107,5 @@
     <string name="flash_camera_permission">Allow Camera permission to use the flashlight. If requests are blocked, enable it in app settings.</string>
     <string name="camera_permission_required_to_continue">Please allow Camera access before continuing.</string>
     <string name="camera_permission_settings_message">Camera permission is blocked. Open Settings, choose Permissions → Camera, and allow access. Then return here and tap Continue.</string>
+    <string name="camera_permission_disable_message">To turn off Camera access, open Settings → Permissions → Camera and choose Don’t allow. Camera access is required to continue into the app.</string>
 </resources>

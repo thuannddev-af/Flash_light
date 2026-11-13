@@ -8,6 +8,8 @@ plugins {
     id("com.google.devtools.ksp")
     id("org.jetbrains.kotlin.plugin.parcelize")
     id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
+    id("kotlin-parcelize")
 
 }
 
@@ -50,6 +52,12 @@ android {
     productFlavors {
         create("appDebug") {
             manifestPlaceholders["ad_app_id"] = "ca-app-pub-3940256099942544~3347511713"
+            buildConfigField("String", "banner_splash", "\"ca-app-pub-3940256099942544/2014213617\"")
+            buildConfigField("String", "inter_splash", "\"ca-app-pub-3940256099942544/1033173712\"")
+            buildConfigField("String", "inter_splash_2f", "\"ca-app-pub-3940256099942544/1033173712\"")
+            buildConfigField("String", "native_full_splash", "\"ca-app-pub-3940256099942544/2247696110\"")
+            buildConfigField("String", "native_full_splash_2", "\"ca-app-pub-3940256099942544/2247696110\"")
+
 
             buildConfigField("Boolean", "build_debug", "true")
 
@@ -57,6 +65,12 @@ android {
 
         create("appProduct") {
             manifestPlaceholders["ad_app_id"] = "ca-app-pub-3940256099942544~3347511713"
+            buildConfigField("String", "banner_splash", "\"ca-app-pub-3940256099942544/2014213617\"")
+            buildConfigField("String", "inter_splash", "\"ca-app-pub-3940256099942544/1033173712\"")
+            buildConfigField("String", "inter_splash_2f", "\"ca-app-pub-3940256099942544/1033173712\"")
+            buildConfigField("String", "native_full_splash", "\"ca-app-pub-3940256099942544/2247696110\"")
+            buildConfigField("String", "native_full_splash_2", "\"ca-app-pub-3940256099942544/2247696110\"")
+
 
             buildConfigField("Boolean", "build_debug", "false")
 
@@ -106,7 +120,8 @@ dependencies {
 
     //shimmer
     implementation("com.facebook.shimmer:shimmer:0.5.0")
-
+    //Gson
+    implementation("com.google.code.gson:gson:2.13.2")
     //AdMob
     implementation("com.google.android.gms:play-services-ads:24.9.0")
 
@@ -132,5 +147,16 @@ dependencies {
 
     implementation("com.intuit.sdp:sdp-android:1.1.1")
     implementation("com.intuit.ssp:ssp-android:1.1.1")
+
+    // hilt
+    implementation("com.google.dagger:hilt-android:2.57.2")
+    //Firebase
+    implementation(platform("com.google.firebase:firebase-bom:34.7.0"))
+    implementation("com.google.firebase:firebase-config")
+    implementation("com.google.firebase:firebase-crashlytics")
+    implementation("com.google.firebase:firebase-analytics")
+
+    // In-App Update
+    implementation("com.google.android.play:app-update-ktx:2.1.0")
 
 }
