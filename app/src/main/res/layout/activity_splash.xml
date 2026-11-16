@@ -137,6 +137,8 @@
 
         <ImageView
             android:id="@+id/close_native_full"
+            android:layout_marginTop="@dimen/_29sdp"
+            android:elevation="16dp"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_gravity="top|end"
@@ -148,6 +150,7 @@
 
         <TextView
             android:id="@+id/native_full_countdown"
+            android:elevation="16dp"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_gravity="top|end"

@@ -7,6 +7,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.ads.admob.helper.adnative.params.AdNativeState
 import com.google.android.material.tabs.TabLayoutMediator
@@ -17,12 +18,14 @@ import com.kt.flash.light.led.banner.component.permission.PermissionActivity
 import com.kt.flash.light.led.banner.databinding.ActivityOnboardingBinding
 import com.kt.flash.light.led.banner.domain.layer.FullscreenAdConfig
 import com.kt.flash.light.led.banner.utils.Logger
+import com.kt.flash.light.led.banner.utils.FirebaseConfigManager
 import com.kt.flash.light.led.banner.utils.ads.NativeAdsUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import java.util.Timer
-import kotlin.concurrent.schedule
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>() {
@@ -30,7 +33,7 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>() {
     private val viewModel: OnBoardingViewModel by viewModels()
     private var tabMediator: TabLayoutMediator? = null
 
-    private var closeButtonTimer: Timer? = null
+    private var nativeCountdownJob: Job? = null
     private var navigating = false
 
     private val pageCallback = object : OnPageChangeCallback() {
@@ -51,7 +54,6 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>() {
         btnNext.setOnClickListener { nextAction() }
         btnClose.visibility = android.view.View.GONE
         frAdsNative.visibility = android.view.View.VISIBLE
-        btnClose.text = "×"
         btnClose.setOnClickListener { nextAction() }
         NativeAdsUtils.preLoadNativeOnBoarding1(this@OnboardingActivity)
         NativeAdsUtils.preLoadNativeOnBoarding3(this@OnboardingActivity)
@@ -80,6 +82,7 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>() {
 
     private fun nextAction() {
         if (navigating || onBoardingAdapter.itemCount == 0) return
+        nativeCountdownJob?.cancel()
         val currentPage = viewBaseActivity.vpOnBoarding.currentItem
         if (currentPage < onBoardingAdapter.itemCount - 1) {
             viewBaseActivity.vpOnBoarding.setCurrentItem(currentPage + 1, true)
@@ -91,7 +94,7 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>() {
     }
 
     override fun onDestroy() {
-        closeButtonTimer?.cancel()
+        nativeCountdownJob?.cancel()
         viewBaseActivity.vpOnBoarding.unregisterOnPageChangeCallback(pageCallback)
         tabMediator?.detach()
         tabMediator = null
@@ -107,21 +110,34 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>() {
         }
     }
 
-    private fun showCloseButton() {
-        closeButtonTimer?.cancel()
-        closeButtonTimer = Timer().apply {
-            schedule(2000){
-                runOnUiThread {
-                    if(onBoardingAdapter.dataSet.getOrNull(viewModel.currentPosition)?.imageId == 0) {
-                        viewBaseActivity.btnClose.isVisible = true
+    private fun startNativeCountdown(tag: String) {
+        nativeCountdownJob?.cancel()
+        val config = FirebaseConfigManager.instance()
+        val dismissable = config.nativeDismissableSeconds
+        val autoSkip = config.nativeAutoSkipSeconds
+        var elapsed = 0L
+        nativeCountdownJob = lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                while (!navigating) {
+                    val current = onBoardingAdapter.dataSet.getOrNull(
+                        viewBaseActivity.vpOnBoarding.currentItem
+                    )
+                    if (current?.imageId != 0 || current.tag != tag) return@repeatOnLifecycle
+                    viewBaseActivity.btnClose.isVisible = elapsed >= dismissable
+                    if (elapsed >= dismissable) viewBaseActivity.btnClose.bringToFront()
+                    if (elapsed >= autoSkip) {
+                        nextAction()
+                        return@repeatOnLifecycle
                     }
+                    delay(1000L)
+                    elapsed++
                 }
             }
         }
     }
 
     private fun initMultiNAtiveAd(position: Int) {
-        closeButtonTimer?.cancel()
+        nativeCountdownJob?.cancel()
         val page = onBoardingAdapter.dataSet.getOrNull(position) ?: return
         val fullscreen = page.imageId == 0
         val contentIndex = onBoardingAdapter.dataSet.take(position + 1).count { it.imageId != 0 }
@@ -147,7 +163,7 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>() {
         }
 
         if(fullscreen) {
-            showCloseButton()
+            startNativeCountdown(page.tag)
         }
     }
     private fun initNativeFullScreen() {

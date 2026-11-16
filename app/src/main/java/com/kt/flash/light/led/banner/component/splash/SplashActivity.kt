@@ -266,6 +266,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                     viewBaseActivity.closeNativeFull.isEnabled = canDismiss
                     viewBaseActivity.closeNativeFull.visibility =
                         if (canDismiss) View.VISIBLE else View.GONE
+                    if (canDismiss) viewBaseActivity.closeNativeFull.bringToFront()
                     viewBaseActivity.nativeFullCountdown.visibility =
                         if (canDismiss) View.GONE else View.VISIBLE
                     viewBaseActivity.nativeFullCountdown.text =
