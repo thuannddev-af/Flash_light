@@ -17,8 +17,17 @@ data class AdConfig(
     @SerializedName("native_language_select_2f") @Expose var enableNativeLanguageSelect2f: Boolean = true,
 
 
-    @SerializedName("native_onboarding") @Expose var enableNativeOnBoarding: Boolean = true,
-    @SerializedName("native_onboarding_fullscreen") @Expose var enableNativeFullscreen: Boolean = true,
+    @SerializedName("native_obd1") @Expose var enableNativeOnB1: Boolean = true,
+    @SerializedName("native_obd1_2f") @Expose var enableNativeOnB12f: Boolean = true,
+    @SerializedName("native_obd12_full") @Expose var enableNativeOnB12: Boolean = true,
+    @SerializedName("native_obd34_full") @Expose var enableNativeOnB34: Boolean = true,
+    @SerializedName("native_obd3") @Expose var enableNativeOnB3: Boolean = true,
+    @SerializedName("native_obd3_2f") @Expose var enableNativeOnB32f: Boolean = true,
+    @SerializedName("native_permission") @Expose var enableNativePermission: Boolean = true,
+
+
+
+
     @SerializedName("native_main") @Expose var enableNativeMain: Boolean = true,
     @SerializedName("appopen_resume") @Expose var enableOpenApp: Boolean = true,
     @SerializedName("inter_main") @Expose var enableInterMain: Boolean = true,

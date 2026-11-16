@@ -81,16 +81,12 @@
         android:id="@+id/frAdsNative"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
         <include
-            android:id="@+id/nativeType1"
-            layout="@layout/layout_native_ad_view_type1" />
-        <include
-            android:id="@+id/nativeType4"
-            layout="@layout/layout_native_ad_view_type4" />
+            android:id="@+id/shimmerContainerNative"
+            layout="@layout/loading_native_ad_view_type1" />
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -71,17 +71,9 @@
     <FrameLayout
         android:id="@+id/frAdsNative"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#FFFFFF"
-        android:visibility="gone">
-        <FrameLayout
-            android:id="@+id/nativeContentView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+        android:layout_height="match_parent">
         <include
             android:id="@+id/shimmerContainerNative"
-            layout="@layout/loading_native_fullscreen_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            layout="@layout/loading_native_fullscreen_view"/>
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

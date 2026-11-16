@@ -10,6 +10,7 @@ import com.ads.admob.helper.AdOptionVisibility
 import com.ads.admob.helper.adnative.NativeAdConfig
 import com.ads.admob.helper.adnative.NativeAdHelper
 import com.ads.admob.helper.adnative.params.NativeAdParam
+import com.facebook.shimmer.Shimmer
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.kt.flash.light.led.banner.BuildConfig
 import com.kt.flash.light.led.banner.domain.layer.AdConfig
@@ -24,18 +25,24 @@ object NativeAdsUtils {
         private set
     var nativeOnBoarding: NativeAdHelper? = null
         private set
+    var nativeOnBoarding3: NativeAdHelper? = null
+        private set
     var nativeFullScreen: NativeAdHelper? = null
         private set
     var nativeFullscreen2: NativeAdHelper? = null
 
+    val adConfig get() = FirebaseConfigManager.instance().adConfig
+
     fun destroyAll() {
         nativeLanguage?.destroy()
         nativeOnBoarding?.destroy()
+        nativeOnBoarding3?.destroy()
         nativeFullScreen?.destroy()
         nativeFullscreen2?.destroy()
 
         nativeLanguage = null
         nativeOnBoarding = null
+        nativeOnBoarding3 = null
         nativeFullScreen = null
         nativeFullscreen2 = null
     }
@@ -95,16 +102,19 @@ object NativeAdsUtils {
         }
     }
 
-    fun preLoadNativeOnBoarding(appActivity: AppCompatActivity) {
+    fun preLoadNativeOnBoarding1(appActivity: AppCompatActivity) {
         val isEnable = FirebaseConfigManager.instance()
-            .adConfig.enableNativeOnBoarding
+            .adConfig.enableNativeOnB1
 
         if (!isEnable) return
 
         if (nativeOnBoarding != null) return
 
         val config = NativeAdConfig(
-            idAds = BuildConfig.native_full_splash, //tí thêm thành onboarding
+            idAdsPriority = if(adConfig.enableNativeOnB12f){
+                BuildConfig.native_obd1_2f
+            }else{null},
+            idAds = BuildConfig.native_obd1,
             canShowAds = true,
             canReloadAds = false,
             layoutId = com.ads.admob.R.layout.layout_native_ad_view_type1,
@@ -124,17 +134,48 @@ object NativeAdsUtils {
         Logger.e("preloadNativeOnboarding")
     }
 
-    fun preLoadNativeFullScreen(appActivity: AppCompatActivity) {
+    fun preLoadNativeOnBoarding3(appActivity: AppCompatActivity) {
         val isEnable = FirebaseConfigManager.instance()
-            .adConfig.enableNativeFullscreen
+            .adConfig.enableNativeOnB3
+
+        if (!isEnable) return
+
+        if (nativeOnBoarding3 != null) return
+
+        val config = NativeAdConfig(
+            idAdsPriority = if(adConfig.enableNativeOnB3){
+                BuildConfig.native_obd3_2f
+            }else{null},
+            idAds = BuildConfig.native_obd3,
+            canShowAds = true,
+            canReloadAds = false,
+            layoutId = com.ads.admob.R.layout.layout_native_ad_view_type1,
+            adPlacement = "native_onboarding3",
+            reloadIfFirstFail = true
+        )
+
+        nativeOnBoarding3 = NativeAdHelper(
+            activity = appActivity,
+            lifecycleOwner = processLifecycleOwner,
+            config = config
+        ).apply {
+            adVisibility = AdOptionVisibility.GONE
+        }
+
+        nativeOnBoarding?.requestAds(NativeAdParam.Request)
+        Logger.e("preloadNativeOnboarding3")
+    }
+
+    fun preLoadNativeFullScreenBetween12(appActivity: AppCompatActivity) {
+        val isEnable = FirebaseConfigManager.instance()
+            .adConfig.enableNativeOnB12
 
         if (!isEnable) return
 
         if (nativeFullScreen != null) return
 
         val config = NativeAdConfig(
-            idAds = BuildConfig.native_full_splash, //tí thêm thành onboarding
-            idAdsPriority = BuildConfig.native_full_splash_2f,
+            idAds = BuildConfig.native_obd12_full, //tí thêm thành onboarding
             canShowAds = true,
             canReloadAds = false,
             layoutId = com.ads.admob.R.layout.layout_native_fullscreen_view,
@@ -153,18 +194,17 @@ object NativeAdsUtils {
         Logger.e("preloadNativeFullScreen")
     }
 
-    fun preloadNativeFullscreen2(appActivity: AppCompatActivity) {
+    fun preloadNativeFullscreenBetween34(appActivity: AppCompatActivity) {
 
         val isEnable = FirebaseConfigManager.instance()
-            .adConfig.enableNativeFullscreen
+            .adConfig.enableNativeOnB34
 
         if (!isEnable) return
 
         if (nativeFullscreen2 != null) return
 
         val config = NativeAdConfig(
-            idAds = BuildConfig.native_full_splash,
-            idAdsPriority = BuildConfig.native_full_splash_2f,
+            idAds = BuildConfig.native_obd34_full,
             canShowAds = true,
             canReloadAds = false,
             layoutId = com.ads.admob.R.layout.layout_native_fullscreen_view,
@@ -205,6 +245,22 @@ object NativeAdsUtils {
                 nativeAdHelper.requestAds(NativeAdParam.Request)
             }
         }
+    }
+
+    fun loadAndShowNative(
+        activity: FragmentActivity,
+        lifecycleOwner: LifecycleOwner,
+        nativeContentView: FrameLayout,
+        shimmerContainerNative: ShimmerFrameLayout
+    ) {
+        val config = NativeAdConfig(
+            BuildConfig.native_permission,
+            canShowAds = FirebaseConfigManager.instance().adConfig.enableNativePermission,
+            canReloadAds = false,
+            layoutId = com.ads.admob.R.layout.layout_native_ad_view_type1,
+            adPlacement = "native_permission"
+        )
+        setNative(activity, config, lifecycleOwner, nativeContentView, shimmerContainerNative)
     }
 
 }

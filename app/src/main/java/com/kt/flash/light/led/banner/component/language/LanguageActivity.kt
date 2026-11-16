@@ -70,6 +70,7 @@ class LanguageActivity : BaseActivity<ActivityLanguageBinding>() {
             saveSelectedLanguage()
         }
         initNativeLanguage()
+        loadNativeOnboarding(isFromSplash)
     }
 
     private fun saveSelectedLanguage() {
@@ -83,7 +84,6 @@ class LanguageActivity : BaseActivity<ActivityLanguageBinding>() {
         if (intent.getBooleanExtra(Constant.KEY_INTENT_FROM_SPLASH, false)) {
             OnboardingActivity.start(this@LanguageActivity)
         } else {
-            // Recreate the whole Main task so every Fragment inflates with the saved locale.
             MainActivity.startNewTask(this)
         }
         finish()
@@ -128,6 +128,14 @@ class LanguageActivity : BaseActivity<ActivityLanguageBinding>() {
             if (saving || isFinishing || isDestroyed) return@launch
             helper.setShimmerLayoutView(viewBaseActivity.shimmerContainerNative.shimmerContainerNative)
             helper.setNativeContentView(viewBaseActivity.frAdsNative)
+        }
+    }
+    private fun loadNativeOnboarding(isFromSplash: Boolean) {
+        if(isFromSplash) {
+            NativeAdsUtils.preLoadNativeFullScreenBetween12(this)
+            NativeAdsUtils.preloadNativeFullscreenBetween34(this)
+            NativeAdsUtils.preLoadNativeOnBoarding1(this)
+            NativeAdsUtils.preLoadNativeOnBoarding3(this)
         }
     }
 

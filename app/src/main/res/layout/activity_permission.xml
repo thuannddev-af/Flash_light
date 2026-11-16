@@ -1,66 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/color_bg">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imgPermissionRequire"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/size50"
-        android:adjustViewBounds="true"
-        android:src="@drawable/ic_permission" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
         android:layout_marginTop="@dimen/size16"
-        android:text="Flash light is requesting access to provide you with the best service possible"
-        android:fontFamily="@font/plusjakartasans_regular"
-        android:textColor="@color/white"
-        android:textSize="14sp" />
+        android:adjustViewBounds="true"
+        android:src="@drawable/ic_permission"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/txtDescription"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/size4"
-        android:visibility="gone"
+        android:layout_marginHorizontal="@dimen/size16"
+        android:layout_marginTop="@dimen/size16"
+        android:fontFamily="@font/plusjakartasans_regular"
+        android:gravity="center"
+        android:text="Flash light is requesting access to provide you with the best service possible"
         android:textColor="@color/white"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@id/imgPermissionRequire"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imgPermissionRequire" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvPermission"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/size16"
         android:orientation="vertical"
-        android:layout_marginTop="@dimen/size44"
-        tools:itemCount="1"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintTop_toBottomOf="@id/txtDescription"
+        app:layout_constraintBottom_toTopOf="@id/btnNext"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         tools:listitem="@layout/item_permission" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/btnNext"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="@dimen/size48"
         android:layout_marginHorizontal="@dimen/size16"
-        android:layout_marginTop="@dimen/size30"
+        android:layout_marginBottom="12dp"
         android:background="@drawable/bg_button"
-        android:gravity="center"
         android:fontFamily="@font/plusjakartasans_semibold"
+        android:gravity="center"
         android:text="@string/continue_1"
         android:textColor="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/tabDots"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
-</androidx.appcompat.widget.LinearLayoutCompat>
+        app:layout_constraintBottom_toTopOf="@id/frAdsNative"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
+    <FrameLayout
+        android:id="@+id/frAdsNative"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <include
+            android:id="@+id/shimmerContainerNative"
+            layout="@layout/loading_native_ad_view_type1" />
+
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

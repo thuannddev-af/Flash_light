@@ -20,10 +20,12 @@ import androidx.lifecycle.lifecycleScope
 import com.kt.flash.light.led.banner.base.activity.BaseActivity
 import com.kt.flash.light.led.banner.component.main.MainActivity
 import com.kt.flash.light.led.banner.databinding.ActivityPermissionBinding
+import com.kt.flash.light.led.banner.utils.ads.NativeAdsUtils
 import com.kt.flash.light.led.banner.utils.setOnClickWithPressEffect
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import java.lang.annotation.Native
 
 @AndroidEntryPoint
 class PermissionActivity : BaseActivity<ActivityPermissionBinding>() {
@@ -60,6 +62,7 @@ class PermissionActivity : BaseActivity<ActivityPermissionBinding>() {
                 finish()
             }
         }
+        initNativeAd()
     }
 
     private fun requestCameraPermission() {
@@ -104,6 +107,9 @@ class PermissionActivity : BaseActivity<ActivityPermissionBinding>() {
         }.flowWithLifecycle(lifecycle, Lifecycle.State.STARTED).launchIn(lifecycleScope)
     }
 
+    private fun initNativeAd() {
+        NativeAdsUtils.loadAndShowNative(this, this, viewBaseActivity.frAdsNative, viewBaseActivity.shimmerContainerNative.shimmerContainerNative)
+    }
     override fun onResume() {
         super.onResume()
         permissionViewModel.refreshPermissionState()
