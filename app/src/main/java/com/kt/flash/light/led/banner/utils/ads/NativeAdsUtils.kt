@@ -13,6 +13,7 @@ import com.ads.admob.helper.adnative.params.NativeAdParam
 import com.facebook.shimmer.Shimmer
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.kt.flash.light.led.banner.BuildConfig
+import com.kt.flash.light.led.banner.R
 import com.kt.flash.light.led.banner.domain.layer.AdConfig
 import com.kt.flash.light.led.banner.utils.FirebaseConfigManager
 import com.kt.flash.light.led.banner.utils.Logger
@@ -65,7 +66,7 @@ object NativeAdsUtils {
             idAds = BuildConfig.native_language,
             canShowAds = true,
             canReloadAds = false,
-            layoutId = com.ads.admob.R.layout.layout_native_ad_view_type1,
+            layoutId = R.layout.layout_native_ad_view_type1,
             adPlacement = "native_language",
             reloadIfFirstFail = true
         )
@@ -92,7 +93,7 @@ object NativeAdsUtils {
             } else null,
             canShowAds = true,
             canReloadAds = false,
-            layoutId = com.kt.flash.light.led.banner.R.layout.layout_native_ad_view_type1_reload,
+            layoutId = R.layout.layout_native_ad_view_type1,
             adPlacement = "native_language_select",
             reloadIfFirstFail = true
         )
@@ -117,7 +118,7 @@ object NativeAdsUtils {
             idAds = BuildConfig.native_obd1,
             canShowAds = true,
             canReloadAds = false,
-            layoutId = com.ads.admob.R.layout.layout_native_ad_view_type1,
+            layoutId = R.layout.layout_native_ad_view_type1,
             adPlacement = "native_onboarding",
             reloadIfFirstFail = true
         )
@@ -149,7 +150,7 @@ object NativeAdsUtils {
             idAds = BuildConfig.native_obd3,
             canShowAds = true,
             canReloadAds = false,
-            layoutId = com.ads.admob.R.layout.layout_native_ad_view_type1,
+            layoutId = R.layout.layout_native_ad_view_type1,
             adPlacement = "native_onboarding3",
             reloadIfFirstFail = true
         )
