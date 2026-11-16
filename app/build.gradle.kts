@@ -56,7 +56,7 @@ android {
             buildConfigField("String", "inter_splash", "\"ca-app-pub-3940256099942544/1033173712\"")
             buildConfigField("String", "inter_splash_2f", "\"ca-app-pub-3940256099942544/1033173712\"")
             buildConfigField("String", "native_full_splash", "\"ca-app-pub-3940256099942544/2247696110\"")
-            buildConfigField("String", "native_full_splash_2", "\"ca-app-pub-3940256099942544/2247696110\"")
+            buildConfigField("String", "native_full_splash_2f", "\"ca-app-pub-3940256099942544/2247696110\"")
 
 
             buildConfigField("Boolean", "build_debug", "true")
@@ -69,7 +69,7 @@ android {
             buildConfigField("String", "inter_splash", "\"ca-app-pub-3940256099942544/1033173712\"")
             buildConfigField("String", "inter_splash_2f", "\"ca-app-pub-3940256099942544/1033173712\"")
             buildConfigField("String", "native_full_splash", "\"ca-app-pub-3940256099942544/2247696110\"")
-            buildConfigField("String", "native_full_splash_2", "\"ca-app-pub-3940256099942544/2247696110\"")
+            buildConfigField("String", "native_full_splash_2f", "\"ca-app-pub-3940256099942544/2247696110\"")
 
 
             buildConfigField("Boolean", "build_debug", "false")

@@ -3,8 +3,16 @@ package com.kt.flash.light.led.banner.component.splash
 import android.os.Bundle
 import android.animation.ValueAnimator
 import android.util.Log
+import android.view.View
 import android.view.animation.LinearInterpolator
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import com.ads.admob.data.ContentAd
+import com.ads.admob.helper.AdOptionVisibility
+import com.ads.admob.helper.adnative.NativeAdConfig
+import com.ads.admob.helper.adnative.NativeAdHelper
+import com.ads.admob.helper.adnative.params.AdNativeState
 import com.ads.admob.helper.interstitial.InterstitialAdSplashConfig
 import com.ads.admob.helper.interstitial.InterstitialAdSplashHelper
 import com.ads.admob.helper.interstitial.params.InterstitialAdParam
@@ -18,13 +26,18 @@ import com.kt.flash.light.led.banner.R
 import com.kt.flash.light.led.banner.component.language.LanguageActivity
 import com.kt.flash.light.led.banner.databinding.ActivitySplashBinding
 import com.kt.flash.light.led.banner.component.onboarding.OnboardingActivity
+import com.kt.flash.light.led.banner.domain.layer.FullscreenAdConfig
 import com.kt.flash.light.led.banner.utils.FirebaseConfigManager
+import com.kt.flash.light.led.banner.utils.Logger
 import com.kt.flash.light.led.banner.utils.SpManager
 import com.kt.flash.light.led.banner.utils.Utils
 import com.kt.flash.light.led.banner.utils.ads.AdPlacement
 import com.kt.flash.light.led.banner.utils.ads.BannerAdsUtils
+import com.kt.flash.light.led.banner.utils.ads.NativeAdsUtils
 import javax.inject.Inject
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 @AndroidEntryPoint
 class SplashActivity : BaseActivity<ActivitySplashBinding>() {
@@ -35,6 +48,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     private var navigating = false
     private var splashAdsStarted = false
 
+    private var interClosed = false
+    private var nativeFullShown = false
 
 
     @Inject
@@ -48,7 +63,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
         showBanner()
     }
 
-
     override fun onConnectivityChanged(connected: Boolean) {
         if (connected) {
             if (!splashAdsStarted && !navigating) {
@@ -56,6 +70,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                 App.instance?.initConsentManager(this) {
                     runOnUiThread {
                         if (!navigating && !isFinishing && !isDestroyed) {
+                            initNativeFullSplash()
                             loadInterSplash()
                         }
                     }
@@ -144,13 +159,15 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     private val interAdCallBack = object : InterstitialAdCallback {
         override fun onNextAction() {
             Log.d("SPLASH_TEST", "onNextAction -> Chuyển màn")
+            if(interClosed) return
             gotoMainScreen()
         }
 
         override fun onAdClose() {
-            Log.d("SPLASH_TEST", "onAdClose -> Chuyển màn")
-
-            gotoMainScreen()
+            Log.d("SPLASH_TEST", "onAdClose -> Hiển thị native fullscreen")
+            if(interClosed) return
+            interClosed = true
+            showNativeFullSplash()
         }
 
         override fun onInterstitialShow() {
@@ -175,7 +192,94 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
         override fun onAdFailedToShow(adError: AdError) {
 
         }
+    }
 
+    private fun loadNativeSplash() {
+        val isEnable = FirebaseConfigManager.instance().adConfig.enableNativeSplash
+        if(!isEnable) {
+            interAdSplashHelper.releaseHoldShow()
+            return
+        }
+
+        val config = NativeAdConfig(
+            idAds = BuildConfig.native_full_splash,
+            canShowAds = true,
+            canReloadAds = false,
+            layoutId = com.ads.admob.R.layout.layout_native_fullscreen_view,
+            adPlacement = "native_splash",
+            reloadIfFirstFail = false
+        )
+
+        val nativeHelper = NativeAdHelper(
+            activity = this,
+            lifecycleOwner = this,
+            config = config
+        ).apply {
+            adVisibility = AdOptionVisibility.GONE
+            setNativeContentView(viewBaseActivity.frAdsBanner)
+        }
+    }
+
+    private fun initNativeFullSplash() {
+//        val config = listOf(
+//            FullscreenAdConfig(
+//                tag = "fs1",
+//                afterNonFullscreenCount = 1,
+//                adHelper = NativeAdsUtils.nativeFullScreen
+//            ),
+//            FullscreenAdConfig(
+//                tag = "fs2",
+//                afterNonFullscreenCount = 2,
+//                adHelper = NativeAdsUtils.nativeFullscreen2
+//            )
+//        )
+//
+//        config.forEach { config ->
+//            config.adHelper?.let { adHelper ->
+//                adHelper.getAdNativeState()
+//                    .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
+//                    .onEach { state ->
+//                        when {
+//                            state == AdNativeState.Fail -> {
+//                                Logger.e("AdNativeState fail")
+//                            }
+//                            state == adHelper.nativeAd?.let { AdNativeState.Loaded(it) } -> {
+//                                adHelper.updateActivity(this@SplashActivity, this@SplashActivity)
+//                            }
+//                        }
+//                    }
+//                    .launchIn(lifecycleScope)
+//            }
+//        }
+        NativeAdsUtils.preloadNativeFullscreen2(this)
+        viewBaseActivity.closeNativeFull.setOnClickListener {
+            // Keep the overlay visible until the next Activity covers Splash.
+            gotoMainScreen()
+        }
+    }
+    private fun showNativeFullSplash() {
+        if(nativeFullShown || navigating || isFinishing || isDestroyed) return
+        val helper = NativeAdsUtils.nativeFullscreen2
+        val nativeAd = helper?.nativeAd
+
+        if(helper == null || nativeAd == null) {
+            Log.w("SPLASH_TEST", "Native fullscreen chưa sẵn sàng hoặc đang bị tắt -> chuyển màn")
+            gotoMainScreen()
+            return
+        }
+        nativeFullShown = true
+        helper.updateActivity(this, this)
+        viewBaseActivity.frAdsNative.visibility = View.VISIBLE
+
+        helper.setShimmerLayoutView(
+            viewBaseActivity.shimmerContainerNative.root
+        )
+        helper.setNativeContentView(
+            viewBaseActivity.nativeFullContent
+        )
+    }
+    private fun loadLanguageNativeAd() {
+        NativeAdsUtils.preLoadNativeLanguage(this)
     }
      private companion object {
         const val PROGRESS_DURATION_MS = 7000L

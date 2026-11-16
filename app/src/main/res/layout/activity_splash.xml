@@ -108,4 +108,45 @@
             android:id="@+id/shimmer_container_banner"
             layout="@layout/layout_banner_control" />
     </FrameLayout>
+
+
+    <FrameLayout
+        android:id="@+id/frAdsNative"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#111111"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="56dp">
+
+            <FrameLayout
+                android:id="@+id/native_full_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <include
+                android:id="@+id/shimmerContainerNative"
+                layout="@layout/loading_native_fullscreen_view" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/close_native_full"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="top|end"
+            android:gravity="center"
+            android:text="×"
+            android:textColor="#FFFFFF"
+            android:textSize="28sp"
+            android:contentDescription="@android:string/cancel" />
+
+    </FrameLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,17 +1,21 @@
 package com.kt.flash.light.led.banner.utils.ads
 
-import android.R
+import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.ui.draw.BuildDrawCacheParams
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import com.ads.admob.helper.AdOptionVisibility
 import com.ads.admob.helper.adnative.NativeAdConfig
 import com.ads.admob.helper.adnative.NativeAdHelper
 import com.ads.admob.helper.adnative.params.NativeAdParam
+import com.facebook.shimmer.ShimmerFrameLayout
 import com.kt.flash.light.led.banner.BuildConfig
 import com.kt.flash.light.led.banner.utils.FirebaseConfigManager
 import com.kt.flash.light.led.banner.utils.Logger
-import java.lang.annotation.Native
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 object NativeAdsUtils {
     private val processLifecycleOwner = ProcessLifecycleOwner.get()
@@ -38,9 +42,9 @@ object NativeAdsUtils {
     fun preLoadNativeLanguage(appActivity: AppCompatActivity) {
         val isEnbale = FirebaseConfigManager.instance()
             .adConfig.enableNativeLanguage
-        if(!isEnbale) return
+        if (!isEnbale) return
 
-        if(nativeLanguage != null) return //nghĩa là đã reload
+        if (nativeLanguage != null) return //nghĩa là đã reload
 
         val config = NativeAdConfig(
             idAds = BuildConfig.native_full_splash,
@@ -61,15 +65,16 @@ object NativeAdsUtils {
         nativeLanguage?.requestAds(NativeAdParam.Request)
         //LOGGGGER
     }
+
     fun preLoadNativeOnBoarding(appActivity: AppCompatActivity) {
         val isEnable = FirebaseConfigManager.instance()
             .adConfig.enableNativeOnBoarding
 
-        if(!isEnable) return
+        if (!isEnable) return
 
-        if(nativeOnBoarding != null) return
+        if (nativeOnBoarding != null) return
 
-        val config = NativeAdConfig (
+        val config = NativeAdConfig(
             idAds = BuildConfig.native_full_splash, //tí thêm thành onboarding
             canShowAds = true,
             canReloadAds = false,
@@ -94,13 +99,13 @@ object NativeAdsUtils {
         val isEnable = FirebaseConfigManager.instance()
             .adConfig.enableNativeFullscreen
 
-        if(!isEnable) return
+        if (!isEnable) return
 
-        if(nativeFullScreen != null) return
+        if (nativeFullScreen != null) return
 
         val config = NativeAdConfig(
             idAds = BuildConfig.native_full_splash, //tí thêm thành onboarding
-            idAdsPriority = BuildConfig.native_full_splash_2,
+            idAdsPriority = BuildConfig.native_full_splash_2f,
             canShowAds = true,
             canReloadAds = false,
             layoutId = com.ads.admob.R.layout.layout_native_fullscreen_view,
@@ -118,6 +123,7 @@ object NativeAdsUtils {
         nativeFullScreen?.requestAds(NativeAdParam.Request)
         Logger.e("preloadNativeFullScreen")
     }
+
     fun preloadNativeFullscreen2(appActivity: AppCompatActivity) {
 
         val isEnable = FirebaseConfigManager.instance()
@@ -129,7 +135,7 @@ object NativeAdsUtils {
 
         val config = NativeAdConfig(
             idAds = BuildConfig.native_full_splash,
-            idAdsPriority = BuildConfig.native_full_splash_2,
+            idAdsPriority = BuildConfig.native_full_splash_2f,
             canShowAds = true,
             canReloadAds = false,
             layoutId = com.ads.admob.R.layout.layout_native_fullscreen_view,
@@ -148,6 +154,28 @@ object NativeAdsUtils {
         nativeFullscreen2?.requestAds(NativeAdParam.Request)
 
         Logger.e("preloadNativeFullscreen2()")
+    }
+
+    private fun setNative(
+        activity: FragmentActivity,
+        config: NativeAdConfig,
+        lifecycleOwner: LifecycleOwner,
+        nativeContentView: FrameLayout,
+        shimmerContainerNative: ShimmerFrameLayout
+    ) {
+        val nativeAdHelper = NativeAdHelper(
+            activity, lifecycleOwner, config
+        ).apply {
+            adVisibility = AdOptionVisibility.GONE
+        }
+
+        activity.lifecycleScope.launch(Dispatchers.Main) {
+            nativeAdHelper.setNativeContentView(nativeContentView)
+            nativeAdHelper.setShimmerLayoutView(shimmerContainerNative)
+            activity.lifecycleScope.launch(Dispatchers.IO) {
+                nativeAdHelper.requestAds(NativeAdParam.Request)
+            }
+        }
     }
 
 }
