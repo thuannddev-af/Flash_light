@@ -12,6 +12,7 @@ import com.ads.admob.helper.adnative.NativeAdHelper
 import com.ads.admob.helper.adnative.params.NativeAdParam
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.kt.flash.light.led.banner.BuildConfig
+import com.kt.flash.light.led.banner.domain.layer.AdConfig
 import com.kt.flash.light.led.banner.utils.FirebaseConfigManager
 import com.kt.flash.light.led.banner.utils.Logger
 import kotlinx.coroutines.Dispatchers
@@ -46,8 +47,15 @@ object NativeAdsUtils {
 
         if (nativeLanguage != null) return //nghĩa là đã reload
 
+        val adConfig = FirebaseConfigManager.instance().adConfig
+
         val config = NativeAdConfig(
-            idAds = BuildConfig.native_full_splash,
+            idAdsPriority = if(adConfig.enableNativeLanguage2f) {
+                BuildConfig.native_language_2f
+            } else {
+                null
+            },
+            idAds = BuildConfig.native_language,
             canShowAds = true,
             canReloadAds = false,
             layoutId = com.ads.admob.R.layout.layout_native_ad_view_type1,
@@ -64,6 +72,27 @@ object NativeAdsUtils {
         }
         nativeLanguage?.requestAds(NativeAdParam.Request)
         //LOGGGGER
+    }
+
+    fun preLoadNativeLanguageSelect(appActivity: AppCompatActivity): NativeAdHelper? {
+        val adConfig = FirebaseConfigManager.instance().adConfig
+        if (!adConfig.enableNativeLanguageSelect) return null
+
+        val config = NativeAdConfig(
+            idAds = BuildConfig.native_language_select,
+            idAdsPriority = if (adConfig.enableNativeLanguageSelect2f) {
+                BuildConfig.native_language_select_2f
+            } else null,
+            canShowAds = true,
+            canReloadAds = false,
+            layoutId = com.kt.flash.light.led.banner.R.layout.layout_native_ad_view_type1_reload,
+            adPlacement = "native_language_select",
+            reloadIfFirstFail = true
+        )
+        return NativeAdHelper(appActivity, appActivity, config).apply {
+            adVisibility = AdOptionVisibility.GONE
+            requestAds(NativeAdParam.Request)
+        }
     }
 
     fun preLoadNativeOnBoarding(appActivity: AppCompatActivity) {

@@ -58,6 +58,16 @@ android {
             buildConfigField("String", "native_full_splash", "\"ca-app-pub-3940256099942544/2247696110\"")
             buildConfigField("String", "native_full_splash_2f", "\"ca-app-pub-3940256099942544/2247696110\"")
 
+            buildConfigField("String", "app_open_resume", "\"ca-app-pub-3940256099942544/9257395921\"")
+            buildConfigField("String", "app_open", "\"ca-app-pub-3940256099942544/9257395921\"")
+
+
+            buildConfigField("String", "native_language", "\"ca-app-pub-3940256099942544/2247696110\"")
+            buildConfigField("String", "native_language_2f", "\"ca-app-pub-3940256099942544/2247696110\"")
+            buildConfigField("String", "native_language_select", "\"ca-app-pub-3940256099942544/2247696110\"")
+            buildConfigField("String", "native_language_select_2f", "\"ca-app-pub-3940256099942544/2247696110\"")
+
+
 
             buildConfigField("Boolean", "build_debug", "true")
 
@@ -70,6 +80,14 @@ android {
             buildConfigField("String", "inter_splash_2f", "\"ca-app-pub-3940256099942544/1033173712\"")
             buildConfigField("String", "native_full_splash", "\"ca-app-pub-3940256099942544/2247696110\"")
             buildConfigField("String", "native_full_splash_2f", "\"ca-app-pub-3940256099942544/2247696110\"")
+
+            buildConfigField("String", "app_open_resume", "\"ca-app-pub-3940256099942544/9257395921\"")
+            buildConfigField("String", "app_open", "\"ca-app-pub-3940256099942544/9257395921\"")
+
+            buildConfigField("String", "native_language", "\"ca-app-pub-3940256099942544/2247696110\"")
+            buildConfigField("String", "native_language_2f", "\"ca-app-pub-3940256099942544/2247696110\"")
+            buildConfigField("String", "native_language_select", "\"ca-app-pub-3940256099942544/2247696110\"")
+            buildConfigField("String", "native_language_select_2f", "\"ca-app-pub-3940256099942544/2247696110\"")
 
 
             buildConfigField("Boolean", "build_debug", "false")

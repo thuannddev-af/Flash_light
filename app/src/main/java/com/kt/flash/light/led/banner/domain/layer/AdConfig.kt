@@ -9,9 +9,14 @@ data class AdConfig(
     @SerializedName("banner_splash") @Expose var enableBannerSplash: Boolean = true,
     @SerializedName("inter_splash") @Expose var enableInterSplash: Boolean = true,
     @SerializedName("inter_splash_2f") @Expose var enableInterSplash2: Boolean = true,
-    @SerializedName("native_splash") @Expose var enableNativeSplash: Boolean = true,
-    @SerializedName("native_splash_2f") @Expose var enableNativeSplash2f: Boolean = true,
+
+
     @SerializedName("native_language") @Expose var enableNativeLanguage: Boolean = true,
+    @SerializedName("native_language_2f") @Expose var enableNativeLanguage2f: Boolean = true,
+    @SerializedName("native_language_select") @Expose var enableNativeLanguageSelect: Boolean = true,
+    @SerializedName("native_language_select_2f") @Expose var enableNativeLanguageSelect2f: Boolean = true,
+
+
     @SerializedName("native_onboarding") @Expose var enableNativeOnBoarding: Boolean = true,
     @SerializedName("native_onboarding_fullscreen") @Expose var enableNativeFullscreen: Boolean = true,
     @SerializedName("native_main") @Expose var enableNativeMain: Boolean = true,
