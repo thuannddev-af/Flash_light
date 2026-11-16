@@ -4,6 +4,8 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 data class AdConfig(
+    @SerializedName("native_full_splash") @Expose var enableNativeFullSplash: Boolean = true,
+    @SerializedName("native_full_splash_2f") @Expose var enableNativeFullSplash2f: Boolean = true,
     @SerializedName("banner_splash") @Expose var enableBannerSplash: Boolean = true,
     @SerializedName("inter_splash") @Expose var enableInterSplash: Boolean = true,
     @SerializedName("inter_splash_2f") @Expose var enableInterSplash2: Boolean = true,

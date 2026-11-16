@@ -25,6 +25,18 @@ class FirebaseConfigManager {
     private val pendingAction: MutableList<() -> Unit> = mutableListOf()
     var adConfig: AdConfig = AdConfig()
 
+    // Seconds from native appearance; auto_skip includes the dismissable period.
+    val nativeDismissableSeconds: Long
+        get() = remoteSeconds("dismissable", 3L).coerceIn(0L, 3600L)
+    val nativeAutoSkipSeconds: Long
+        get() = remoteSeconds("auto_skip", 7L)
+            .coerceIn(1L, 3600L).coerceAtLeast(nativeDismissableSeconds)
+
+    private fun remoteSeconds(key: String, fallback: Long): Long {
+        val value = FirebaseRemoteConfig.getInstance().all[key]?.asString()
+        return value?.toLongOrNull() ?: fallback
+    }
+
     fun doAfterFetch(action: () -> Unit) {
         if(isFetchDone) {
             action()

@@ -8,6 +8,10 @@ import android.view.animation.LinearInterpolator
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import com.ads.admob.data.ContentAd
 import com.ads.admob.helper.AdOptionVisibility
 import com.ads.admob.helper.adnative.NativeAdConfig
@@ -50,6 +54,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
     private var interClosed = false
     private var nativeFullShown = false
+    private var nativeFullSplashHelper: NativeAdHelper? = null
+    private var nativeCountdownJob: Job? = null
 
 
     @Inject
@@ -72,6 +78,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                         if (!navigating && !isFinishing && !isDestroyed) {
                             initNativeFullSplash()
                             loadInterSplash()
+                            loadLanguageNativeAd()
                         }
                     }
                 }
@@ -104,6 +111,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
         if (navigating || isFinishing || isDestroyed) return
         if (!Utils.isConnected(this)) return
         navigating = true
+        nativeCountdownJob?.cancel()
         progressAnimator?.cancel()
         progressAnimator = null
         updateProgress(100)
@@ -194,80 +202,45 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
         }
     }
 
-    private fun loadNativeSplash() {
-        val isEnable = FirebaseConfigManager.instance().adConfig.enableNativeSplash
-        if(!isEnable) {
-            interAdSplashHelper.releaseHoldShow()
-            return
+    private fun initNativeFullSplash() {
+        viewBaseActivity.closeNativeFull.setOnClickListener {
+            if (!viewBaseActivity.closeNativeFull.isEnabled) return@setOnClickListener
+            gotoMainScreen()
         }
+        if (nativeFullSplashHelper != null) return
+        val adConfig = FirebaseConfigManager.instance().adConfig
+        if (!adConfig.enableNativeFullSplash) return
 
         val config = NativeAdConfig(
             idAds = BuildConfig.native_full_splash,
+            idAdsPriority = if (adConfig.enableNativeFullSplash2f) {
+                BuildConfig.native_full_splash_2f
+            } else {
+                null
+            },
             canShowAds = true,
             canReloadAds = false,
             layoutId = com.ads.admob.R.layout.layout_native_fullscreen_view,
-            adPlacement = "native_splash",
-            reloadIfFirstFail = false
+            adPlacement = "native_full_splash",
+            reloadIfFirstFail = true
         )
-
-        val nativeHelper = NativeAdHelper(
-            activity = this,
-            lifecycleOwner = this,
-            config = config
-        ).apply {
+        nativeFullSplashHelper = NativeAdHelper(this, this, config).apply {
             adVisibility = AdOptionVisibility.GONE
-            setNativeContentView(viewBaseActivity.frAdsBanner)
-        }
-    }
-
-    private fun initNativeFullSplash() {
-//        val config = listOf(
-//            FullscreenAdConfig(
-//                tag = "fs1",
-//                afterNonFullscreenCount = 1,
-//                adHelper = NativeAdsUtils.nativeFullScreen
-//            ),
-//            FullscreenAdConfig(
-//                tag = "fs2",
-//                afterNonFullscreenCount = 2,
-//                adHelper = NativeAdsUtils.nativeFullscreen2
-//            )
-//        )
-//
-//        config.forEach { config ->
-//            config.adHelper?.let { adHelper ->
-//                adHelper.getAdNativeState()
-//                    .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
-//                    .onEach { state ->
-//                        when {
-//                            state == AdNativeState.Fail -> {
-//                                Logger.e("AdNativeState fail")
-//                            }
-//                            state == adHelper.nativeAd?.let { AdNativeState.Loaded(it) } -> {
-//                                adHelper.updateActivity(this@SplashActivity, this@SplashActivity)
-//                            }
-//                        }
-//                    }
-//                    .launchIn(lifecycleScope)
-//            }
-//        }
-        NativeAdsUtils.preloadNativeFullscreen2(this)
-        viewBaseActivity.closeNativeFull.setOnClickListener {
-            // Keep the overlay visible until the next Activity covers Splash.
-            gotoMainScreen()
+            requestAds(com.ads.admob.helper.adnative.params.NativeAdParam.Request)
         }
     }
     private fun showNativeFullSplash() {
         if(nativeFullShown || navigating || isFinishing || isDestroyed) return
-        val helper = NativeAdsUtils.nativeFullscreen2
+        val helper = nativeFullSplashHelper
         val nativeAd = helper?.nativeAd
 
         if(helper == null || nativeAd == null) {
-            Log.w("SPLASH_TEST", "Native fullscreen chưa sẵn sàng hoặc đang bị tắt -> chuyển màn")
             gotoMainScreen()
             return
         }
         nativeFullShown = true
+        viewBaseActivity.closeNativeFull.isEnabled = false
+        viewBaseActivity.closeNativeFull.visibility = View.GONE
         helper.updateActivity(this, this)
         viewBaseActivity.frAdsNative.visibility = View.VISIBLE
 
@@ -277,7 +250,37 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
         helper.setNativeContentView(
             viewBaseActivity.nativeFullContent
         )
+        startNativeCountdown()
     }
+
+    private fun startNativeCountdown() {
+        if (nativeCountdownJob != null) return
+        val config = FirebaseConfigManager.instance()
+        val dismissable = config.nativeDismissableSeconds
+        val autoSkip = config.nativeAutoSkipSeconds
+        var elapsed = 0L
+        nativeCountdownJob = lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                while (!navigating) {
+                    val canDismiss = elapsed >= dismissable
+                    viewBaseActivity.closeNativeFull.isEnabled = canDismiss
+                    viewBaseActivity.closeNativeFull.visibility =
+                        if (canDismiss) View.VISIBLE else View.GONE
+                    viewBaseActivity.nativeFullCountdown.visibility =
+                        if (canDismiss) View.GONE else View.VISIBLE
+                    viewBaseActivity.nativeFullCountdown.text =
+                        (dismissable - elapsed).coerceAtLeast(0).toString()
+                    if (elapsed >= autoSkip) {
+                        gotoMainScreen()
+                        return@repeatOnLifecycle
+                    }
+                    delay(1000L)
+                    elapsed++
+                }
+            }
+        }
+    }
+
     private fun loadLanguageNativeAd() {
         NativeAdsUtils.preLoadNativeLanguage(this)
     }

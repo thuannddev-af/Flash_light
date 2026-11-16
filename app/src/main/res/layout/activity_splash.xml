@@ -136,16 +136,25 @@
                 layout="@layout/loading_native_fullscreen_view" />
         </FrameLayout>
 
-        <TextView
+        <ImageView
             android:id="@+id/close_native_full"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_gravity="top|end"
-            android:gravity="center"
-            android:text="×"
-            android:textColor="#FFFFFF"
-            android:textSize="28sp"
+            android:padding="12dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_close_2"
+            android:visibility="gone"
             android:contentDescription="@android:string/cancel" />
+
+        <TextView
+            android:id="@+id/native_full_countdown"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="top|end"
+            android:gravity="center"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp" />
 
     </FrameLayout>
 
