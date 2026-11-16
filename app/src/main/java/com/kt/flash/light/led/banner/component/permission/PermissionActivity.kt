@@ -20,6 +20,7 @@ import androidx.lifecycle.lifecycleScope
 import com.kt.flash.light.led.banner.base.activity.BaseActivity
 import com.kt.flash.light.led.banner.component.main.MainActivity
 import com.kt.flash.light.led.banner.databinding.ActivityPermissionBinding
+import com.kt.flash.light.led.banner.utils.ads.InterAdsUtils
 import com.kt.flash.light.led.banner.utils.ads.NativeAdsUtils
 import com.kt.flash.light.led.banner.utils.setOnClickWithPressEffect
 import dagger.hilt.android.AndroidEntryPoint
@@ -110,6 +111,8 @@ class PermissionActivity : BaseActivity<ActivityPermissionBinding>() {
     private fun initNativeAd() {
         NativeAdsUtils.loadAndShowNative(this, this, viewBaseActivity.frAdsNative, viewBaseActivity.shimmerContainerNative.shimmerContainerNative)
     }
+
+
     override fun onResume() {
         super.onResume()
         permissionViewModel.refreshPermissionState()

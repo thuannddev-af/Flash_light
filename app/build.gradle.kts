@@ -76,6 +76,7 @@ android {
             buildConfigField("String", "native_obd3_2f", "\"ca-app-pub-3940256099942544/2247696110\"")
             buildConfigField("String", "native_permission", "\"ca-app-pub-3940256099942544/2247696110\"")
 
+            buildConfigField("String", "inter_home", "\"ca-app-pub-3940256099942544/1033173712\"")
 
 
             buildConfigField("Boolean", "build_debug", "true")
@@ -106,6 +107,9 @@ android {
             buildConfigField("String", "native_obd3", "\"ca-app-pub-3940256099942544/2247696110\"")
             buildConfigField("String", "native_obd3_2f", "\"ca-app-pub-3940256099942544/2247696110\"")
             buildConfigField("String", "native_permission", "\"ca-app-pub-3940256099942544/2247696110\"")
+
+
+            buildConfigField("String", "inter_home", "\"ca-app-pub-3940256099942544/1033173712\"")
 
             buildConfigField("Boolean", "build_debug", "false")
 

@@ -8,6 +8,10 @@ import android.os.Bundle
 import androidx.compose.ui.text.intl.Locale
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.ads.admob.cmp.ConsentManager
+import com.ads.admob.admob.AdmobFactory
+import com.ads.admob.config.AfAdConfig
+import com.ads.admob.config.AfAdjustConfig
+import com.ads.admob.listener.AdmobCallBack
 import com.ads.admob.cmp.interfaces.OnConsentResponse
 import com.ads.admob.config.NetworkProvider
 import com.ads.admob.data.ContentAd
@@ -75,10 +79,27 @@ class App : Application(), Application.ActivityLifecycleCallbacks {
         context = applicationContext
         FirebaseApp.initializeApp(this)
         FirebaseTrackingManager.initialize(this)
+        initAdmob()
 
         FirebaseConfigManager.instance().fetch()
         registerActivityLifecycleCallbacks(this)
     }
+    private fun initAdmob() {
+        val config = AfAdConfig.Builder(
+            afAdjustConfig = AfAdjustConfig.Build(adjustToken = "").build()
+        )
+            .application(this)
+            .intervalBetweenInterstitial(0L)
+            .buildVariantProduce(!BuildConfig.DEBUG)
+            .build()
+
+        AdmobFactory.INSTANCE.initAdmob(this, config, object : AdmobCallBack {
+            override fun initialized() {
+                Logger.e("Admob initialized")
+            }
+        })
+    }
+
     override fun onConfigurationChanged(newConfig: Configuration) {
     val locale = getDeviceLanguage()
     val language = spManager.getLanguage()

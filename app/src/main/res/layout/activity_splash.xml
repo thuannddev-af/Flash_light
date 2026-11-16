@@ -123,8 +123,7 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="56dp">
+            android:layout_height="match_parent">
 
             <FrameLayout
                 android:id="@+id/native_full_content"
@@ -154,7 +153,8 @@
             android:layout_gravity="top|end"
             android:gravity="center"
             android:textColor="#FFFFFF"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:layout_marginTop="@dimen/_29sdp"/>
 
     </FrameLayout>
 

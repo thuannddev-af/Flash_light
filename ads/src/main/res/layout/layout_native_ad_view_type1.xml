@@ -15,6 +15,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <com.google.android.gms.ads.nativead.MediaView
+            android:id="@+id/ad_media"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size128"
+            android:layout_marginTop="@dimen/size5"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
         <LinearLayout
             android:id="@+id/linearLayout"
             android:layout_width="0dp"
@@ -24,7 +34,7 @@
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textAd">
+            app:layout_constraintTop_toBottomOf="@+id/ad_media">
 
             <ImageView
                 android:id="@+id/ad_app_icon"
@@ -41,11 +51,25 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/textAd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/shape_ad_view"
+                    android:layout_marginStart="10dp"
+                    android:paddingHorizontal="@dimen/size5"
+                    android:text="Ad"
+                    android:textColor="@color/gnt_white"
+                    android:textSize="@dimen/size10"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                <TextView
                     android:id="@+id/ad_headline"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/size8"
                     android:ellipsize="end"
+                    android:visibility="gone"
                     android:lines="1"
                     android:textColor="@color/text_color_cta_2"
                     android:textSize="@dimen/size16"
@@ -75,27 +99,7 @@
         </LinearLayout>
 
 
-        <TextView
-            android:id="@+id/textAd"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/shape_ad_view"
-            android:paddingHorizontal="@dimen/size5"
-            android:text="Ad"
-            android:textColor="@color/gnt_white"
-            android:textSize="@dimen/size10"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.gms.ads.nativead.MediaView
-            android:id="@+id/ad_media"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/size128"
-            android:layout_marginTop="@dimen/size5"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/ad_call_to_action"
@@ -113,7 +117,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_min="@dimen/size40"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ad_media" />
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.gms.ads.nativead.NativeAdView>

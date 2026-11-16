@@ -17,12 +17,14 @@ object InterAdsUtils {
 
     fun loadInterAds(
         activity: Activity, idAdsPriority: String? = null, idAds: String, adPlacement: String, isEnable: Boolean, isLoadAndShow: Boolean = false,
-        onAdLoaded: (() -> Unit)? = null, onAdLoadFail:(() -> Unit)? = null
+        onAdLoaded: (() -> Unit)? = null, onAdLoadFail:(() -> Unit)? = null,
+        showByTime: Int = 1
     ) {
         InterstitialAdsHelper.getInstance(adPlacement).setInterstitialAdConfig(
             InterstitialAdConfig(
                 idAdsPriority = idAdsPriority,
                 idAds = idAds,
+                showByTime = showByTime.coerceAtLeast(1),
                 canShowAds = isEnable,
                 canReloadAds = false,
                 adPlacement = adPlacement,
@@ -33,20 +35,27 @@ object InterAdsUtils {
     }
 
     fun showInterAds(
-        activity: Activity, lifecycleOwner: LifecycleOwner, adPlacement: String, isReloadWhenClose: Boolean = false, action: () -> Unit ) {
+        activity: Activity, lifecycleOwner: LifecycleOwner, adPlacement: String,
+        isReloadWhenClose: Boolean = false, onAdShown: (() -> Unit)? = null, action: () -> Unit ) {
+        val completed = java.util.concurrent.atomic.AtomicBoolean(false)
+        fun complete() {
+            if (!completed.compareAndSet(false, true)) return
+            checkReloadInter(activity, adPlacement, isReloadWhenClose)
+            action.invoke()
+        }
         InterstitialAdsHelper.getInstance(adPlacement)
             .forceShowInterstitial(activity, lifecycleOwner, object : InterstitialAdShowCallBack {
                 override fun onNextAction() {
-
+                    complete()
                 }
 
                 override fun onAdClose() {
-                    checkReloadInter(activity, adPlacement, isReloadWhenClose)
-                    action.invoke()
+                    complete()
                 }
 
                 override fun onInterstitialShow() {
                     Logger.e("InterAds: onInterstitialShow $adPlacement")
+                    onAdShown?.invoke()
                 }
 
                 override fun onAdClicked() {
@@ -58,8 +67,7 @@ object InterAdsUtils {
                 }
 
                 override fun onAdFailedToShow(adError: AdError) {
-                    checkReloadInter(activity, adPlacement, isReloadWhenClose)
-                    action.invoke()
+                    complete()
                 }
             })
         }
@@ -100,7 +108,7 @@ object InterAdsUtils {
         }
     }
     fun cancelAllAds(isPurchased: Boolean) {
-        InterstitialAdsHelper.getInstance(AdPlacement.INTER_MAIN).cancelRequestAndShowAllAds(isPurchased)
+        InterstitialAdsHelper.getInstance(AdPlacement.INTER_HOME).cancelRequestAndShowAllAds(isPurchased)
         InterstitialAdsHelper.getInstance(AdPlacement.INTER_SPLASH).cancelRequestAndShowAllAds(isPurchased)
     }
 

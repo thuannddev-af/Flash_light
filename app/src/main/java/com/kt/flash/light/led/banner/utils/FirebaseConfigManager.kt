@@ -25,6 +25,10 @@ class FirebaseConfigManager {
     private val pendingAction: MutableList<() -> Unit> = mutableListOf()
     var adConfig: AdConfig = AdConfig()
 
+    val interClick: Int
+        get() = remoteSeconds("inter_click", 2L)
+            .coerceIn(1L, Int.MAX_VALUE.toLong()).toInt()
+
     // Seconds from native appearance; auto_skip includes the dismissable period.
     val nativeDismissableSeconds: Long
         get() = remoteSeconds("dismissable", 3L).coerceIn(0L, 3600L)

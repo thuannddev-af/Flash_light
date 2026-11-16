@@ -26,6 +26,9 @@ data class AdConfig(
     @SerializedName("native_permission") @Expose var enableNativePermission: Boolean = true,
 
 
+    @SerializedName("inter_home") @Expose var enableInterHome: Boolean = true,
+
+
 
 
     @SerializedName("native_main") @Expose var enableNativeMain: Boolean = true,
