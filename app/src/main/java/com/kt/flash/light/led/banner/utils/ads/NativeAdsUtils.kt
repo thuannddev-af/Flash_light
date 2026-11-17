@@ -3,6 +3,12 @@ package com.kt.flash.light.led.banner.utils.ads
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.core.view.isVisible
+import com.ads.admob.helper.adnative.params.AdNativeState
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.lifecycleScope
@@ -21,6 +27,54 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 object NativeAdsUtils {
+    fun showNative(
+        fragment: Fragment,
+        placement: String,
+        container: FrameLayout,
+        shimmer: ShimmerFrameLayout,
+        preloadedHelper: NativeAdHelper? = null
+    ): NativeAdHelper? {
+        require(placement == AdPlacement.NATIVE_CUSTOM) {
+            "Add native config mapping for placement: $placement"
+        }
+        container.isVisible = adConfig.enableNativeCustom
+        if (!adConfig.enableNativeCustom) return null
+
+        val owner = fragment.viewLifecycleOwner
+        val helper = preloadedHelper ?: NativeAdHelper(
+            fragment.requireActivity(), owner,
+            NativeAdConfig(
+                idAds = BuildConfig.native_custom,
+                canShowAds = true,
+                canReloadAds = false,
+                layoutId = R.layout.layout_native_medium,
+                adPlacement = placement,
+                reloadIfFirstFail = true
+            )
+        ).apply { adVisibility = AdOptionVisibility.GONE }
+
+        helper.setShimmerLayoutView(shimmer)
+        helper.setNativeContentView(container)
+        helper.getAdNativeState().onEach { state ->
+            if (state is AdNativeState.Fail || state is AdNativeState.Cancel) {
+                container.isVisible = false
+            }
+        }.launchIn(owner.lifecycleScope)
+        if (preloadedHelper == null) {
+            owner.lifecycle.addObserver(object : DefaultLifecycleObserver {
+                override fun onDestroy(owner: LifecycleOwner) {
+                    helper.destroy()
+                    owner.lifecycle.removeObserver(this)
+                }
+            })
+            helper.requestAds(NativeAdParam.Request)
+        }
+        return helper
+    }
+    var nativeCustom: NativeAdHelper? = null
+        private set
+    private var nativeCustomOwner: AppCompatActivity? = null
+
     private val processLifecycleOwner = ProcessLifecycleOwner.get()
     var nativeLanguage: NativeAdHelper? = null
         private set
@@ -35,6 +89,9 @@ object NativeAdsUtils {
     val adConfig get() = FirebaseConfigManager.instance().adConfig
 
     fun destroyAll() {
+        nativeCustom?.destroy()
+        nativeCustom = null
+        nativeCustomOwner = null
         nativeLanguage?.destroy()
         nativeOnBoarding?.destroy()
         nativeOnBoarding3?.destroy()
@@ -262,6 +319,35 @@ object NativeAdsUtils {
             adPlacement = "native_permission"
         )
         setNative(activity, config, lifecycleOwner, nativeContentView, shimmerContainerNative)
+    }
+
+    fun preLoadNativeCustom(appActivity: AppCompatActivity) {
+        if (nativeCustomOwner === appActivity && nativeCustom != null) return
+        nativeCustom?.destroy()
+        nativeCustom = null
+        nativeCustomOwner = null
+        if (!adConfig.enableNativeCustom) return
+
+        val config = NativeAdConfig(
+            idAds = BuildConfig.native_custom,
+            canShowAds = true,
+            canReloadAds = false,
+            layoutId = R.layout.layout_native_medium,
+            adPlacement = "native_custom",
+            reloadIfFirstFail = true
+        )
+        nativeCustomOwner = appActivity
+        nativeCustom = NativeAdHelper(appActivity, appActivity, config).apply {
+            adVisibility = AdOptionVisibility.GONE
+            requestAds(NativeAdParam.Request)
+        }
+    }
+
+    fun destroyNativeCustom(appActivity: AppCompatActivity) {
+        if (nativeCustomOwner !== appActivity) return
+        nativeCustom?.destroy()
+        nativeCustom = null
+        nativeCustomOwner = null
     }
 
 }

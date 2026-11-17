@@ -1,6 +1,7 @@
 package com.kt.flash.light.led.banner.utils.ads
 
 import android.app.Activity
+import android.os.SystemClock
 import androidx.lifecycle.LifecycleOwner
 import arrow.core.raise.nullable
 import com.ads.admob.data.ContentAd
@@ -12,8 +13,45 @@ import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.kt.flash.light.led.banner.utils.Logger
+import com.kt.flash.light.led.banner.BuildConfig
+import com.kt.flash.light.led.banner.utils.FirebaseConfigManager
 
 object InterAdsUtils {
+    private var homeEnteredAtMs: Long? = null
+    private var lastInterClosedAtMs: Long? = null
+
+    fun onHomeEntered() {
+        if (homeEnteredAtMs == null) homeEnteredAtMs = SystemClock.elapsedRealtime()
+    }
+
+    private fun canShowByInterval(): Boolean {
+        val start = listOfNotNull(homeEnteredAtMs, lastInterClosedAtMs).maxOrNull()
+            ?: return true
+        return SystemClock.elapsedRealtime() - start >=
+            FirebaseConfigManager.instance().intervalBetweenInterstitialMs
+    }
+
+    fun preLoadInterBack(activity: Activity) {
+        loadInterAds(
+            activity = activity,
+            idAds = BuildConfig.inter_back,
+            adPlacement = AdPlacement.INTER_BACK,
+            isEnable = FirebaseConfigManager.instance().adConfig.enableInterBack
+        )
+    }
+
+    fun showInterBack(activity: Activity, lifecycleOwner: LifecycleOwner, action: () -> Unit) {
+        if (!FirebaseConfigManager.instance().adConfig.enableInterBack) {
+            action()
+            return
+        }
+        showInterAds(
+            activity = activity,
+            lifecycleOwner = lifecycleOwner,
+            adPlacement = AdPlacement.INTER_BACK,
+            action = action
+        )
+    }
 
     fun loadInterAds(
         activity: Activity, idAdsPriority: String? = null, idAds: String, adPlacement: String, isEnable: Boolean, isLoadAndShow: Boolean = false,
@@ -37,6 +75,11 @@ object InterAdsUtils {
     fun showInterAds(
         activity: Activity, lifecycleOwner: LifecycleOwner, adPlacement: String,
         isReloadWhenClose: Boolean = false, onAdShown: (() -> Unit)? = null, action: () -> Unit ) {
+        if (!canShowByInterval()) {
+            Logger.e("InterAds: skip $adPlacement, interval_between_interstitial not reached")
+            action()
+            return
+        }
         val completed = java.util.concurrent.atomic.AtomicBoolean(false)
         fun complete() {
             if (!completed.compareAndSet(false, true)) return
@@ -50,6 +93,7 @@ object InterAdsUtils {
                 }
 
                 override fun onAdClose() {
+                    lastInterClosedAtMs = SystemClock.elapsedRealtime()
                     complete()
                 }
 
@@ -108,6 +152,7 @@ object InterAdsUtils {
         }
     }
     fun cancelAllAds(isPurchased: Boolean) {
+        InterstitialAdsHelper.getInstance(AdPlacement.INTER_BACK).cancelRequestAndShowAllAds(isPurchased)
         InterstitialAdsHelper.getInstance(AdPlacement.INTER_HOME).cancelRequestAndShowAllAds(isPurchased)
         InterstitialAdsHelper.getInstance(AdPlacement.INTER_SPLASH).cancelRequestAndShowAllAds(isPurchased)
     }

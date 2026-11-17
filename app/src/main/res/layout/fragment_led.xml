@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/size16"
-        android:orientation="vertical">
+    android:padding="@dimen/size16"
+    android:orientation="vertical">
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/size190"
@@ -29,6 +25,15 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/full_screen"/>
         </FrameLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -59,6 +64,16 @@
                 android:maxLength="200"
                 android:singleLine="true"/>
         </LinearLayout>
+        <FrameLayout
+            android:layout_marginTop="@dimen/size12"
+            android:id="@+id/frAdsNative"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <include
+                android:id="@+id/shimmerContainerNative"
+                layout="@layout/loading_native_medium"/>
+        </FrameLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -332,3 +347,4 @@
         </LinearLayout>
     </LinearLayout>
 </ScrollView>
+</LinearLayout>

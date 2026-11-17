@@ -37,8 +37,8 @@
 
             <ImageView
                 android:id="@+id/ad_app_icon"
-                android:layout_width="55dp"
-                android:layout_height="55dp"
+                android:layout_width="@dimen/_38sdp"
+                android:layout_height="@dimen/_38sdp"
                 android:background="@drawable/bg_avt_ads"
                 android:scaleType="fitCenter"
                 app:layout_constraintStart_toStartOf="parent"

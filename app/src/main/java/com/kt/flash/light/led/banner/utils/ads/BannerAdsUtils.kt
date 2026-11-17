@@ -11,7 +11,8 @@ import com.kt.flash.light.led.banner.BuildConfig
 import com.kt.flash.light.led.banner.utils.FirebaseConfigManager
 
 object BannerAdsUtils {
-    var bannerAdMain: BannerAdHelper? = null
+    var bannerAdSplash: BannerAdHelper? = null
+    var bannerAdAll: BannerAdHelper? = null
 
     private fun setBanner(
         activity: AppCompatActivity,
@@ -38,13 +39,30 @@ object BannerAdsUtils {
             reloadIfFirstFail = true
         )
 //            .apply { collapsibleGravity = BannerCollapsibleGravity.BOTTOM }
-        bannerAdMain = BannerAdHelper(activity, lifecycleOwner, config)
-        bannerAdMain?.setBannerContentView(bannerContentView)
-        bannerAdMain?.requestAds(BannerAdParam.Request)
+        bannerAdSplash = BannerAdHelper(activity, lifecycleOwner, config)
+        bannerAdSplash?.setBannerContentView(bannerContentView)
+        bannerAdSplash?.requestAds(BannerAdParam.Request)
     }
 
+    fun initBannerAll(
+        activity: AppCompatActivity,
+        lifecycleOwner: LifecycleOwner,
+        bannerContentView: FrameLayout
+    ) {
+        val config = BannerAdConfig(
+            idAds = BuildConfig.banner_all,
+            canShowAds = FirebaseConfigManager.instance().adConfig.enableBannerAll,
+            canReloadAds = false,
+            adPlacement = "banner_all",
+            reloadIfFirstFail = true
+        )
+            .apply { collapsibleGravity = BannerCollapsibleGravity.BOTTOM }
+        bannerAdAll = BannerAdHelper(activity, lifecycleOwner, config)
+        bannerAdAll?.setBannerContentView(bannerContentView)
+        bannerAdAll?.requestAds(BannerAdParam.Request)
+    }
     fun cancelAllAds(isPurchased: Boolean) {
-        bannerAdMain?.cancelRequestAndShowAllAds(isPurchased)
-        bannerAdMain?.cancel()
+        bannerAdSplash?.cancelRequestAndShowAllAds(isPurchased)
+        bannerAdSplash?.cancel()
     }
 }

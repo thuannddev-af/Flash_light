@@ -15,6 +15,7 @@
         android:id="@+id/screen_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_32sdp"
         android:paddingTop="@dimen/size16"
         android:paddingBottom="@dimen/size8"
         android:gravity="center"
@@ -52,6 +53,7 @@
             android:orientation="vertical">
 
             <ImageView
+                android:id="@+id/tvFlash"
                 android:layout_width="@dimen/size26"
                 android:layout_height="@dimen/size26"
                 android:duplicateParentState="true"
@@ -68,7 +70,13 @@
                 android:gravity="center"
                 android:text="@string/flashlight_tab"
                 android:textColor="@color/control_tint"
-                android:textSize="@dimen/text_size_12" />
+                android:textSize="@dimen/text_size_12"
+
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:focusable="false"/>
         </LinearLayout>
 
         <LinearLayout
@@ -92,6 +100,7 @@
                 app:tint="@color/control_tint" />
 
             <TextView
+                android:id="@+id/tvEdge"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/size8"
@@ -100,7 +109,13 @@
                 android:gravity="center"
                 android:text="@string/edge_lighting"
                 android:textColor="@color/control_tint"
-                android:textSize="@dimen/text_size_12" />
+                android:textSize="@dimen/text_size_12"
+
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:focusable="false"/>
         </LinearLayout>
 
         <LinearLayout
@@ -124,6 +139,7 @@
                 app:tint="@color/control_tint" />
 
             <TextView
+                android:id="@+id/tvLed"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/size8"
@@ -132,7 +148,13 @@
                 android:gravity="center"
                 android:text="@string/led"
                 android:textColor="@color/control_tint"
-                android:textSize="@dimen/text_size_12" />
+                android:textSize="@dimen/text_size_12"
+
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:focusable="false"/>
         </LinearLayout>
 
         <LinearLayout
@@ -156,6 +178,7 @@
                 app:tint="@color/control_tint" />
 
             <TextView
+                android:id="@+id/tvAlert"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/size8"
@@ -164,8 +187,22 @@
                 android:gravity="center"
                 android:text="@string/flash_alert"
                 android:textColor="@color/control_tint"
-                android:textSize="@dimen/text_size_12" />
+                android:textSize="@dimen/text_size_12"
+
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:focusable="false"/>
         </LinearLayout>
     </com.kt.flash.light.led.banner.customview.GlowTabBar>
+    <FrameLayout
+        android:id="@+id/frAdsBanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <include layout="@layout/layout_banner_control" />
+    </FrameLayout>
 </LinearLayout>
 

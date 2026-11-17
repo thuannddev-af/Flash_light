@@ -5,17 +5,29 @@ import android.widget.Toast
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
+import com.ads.admob.helper.AdOptionVisibility
+import com.ads.admob.helper.adnative.NativeAdConfig
+import com.ads.admob.helper.adnative.NativeAdHelper
+import com.ads.admob.helper.adnative.params.AdNativeState
+import com.ads.admob.helper.adnative.params.NativeAdParam
+import com.kt.flash.light.led.banner.BuildConfig
 import com.kt.flash.light.led.banner.R
 import com.kt.flash.light.led.banner.base.fragment.BaseFragment
 import com.kt.flash.light.led.banner.component.lightcontroller.Light
 import com.kt.flash.light.led.banner.component.lightcontroller.LightController
 import com.kt.flash.light.led.banner.databinding.FragmentFlashBinding
+import com.kt.flash.light.led.banner.utils.FirebaseConfigManager
+import com.kt.flash.light.led.banner.utils.ads.NativeAdsUtils
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 class FlashFragment : BaseFragment<FragmentFlashBinding>() {
     private var lightOn = false
     private var activeMode = FLASH_MODE
     private var modes: List<View> = emptyList()
     private var torch: LightController? = null
+    private var nativeCustomHelper: NativeAdHelper? = null
 
     override fun provideViewBinding(container: ViewGroup?) =
         FragmentFlashBinding.inflate(layoutInflater, container, false)
@@ -78,6 +90,7 @@ class FlashFragment : BaseFragment<FragmentFlashBinding>() {
     override fun onResume() {
         super.onResume()
         torch?.register()
+        initNativeCustom()
     }
 
     override fun onPause() {
@@ -134,7 +147,26 @@ class FlashFragment : BaseFragment<FragmentFlashBinding>() {
         torch?.release()
         torch = null
         modes = emptyList()
+        nativeCustomHelper?.destroy()
+        nativeCustomHelper = null
         super.onDestroyView()
+    }
+
+    private fun initNativeCustom() {
+        if (nativeCustomHelper != null) return
+        val enabled = FirebaseConfigManager.instance().adConfig.enableNativeCustom
+        viewBaseFragment.frAdsNative.isVisible = enabled
+        if (!enabled) return
+
+        val helper = NativeAdsUtils.nativeCustom ?: return
+        helper.setShimmerLayoutView(viewBaseFragment.shimmerContainerNative.root)
+        helper.setNativeContentView(viewBaseFragment.frAdsNative)
+        nativeCustomHelper = helper
+        helper.getAdNativeState().onEach { state ->
+            if (state is AdNativeState.Fail || state is AdNativeState.Cancel) {
+                viewBaseFragment.frAdsNative.isVisible = false
+            }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     private companion object {

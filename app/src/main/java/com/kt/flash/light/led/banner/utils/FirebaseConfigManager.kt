@@ -25,6 +25,9 @@ class FirebaseConfigManager {
     private val pendingAction: MutableList<() -> Unit> = mutableListOf()
     var adConfig: AdConfig = AdConfig()
 
+    val intervalBetweenInterstitialMs: Long
+        get() = remoteSeconds("interval_between_interstitial", 30_000L).coerceAtLeast(0L)
+
     val interClick: Int
         get() = remoteSeconds("inter_click", 2L)
             .coerceIn(1L, Int.MAX_VALUE.toLong()).toInt()

@@ -15,7 +15,9 @@ import com.kt.flash.light.led.banner.component.permission.PermissionActivity
 import com.kt.flash.light.led.banner.databinding.ActivityMainBinding
 import com.kt.flash.light.led.banner.utils.FirebaseConfigManager
 import com.kt.flash.light.led.banner.utils.ads.AdPlacement
+import com.kt.flash.light.led.banner.utils.ads.BannerAdsUtils
 import com.kt.flash.light.led.banner.utils.ads.InterAdsUtils
+import com.kt.flash.light.led.banner.utils.ads.NativeAdsUtils
 
 class MainActivity : BaseActivity<ActivityMainBinding>() {
     private var redirectingForPermission = false
@@ -34,19 +36,28 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        showBannerMain()
+        InterAdsUtils.onHomeEntered()
+        NativeAdsUtils.preLoadNativeCustom(this)
         window.setBackgroundDrawableResource(android.R.color.black)
+
+       viewBaseActivity.tvFlash.isSelected = true
+        viewBaseActivity.tvEdge.isSelected = true
+        viewBaseActivity.tvLed.isSelected = true
+        viewBaseActivity.tvAlert.isSelected = true
+
         interTabClickCount = savedInstanceState?.getLong(KEY_INTER_TAB_CLICKS) ?: 0L
         interClickStep = savedInstanceState?.getLong(KEY_INTER_CLICK_STEP)
             ?: FirebaseConfigManager.instance().interClick.toLong()
         clicksUntilNextInter = savedInstanceState?.getLong(KEY_NEXT_INTER_CLICKS)
             ?: interClickStep
 
+
         InterAdsUtils.loadInterAds(
             activity = this,
             idAds = BuildConfig.inter_home,
             adPlacement = AdPlacement.INTER_HOME,
             isEnable = FirebaseConfigManager.instance().adConfig.enableInterHome,
-            // Count clicks in the app; leave the ads module's own frequency at one.
             showByTime = 1
         )
 
@@ -156,11 +167,15 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     }
 
     override fun onDestroy() {
+        NativeAdsUtils.destroyNativeCustom(this)
         viewBaseActivity.mainPager.unregisterOnPageChangeCallback(pageCallback)
         viewBaseActivity.mainPager.adapter = null
         super.onDestroy()
     }
 
+    private fun showBannerMain(){
+        BannerAdsUtils.initBannerAll(this, this, viewBaseActivity.frAdsBanner)
+    }
     companion object {
         private const val KEY_TAB_HISTORY = "main_tab_history"
         private const val KEY_INTER_TAB_CLICKS = "inter_tab_clicks"

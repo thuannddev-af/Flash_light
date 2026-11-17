@@ -10,7 +10,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.ads.admob.helper.adnative.params.AdNativeState
-import com.google.android.material.tabs.TabLayoutMediator
+import com.google.android.material.tabs.TabLayout
+import android.view.View
 import com.kt.flash.light.led.banner.R
 import com.kt.flash.light.led.banner.base.activity.BaseActivity
 import com.kt.flash.light.led.banner.component.main.MainActivity
@@ -31,7 +32,7 @@ import kotlinx.coroutines.launch
 class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>() {
     private val onBoardingAdapter = OnBoardingAdapter()
     private val viewModel: OnBoardingViewModel by viewModels()
-    private var tabMediator: TabLayoutMediator? = null
+    private var syncingDots = false
 
     private var nativeCountdownJob: Job? = null
     private var navigating = false
@@ -39,6 +40,7 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>() {
     private val pageCallback = object : OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
             viewModel.currentPosition = position
+            selectContentDot(position)
             initMultiNAtiveAd(position)
         }
     }
@@ -46,9 +48,22 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>() {
     override fun provideViewBinding() = ActivityOnboardingBinding.inflate(layoutInflater)
 
     override fun initViews() = with(viewBaseActivity) {
-        //setFullscreen()
         vpOnBoarding.adapter = onBoardingAdapter
-        tabMediator = TabLayoutMediator(tabDots, vpOnBoarding) { _, _ -> }.also { it.attach() }
+        tabDots.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                updateDot(tab, true)
+                if (!syncingDots) {
+                    val contentPositions = onBoardingAdapter.dataSet.indices.filter {
+                        onBoardingAdapter.dataSet[it].imageId != 0
+                    }
+                    contentPositions.getOrNull(tab.position)?.let {
+                        vpOnBoarding.setCurrentItem(it, true)
+                    }
+                }
+            }
+            override fun onTabUnselected(tab: TabLayout.Tab) = updateDot(tab, false)
+            override fun onTabReselected(tab: TabLayout.Tab) = Unit
+        })
         vpOnBoarding.registerOnPageChangeCallback(pageCallback)
         btnNext.isEnabled = false
         btnNext.setOnClickListener { nextAction() }
@@ -67,13 +82,47 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>() {
         viewModel.getListOnBoarding()
     }
 
+    private fun updateDot(tab: TabLayout.Tab, selected: Boolean) {
+        val dot = tab.customView?.findViewById<View>(R.id.dot_indicator) ?: return
+        dot.isSelected = selected
+        dot.layoutParams = dot.layoutParams.apply {
+            width = ((if (selected) 32 else 8) * resources.displayMetrics.density).toInt()
+        }
+    }
+
+    private fun createContentDots() {
+        syncingDots = true
+        with(viewBaseActivity.tabDots) {
+            removeAllTabs()
+            repeat(onBoardingAdapter.dataSet.count { it.imageId != 0 }) {
+                val tab = newTab().setCustomView(R.layout.item_onboarding_dot)
+                addTab(tab, false)
+                updateDot(tab, false)
+            }
+        }
+        syncingDots = false
+        selectContentDot(viewBaseActivity.vpOnBoarding.currentItem)
+    }
+
+    private fun selectContentDot(pagerPosition: Int) {
+        val pages = onBoardingAdapter.dataSet
+        if (pages.getOrNull(pagerPosition)?.imageId == 0) return
+        val contentPosition = pages.take(pagerPosition + 1).count { it.imageId != 0 } - 1
+        val tab = viewBaseActivity.tabDots.getTabAt(contentPosition) ?: return
+        syncingDots = true
+        viewBaseActivity.tabDots.selectTab(tab)
+        syncingDots = false
+    }
+
     override fun initObserver() {
         viewModel.listOnBoarding.onEach { pages ->
             onBoardingAdapter.setData(ArrayList(pages))
+            createContentDots()
             viewBaseActivity.btnNext.isEnabled = pages.isNotEmpty()
             if (pages.isNotEmpty()) {
                 val position = viewModel.currentPosition.coerceIn(pages.indices)
                 viewBaseActivity.vpOnBoarding.setCurrentItem(position, false)
+                selectContentDot(position)
                 initNativeFullScreen()
                 initMultiNAtiveAd(position)
             }
@@ -96,8 +145,6 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>() {
     override fun onDestroy() {
         nativeCountdownJob?.cancel()
         viewBaseActivity.vpOnBoarding.unregisterOnPageChangeCallback(pageCallback)
-        tabMediator?.detach()
-        tabMediator = null
         viewBaseActivity.vpOnBoarding.adapter = null
         super.onDestroy()
     }

@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -11,6 +12,23 @@
         android:paddingTop="@dimen/size16"
         android:paddingEnd="@dimen/size16"
         android:paddingBottom="@dimen/size24">
-        <include android:id="@+id/edge_content" layout="@layout/view_edge_light" />
+
+        <include
+            android:id="@+id/edge_content"
+            layout="@layout/view_edge_light" />
+
+
+        <FrameLayout
+            android:id="@+id/frAdsNative"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size20">
+
+            <include
+                android:id="@+id/shimmerContainerNative"
+                layout="@layout/loading_native_medium" />
+        </FrameLayout>
     </LinearLayout>
+
+
 </ScrollView>

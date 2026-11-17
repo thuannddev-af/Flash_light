@@ -273,38 +273,14 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!--            <LinearLayout-->
-        <!--                android:layout_width="match_parent"-->
-        <!--                android:layout_height="@dimen/size190"-->
-        <!--                android:layout_marginTop="@dimen/size32"-->
-        <!--                android:background="@drawable/bg_ad"-->
-        <!--                android:orientation="vertical"-->
-        <!--                android:padding="@dimen/size12">-->
+        <FrameLayout
+            android:id="@+id/frAdsNative"
+            android:layout_marginTop="@dimen/size48"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <!--                <TextView-->
-        <!--                    android:layout_width="wrap_content"-->
-        <!--                    android:layout_height="wrap_content"-->
-        <!--                    android:text="@string/ad_label"-->
-        <!--                    android:textColor="#FFD54F"-->
-        <!--                    android:textSize="@dimen/text_size_10" />-->
-
-        <!--                <TextView-->
-        <!--                    android:layout_width="match_parent"-->
-        <!--                    android:layout_height="0dp"-->
-        <!--                    android:layout_weight="1"-->
-        <!--                    android:gravity="center"-->
-        <!--                    android:text="@string/ad_placeholder"-->
-        <!--                    android:textColor="#C1C7D0"-->
-        <!--                    android:textSize="@dimen/text_size_16" />-->
-
-        <!--                <TextView-->
-        <!--                    android:layout_width="match_parent"-->
-        <!--                    android:layout_height="@dimen/size42"-->
-        <!--                    android:background="@drawable/bg_install"-->
-        <!--                    android:gravity="center"-->
-        <!--                    android:text="@string/install"-->
-        <!--                    android:textColor="#FFFFFF"-->
-        <!--                    android:textSize="@dimen/text_size_14" />-->
-        <!--            </LinearLayout>-->
+            <include android:id="@+id/shimmerContainerNative"
+                layout="@layout/loading_native_medium"/>
+        </FrameLayout>
     </LinearLayout>
 </ScrollView>

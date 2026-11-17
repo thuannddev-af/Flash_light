@@ -13,8 +13,18 @@
         android:layout_width="@dimen/size48"
         android:layout_height="@dimen/size48"
         android:layout_margin="@dimen/size8"
-        android:src="@android:drawable/ic_menu_close_clear_cancel"
-        android:tint="#FFD54F"
+        android:src="@drawable/ic_close_2"
+        android:tint="@color/color_main"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/close"/>
+
+    <FrameLayout
+        android:id="@+id/frAdsBanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom">
+
+        <include android:id="@+id/shimmer_container_banner"
+            layout="@layout/layout_banner_control"/>
+    </FrameLayout>
 </FrameLayout>

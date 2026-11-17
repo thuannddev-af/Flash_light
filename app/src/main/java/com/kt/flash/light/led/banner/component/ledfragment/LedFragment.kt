@@ -6,11 +6,24 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.SeekBar
+import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
+import androidx.lifecycle.lifecycleScope
+import com.ads.admob.helper.AdOptionVisibility
+import com.ads.admob.helper.adnative.NativeAdConfig
+import com.ads.admob.helper.adnative.NativeAdHelper
+import com.ads.admob.helper.adnative.params.AdNativeState
+import com.ads.admob.helper.adnative.params.NativeAdParam
+import com.kt.flash.light.led.banner.BuildConfig
 import com.kt.flash.light.led.banner.R
 import com.kt.flash.light.led.banner.base.fragment.BaseFragment
 import com.kt.flash.light.led.banner.component.colorpicker.showColorPickerDialog
 import com.kt.flash.light.led.banner.databinding.FragmentLedBinding
+import com.kt.flash.light.led.banner.utils.FirebaseConfigManager
+import com.kt.flash.light.led.banner.utils.ads.AdPlacement
+import com.kt.flash.light.led.banner.utils.ads.NativeAdsUtils
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlin.math.roundToInt
 
 class LedFragment : BaseFragment<FragmentLedBinding>() {
@@ -21,6 +34,7 @@ class LedFragment : BaseFragment<FragmentLedBinding>() {
     private var direction = 1
     private var effect = 0
     private var picker: Dialog? = null
+    private var nativeAdHelper : NativeAdHelper? = null
 
     override fun provideViewBinding(container: ViewGroup?) =
         FragmentLedBinding.inflate(layoutInflater, container, false)
@@ -148,7 +162,9 @@ class LedFragment : BaseFragment<FragmentLedBinding>() {
     }
 
     override fun onResume() {
-        super.onResume(); viewBaseFragment.ledPreview.running = true
+        super.onResume();
+        viewBaseFragment.ledPreview.running = true
+        initNativeNew()
     }
 
     override fun onPause() {
@@ -156,8 +172,33 @@ class LedFragment : BaseFragment<FragmentLedBinding>() {
     }
 
     override fun onDestroyView() {
+        nativeAdHelper?.destroy()
+        nativeAdHelper = null
         picker?.dismiss(); picker = null; viewBaseFragment.ledPreview.running =
             false; super.onDestroyView()
+
+
+    }
+
+    private fun initNativeCustom(){
+        if(nativeAdHelper != null) return
+        val enable = FirebaseConfigManager.instance().adConfig.enableNativeCustom
+        viewBaseFragment.frAdsNative.isVisible = enable
+        if(!enable) return
+
+        val helper = NativeAdsUtils.nativeCustom ?: return
+        helper.setShimmerLayoutView(viewBaseFragment.shimmerContainerNative.root)
+        helper.setNativeContentView(viewBaseFragment.frAdsNative)
+        nativeAdHelper = helper
+        helper.getAdNativeState().onEach { state ->
+            if(state is AdNativeState.Fail || state is AdNativeState.Cancel) {
+                viewBaseFragment.frAdsNative.isVisible = false
+            }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+    }
+
+    private fun initNativeNew() {
+        NativeAdsUtils.showNative(this, AdPlacement.NATIVE_CUSTOM, viewBaseFragment.frAdsNative, viewBaseFragment.shimmerContainerNative.root)
     }
 }
 

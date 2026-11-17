@@ -1,22 +1,17 @@
 package com.kt.flash.light.led.banner.component.splash
 
-import android.os.Bundle
 import android.animation.ValueAnimator
+import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.animation.LinearInterpolator
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import com.ads.admob.data.ContentAd
 import com.ads.admob.helper.AdOptionVisibility
 import com.ads.admob.helper.adnative.NativeAdConfig
 import com.ads.admob.helper.adnative.NativeAdHelper
-import com.ads.admob.helper.adnative.params.AdNativeState
 import com.ads.admob.helper.interstitial.InterstitialAdSplashConfig
 import com.ads.admob.helper.interstitial.InterstitialAdSplashHelper
 import com.ads.admob.helper.interstitial.params.InterstitialAdParam
@@ -25,23 +20,22 @@ import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.LoadAdError
 import com.kt.flash.light.led.banner.App
 import com.kt.flash.light.led.banner.BuildConfig
-import com.kt.flash.light.led.banner.base.activity.BaseActivity
 import com.kt.flash.light.led.banner.R
+import com.kt.flash.light.led.banner.base.activity.BaseActivity
 import com.kt.flash.light.led.banner.component.language.LanguageActivity
-import com.kt.flash.light.led.banner.databinding.ActivitySplashBinding
 import com.kt.flash.light.led.banner.component.onboarding.OnboardingActivity
-import com.kt.flash.light.led.banner.domain.layer.FullscreenAdConfig
+import com.kt.flash.light.led.banner.databinding.ActivitySplashBinding
 import com.kt.flash.light.led.banner.utils.FirebaseConfigManager
-import com.kt.flash.light.led.banner.utils.Logger
 import com.kt.flash.light.led.banner.utils.SpManager
 import com.kt.flash.light.led.banner.utils.Utils
 import com.kt.flash.light.led.banner.utils.ads.AdPlacement
 import com.kt.flash.light.led.banner.utils.ads.BannerAdsUtils
 import com.kt.flash.light.led.banner.utils.ads.NativeAdsUtils
-import javax.inject.Inject
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class SplashActivity : BaseActivity<ActivitySplashBinding>() {
@@ -51,6 +45,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     private var progress = 0
     private var navigating = false
     private var splashAdsStarted = false
+    private var interBackdrop: View? = null
 
     private var interClosed = false
     private var nativeFullShown = false
@@ -60,7 +55,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
     @Inject
     lateinit var spManager: SpManager
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -90,7 +84,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
         }
     }
 
-    // Visual progress only. The interstitial helper decides when Splash finishes.
     private fun startProgressBar() {
         if (progressAnimator?.isStarted == true || navigating || progress >= 99) return
         progressAnimator = ValueAnimator.ofInt(progress, 99).apply {
@@ -104,7 +97,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     private fun updateProgress(value: Int) {
         progress = value.coerceIn(0, 100)
         viewBaseActivity.progressBar.progress = progress
-        viewBaseActivity.progressPercent.text = getString(R.string.splash_progress_percent, progress)
+        viewBaseActivity.progressPercent.text =
+            getString(R.string.splash_progress_percent, progress)
     }
 
     private fun gotoMainScreen() {
@@ -115,13 +109,14 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
         progressAnimator?.cancel()
         progressAnimator = null
         updateProgress(100)
-        if(spManager.isLanguageChosen()) {
+        if (spManager.isLanguageChosen()) {
             OnboardingActivity.start(this)
-        }else {
+        } else {
             LanguageActivity.start(this, isFromSplash = true)
         }
         finish()
     }
+
     override fun onPause() {
         progressAnimator?.cancel()
         progressAnimator = null
@@ -138,11 +133,12 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     }
 
     private fun loadInterSplash() {
+        //window.setBackgroundDrawable(ColorDrawable(Color.BLACK))
         interAdSplashHelper.holdShow = false
         interAdSplashHelper.requestAds(InterstitialAdParam.Request)
     }
 
-    private val interAdSplashHelper by lazy {initInterAdSplash()}
+    private val interAdSplashHelper by lazy { initInterAdSplash() }
     private fun initInterAdSplash(): InterstitialAdSplashHelper {
         val config = InterstitialAdSplashConfig(
             idAds = BuildConfig.inter_splash,
@@ -166,19 +162,22 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
     private val interAdCallBack = object : InterstitialAdCallback {
         override fun onNextAction() {
+            hideInterBackdrop()
             Log.d("SPLASH_TEST", "onNextAction -> Chuyển màn")
-            if(interClosed) return
+            if (interClosed) return
             gotoMainScreen()
         }
 
         override fun onAdClose() {
+            hideInterBackdrop()
             Log.d("SPLASH_TEST", "onAdClose -> Hiển thị native fullscreen")
-            if(interClosed) return
+            if (interClosed) return
             interClosed = true
             showNativeFullSplash()
         }
 
         override fun onInterstitialShow() {
+            showInterBackdrop()
         }
 
         override fun onAdLoaded(data: ContentAd) {
@@ -198,8 +197,37 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
         }
 
         override fun onAdFailedToShow(adError: AdError) {
+            hideInterBackdrop()
 
         }
+    }
+
+    private fun showInterBackdrop() {
+        if (interBackdrop != null || isFinishing || isDestroyed) return
+        val decor = window.decorView as? android.view.ViewGroup ?: return
+        interBackdrop = View(this).apply {
+            setBackgroundColor(android.graphics.Color.BLACK)
+            isClickable = true
+            importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+            elevation = 100f * resources.displayMetrics.density
+            decor.addView(
+                this, android.view.ViewGroup.LayoutParams(
+                    android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                    android.view.ViewGroup.LayoutParams.MATCH_PARENT
+                )
+            )
+            bringToFront()
+        }
+    }
+
+    private fun hideInterBackdrop() {
+        interBackdrop?.let { (it.parent as? android.view.ViewGroup)?.removeView(it) }
+        interBackdrop = null
+    }
+
+    override fun onDestroy() {
+        hideInterBackdrop()
+        super.onDestroy()
     }
 
     private fun initNativeFullSplash() {
@@ -229,12 +257,13 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
             requestAds(com.ads.admob.helper.adnative.params.NativeAdParam.Request)
         }
     }
+
     private fun showNativeFullSplash() {
-        if(nativeFullShown || navigating || isFinishing || isDestroyed) return
+        if (nativeFullShown || navigating || isFinishing || isDestroyed) return
         val helper = nativeFullSplashHelper
         val nativeAd = helper?.nativeAd
 
-        if(helper == null || nativeAd == null) {
+        if (helper == null || nativeAd == null) {
             gotoMainScreen()
             return
         }
@@ -285,7 +314,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     private fun loadLanguageNativeAd() {
         NativeAdsUtils.preLoadNativeLanguage(this)
     }
-     private companion object {
+
+    private companion object {
         const val PROGRESS_DURATION_MS = 7000L
         const val KEY_PROGRESS = "splash_progress"
     }

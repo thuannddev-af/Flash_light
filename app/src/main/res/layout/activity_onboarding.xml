@@ -44,16 +44,18 @@
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabDots"
-            android:layout_width="96dp"
+            android:layout_width="wrap_content"
             android:layout_height="24dp"
             android:layout_gravity="center"
             android:background="@android:color/transparent"
             app:tabMinWidth="0dp"
-            app:tabPaddingStart="8dp"
-            app:tabPaddingEnd="8dp"
+            app:tabMode="scrollable"
+            app:tabPaddingStart="0dp"
+            app:tabPaddingEnd="0dp"
+            app:tabPaddingTop="0dp"
+            app:tabPaddingBottom="0dp"
             app:tabIndicatorHeight="0dp"
             app:tabRippleColor="@android:color/transparent"
-            app:tabBackground="@drawable/onboarding_tab_dot"
             app:layout_constraintBottom_toTopOf="@id/btnNext"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
@@ -65,12 +67,12 @@
 
         <TextView
             android:id="@+id/btnNext"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/size48"
+            android:layout_width="@dimen/size70"
+            android:layout_height="@dimen/size40"
             android:layout_marginBottom="8dp"
             android:paddingHorizontal="16dp"
             android:gravity="center"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:background="@drawable/bg_button_next"
             android:fontFamily="@font/plusjakartasans_semibold"
             android:text="Next"
             android:textColor="@color/color_main"

@@ -31,6 +31,8 @@ import com.kt.flash.light.led.banner.utils.LocaleHelper
 import com.kt.flash.light.led.banner.utils.Logger
 import com.kt.flash.light.led.banner.utils.SpManager
 import com.kt.flash.light.led.banner.utils.ads.AdPlacement
+import com.kt.flash.light.led.banner.utils.ads.AppOpenAdsUtils
+import com.ads.admob.AdmobManager
 import com.kt.flash.light.led.banner.utils.getDeviceLanguage
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
@@ -40,6 +42,7 @@ import javax.inject.Singleton
 @HiltAndroidApp
 @Singleton
 class App : Application(), Application.ActivityLifecycleCallbacks {
+    private var resumeHost = java.lang.ref.WeakReference<Activity>(null)
     @Inject
     lateinit var spManager: SpManager
     private var isColdStart = true
@@ -123,69 +126,61 @@ class App : Application(), Application.ActivityLifecycleCallbacks {
     }
 
     private fun initOpenResume() {
-        appResumeAdHelper = initAppOpenAd()
+        if (appResumeAdHelper != null) return
+        appResumeAdHelper = AppOpenAdsUtils.initResume(this)
         appResumeAdHelper?.registerAdListener(object : AppOpenAdCallBack {
             override fun onAppOpenAdShow() {
-                TODO("Not yet implemented")
+                resumeHost.get()?.let { AppOpenAdsUtils.showResumeBackdrop(it) }
+                AdmobManager.adsShowFullScreen()
+                Logger.e("Resume app-open shown")
             }
 
             override fun onAppOpenAdClose() {
-                TODO("Not yet implemented")
+                AppOpenAdsUtils.hideResumeBackdrop()
+                AdmobManager.adsFullScreenDismiss()
+                Logger.e("Resume app-open closed; helper preloads the next ad")
             }
 
             override fun onAdLoaded(data: ContentAd) {
-                TODO("Not yet implemented")
+                Logger.e("Resume app-open loaded")
             }
 
             override fun onAdFailedToLoad(loadAdError: LoadAdError) {
-                TODO("Not yet implemented")
+                Logger.e("Resume app-open load failed: ${loadAdError.message}")
             }
 
             override fun onAdClicked() {
-                TODO("Not yet implemented")
             }
 
             override fun onAdImpression() {
-                TODO("Not yet implemented")
             }
 
             override fun onAdFailedToShow(adError: AdError) {
-                TODO("Not yet implemented")
+                AppOpenAdsUtils.hideResumeBackdrop()
+                AdmobManager.adsFullScreenDismiss()
+                Logger.e("Resume app-open show failed: ${adError.message}")
             }
 
         })
     }
 
-    private fun initAppOpenAd() : AppResumeAdHelper {
-        val listClassInValid = mutableListOf<Class<*>>()
-        listClassInValid.add(AdActivity::class.java)
-        listClassInValid.add(SplashActivity::class.java)
-        val config = AppResumeAdConfig(
-            idAds = BuildConfig.banner_splash,
-            listClassInValid = listClassInValid,
-            canShowAds = true,
-            networkProvider = NetworkProvider.ADMOB,
-            adPlacement = AdPlacement.OPEN_RESUME,
-            reloadIfFirstFail = true
-        )
-        return AppResumeAdHelper(
-            application = this,
-            lifecycleOwner = ProcessLifecycleOwner.get(),
-            config = config
-        )
-    }
     override fun attachBaseContext(base: Context?) {
         val context = LocaleHelper.onAttach(base, java.util.Locale.getDefault().language)
         super.attachBaseContext(context)
     }
     fun destroyAppOpenAd() {
+        AppOpenAdsUtils.hideResumeBackdrop()
         appResumeAdHelper?.unregisterAllAdListener()
         appResumeAdHelper?.destroyAds()
         appResumeAdHelper = null
     }
 
-    override fun onActivityStarted(activity: Activity) {}
-    override fun onActivityResumed(activity: Activity) {}
+    override fun onActivityStarted(activity: Activity) {
+        if (activity !is AdActivity) resumeHost = java.lang.ref.WeakReference(activity)
+    }
+    override fun onActivityResumed(activity: Activity) {
+        if (activity !is AdActivity) resumeHost = java.lang.ref.WeakReference(activity)
+    }
     override fun onActivityPaused(activity: Activity) {}
     override fun onActivityStopped(activity: Activity) {}
     override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
@@ -197,8 +192,8 @@ class App : Application(), Application.ActivityLifecycleCallbacks {
     }
 
     override fun onActivityDestroyed(activity: Activity) {
-        if (activity is MainActivity) {
-            destroyAppOpenAd()
-        }
+        AppOpenAdsUtils.releaseResumeBackdrop(activity)
+        if (resumeHost.get() === activity) resumeHost.clear()
+        // Resume ads follow the application lifecycle, not a single MainActivity instance.
     }
 }

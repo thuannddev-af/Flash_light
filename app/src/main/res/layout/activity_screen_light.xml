@@ -15,4 +15,15 @@
         android:src="@android:drawable/ic_menu_close_clear_cancel"
         android:tint="#FFD54F"
         android:contentDescription="@string/close"/>
+
+    <FrameLayout
+        android:id="@+id/frAdsBanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom">
+
+        <include
+            android:id="@+id/shimmer_container_banner"
+            layout="@layout/layout_banner_control" />
+    </FrameLayout>
 </FrameLayout>
