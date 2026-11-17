@@ -10,7 +10,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/ad_unit_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        >
 
         <com.google.android.gms.ads.nativead.MediaView
             android:id="@+id/ad_media"
@@ -110,10 +111,14 @@
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/ad_call_to_action"
+                android:elevation="0dp"
+                android:translationZ="0dp"
+                android:stateListAnimator="@null"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/size40"
                 android:layout_marginTop="@dimen/size10"
                 android:background="@drawable/bg_button"
+                android:hint="@null"
                 android:backgroundTint="@null"
                 android:gravity="center"
                 android:insetTop="0dp"

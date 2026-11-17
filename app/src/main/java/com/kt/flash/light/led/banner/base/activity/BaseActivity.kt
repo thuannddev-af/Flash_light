@@ -4,6 +4,9 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
+import androidx.lifecycle.Lifecycle
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
@@ -34,15 +37,25 @@ abstract class BaseActivity <V : ViewBinding> : AppCompatActivity(){
     private var networkDialog: NoInternetDialog? = null
     private var networkCallback: ConnectivityManager.NetworkCallback? = null
     private var lastConnected: Boolean? = null
+    private val networkHandler = Handler(Looper.getMainLooper())
+    private val networkCheck = object : Runnable {
+        override fun run() {
+            val callback = networkCallback ?: return
+            refreshConnection(callback)
+            networkHandler.postDelayed(this, 1000L)
+        }
+    }
 
     private val connectivityManager by lazy {
         getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
     }
 
-    override fun onResume() {
-        super.onResume()
-        hideSystemUI()
+    override fun onStart() {
+        super.onStart()
+        if (networkCallback != null) return
         val callback = object : ConnectivityManager.NetworkCallback() {
+            override fun onAvailable(network: Network) { refreshConnection(this) }
+            override fun onUnavailable() { refreshConnection(this) }
             override fun onCapabilitiesChanged(network: Network, capabilities: NetworkCapabilities) {
                 refreshConnection(this)
             }
@@ -59,6 +72,19 @@ abstract class BaseActivity <V : ViewBinding> : AppCompatActivity(){
         refreshConnection(callback)
     }
 
+    override fun onResume() {
+        super.onResume()
+        hideSystemUI()
+        networkHandler.removeCallbacks(networkCheck)
+        // Local capability check only: no HTTP requests or Internet polling.
+        networkHandler.post(networkCheck)
+    }
+
+    override fun onPostResume() {
+        super.onPostResume()
+        networkCallback?.let { refreshConnection(it) }
+    }
+
     override fun attachBaseContext(newBase: Context) {
         language = SpManager.getInstance(this).getLanguage()
         val context = LocaleHelper.setLocale(newBase, language.languageCode)
@@ -68,6 +94,7 @@ abstract class BaseActivity <V : ViewBinding> : AppCompatActivity(){
     private fun refreshConnection(callback: ConnectivityManager.NetworkCallback) {
         runOnUiThread {
             if (networkCallback !== callback || isFinishing || isDestroyed) return@runOnUiThread
+            if (!lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) return@runOnUiThread
             val connected = Utils.isConnected(this)
             if (connected) {
                 networkDialog?.dismiss()
@@ -85,13 +112,27 @@ abstract class BaseActivity <V : ViewBinding> : AppCompatActivity(){
     protected open fun onConnectivityChanged(connected: Boolean) {}
 
     override fun onPause() {
-        val callback = networkCallback
-        networkCallback = null
-        if (callback != null) connectivityManager.unregisterNetworkCallback(callback)
-        lastConnected = null
+        networkHandler.removeCallbacks(networkCheck)
         networkDialog?.dismiss()
         networkDialog = null
         super.onPause()
+    }
+
+    override fun onStop() {
+        val callback = networkCallback
+        networkCallback = null
+        if (callback != null) {
+            try {
+                connectivityManager.unregisterNetworkCallback(callback)
+            } catch (_: IllegalArgumentException) {
+                // Already unregistered by the platform.
+            }
+        }
+        networkHandler.removeCallbacks(networkCheck)
+        lastConnected = null
+        networkDialog?.dismiss()
+        networkDialog = null
+        super.onStop()
     }
 
     open fun onBack() {

@@ -16,9 +16,6 @@ class FirebaseConfigManager {
         }
     }
 
-    private val mMaxTryTime = 5
-    private var mTrytime = 0
-
     private var isFetchDone = false
     var versionForce = "1.0.0"
     var isForceUpdate = false
@@ -51,47 +48,63 @@ class FirebaseConfigManager {
             pendingAction.add(action)
         }
     }
+    private var fetchStarted = false
+
     fun fetch(onFetchCompplete: (() -> Unit)? = null) {
-        val longCache = 15 * 60L
-        FirebaseRemoteConfig.getInstance().fetch(longCache).addOnCompleteListener { task ->
+        if (isFetchDone) {
+            onFetchCompplete?.invoke()
+            return
+        }
+        onFetchCompplete?.let { pendingAction.add(it) }
+        if (fetchStarted) return
+        fetchStarted = true
+        val handler = android.os.Handler(android.os.Looper.getMainLooper())
+        val remote = FirebaseRemoteConfig.getInstance()
+        val fallback = Runnable {
+            if (!isFetchDone) {
+                Logger.e("Remote Config timeout: continue with activated/default values")
+                readActivatedConfig()
+                finishFetch()
+            }
+        }
+        handler.postDelayed(fallback, 10_000L)
+        remote.fetch(15 * 60L).addOnCompleteListener { task ->
+            if (isFetchDone) return@addOnCompleteListener
             if (task.isSuccessful) {
-                Logger.e("load config success")
-                FirebaseRemoteConfig.getInstance().activate()
-                versionForce = FirebaseRemoteConfig.getInstance().getString(KEY_VERSION_FORCE)
-                isForceUpdate = FirebaseRemoteConfig.getInstance().getBoolean(KEY_IS_FORCE_UPDATE)
-                val json = FirebaseRemoteConfig.getInstance().getString(KEY_ADS_STATUS_ENABLE)
-                Logger.e("FireBaseConfigManager : $json")
-                if (json.isEmpty()) {
-
-                } else {
-                    try {
-                        adConfig = Gson().fromJson(json, AdConfig::class.java)
-
-                    } catch (e: Exception) {
-
-                        Logger.e(e.message)
+                remote.activate().addOnCompleteListener {
+                    if (!isFetchDone) {
+                        handler.removeCallbacks(fallback)
+                        readActivatedConfig()
+                        finishFetch()
                     }
                 }
             } else {
-
-                Logger.e("load config fail")
+                handler.removeCallbacks(fallback)
+                Logger.e("Remote Config fetch failed: continue with activated/default values")
+                readActivatedConfig()
+                finishFetch()
             }
         }
     }
 
-    private fun onFetchFinished(onFetchComplete: (() -> Unit)?) {
-        isFetchDone = true
-        onFetchComplete?.invoke()
-        pendingAction.forEach { it() }
-        pendingAction.clear()
-    }
-    private fun tryFetchAgain(onFetchCompplete: (() -> Unit)?) {
-        ++mTrytime
-        if(mTrytime < mMaxTryTime) {
-            fetch(onFetchCompplete)
-        } else {
-            mTrytime = 0
-            onFetchFinished(onFetchCompplete)
+    private fun readActivatedConfig() {
+        val remote = FirebaseRemoteConfig.getInstance()
+        versionForce = remote.getString(KEY_VERSION_FORCE)
+        isForceUpdate = remote.getBoolean(KEY_IS_FORCE_UPDATE)
+        val json = remote.getString(KEY_ADS_STATUS_ENABLE)
+        if (json.isBlank()) return
+        try {
+            Gson().fromJson(json, AdConfig::class.java)?.let { adConfig = it }
+        } catch (error: Exception) {
+            Logger.e("Invalid config_ads: ${error.message}")
         }
+    }
+
+    private fun finishFetch() {
+        if (isFetchDone) return
+        isFetchDone = true
+        val actions = pendingAction.toList()
+        pendingAction.clear()
+        actions.forEach { it() }
     }
 }

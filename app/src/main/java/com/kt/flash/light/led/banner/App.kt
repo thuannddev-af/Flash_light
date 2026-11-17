@@ -32,6 +32,7 @@ import com.kt.flash.light.led.banner.utils.Logger
 import com.kt.flash.light.led.banner.utils.SpManager
 import com.kt.flash.light.led.banner.utils.ads.AdPlacement
 import com.kt.flash.light.led.banner.utils.ads.AppOpenAdsUtils
+import com.kt.flash.light.led.banner.utils.ads.AdWindowUtils
 import com.ads.admob.AdmobManager
 import com.kt.flash.light.led.banner.utils.getDeviceLanguage
 import dagger.hilt.android.HiltAndroidApp
@@ -179,12 +180,14 @@ class App : Application(), Application.ActivityLifecycleCallbacks {
         if (activity !is AdActivity) resumeHost = java.lang.ref.WeakReference(activity)
     }
     override fun onActivityResumed(activity: Activity) {
+        AdWindowUtils.applyCutoutSafeArea(activity)
         if (activity !is AdActivity) resumeHost = java.lang.ref.WeakReference(activity)
     }
     override fun onActivityPaused(activity: Activity) {}
     override fun onActivityStopped(activity: Activity) {}
     override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+        AdWindowUtils.applyCutoutSafeArea(activity)
         if (isColdStart) {
             isColdStart = false
             //handleColdStart(activity)

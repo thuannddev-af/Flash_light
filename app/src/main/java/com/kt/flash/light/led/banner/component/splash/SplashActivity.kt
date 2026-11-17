@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.animation.LinearInterpolator
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -44,6 +45,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     private var progressAnimator: ValueAnimator? = null
     private var progress = 0
     private var navigating = false
+    private var pendingNavigation = false
     private var splashAdsStarted = false
     private var interBackdrop: View? = null
 
@@ -51,6 +53,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     private var nativeFullShown = false
     private var nativeFullSplashHelper: NativeAdHelper? = null
     private var nativeCountdownJob: Job? = null
+    private var interWaitJob: Job? = null
+    private var interStageFinished = false
 
 
     @Inject
@@ -59,20 +63,31 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        pendingNavigation = savedInstanceState?.getBoolean(KEY_PENDING_NAVIGATION) ?: false
         updateProgress(savedInstanceState?.getInt(KEY_PROGRESS) ?: 0)
         showBanner()
     }
 
     override fun onConnectivityChanged(connected: Boolean) {
         if (connected) {
+            if (pendingNavigation) {
+                gotoMainScreen()
+                return
+            }
             if (!splashAdsStarted && !navigating) {
                 splashAdsStarted = true
+                Log.d("SPLASH_TEST", "Waiting for consent")
                 App.instance?.initConsentManager(this) {
                     runOnUiThread {
-                        if (!navigating && !isFinishing && !isDestroyed) {
-                            initNativeFullSplash()
-                            loadInterSplash()
-                            loadLanguageNativeAd()
+                        Log.d("SPLASH_TEST", "Consent returned; waiting for Remote Config")
+                        FirebaseConfigManager.instance().doAfterFetch {
+                            Log.d("SPLASH_TEST", "Remote Config ready; starting Splash ads")
+                            if (!navigating && !isFinishing && !isDestroyed) {
+                                initNativeFullSplash()
+                                loadInterSplash()
+                                loadLanguageNativeAd()
+                                loadNativeOnboarding(this)
+                            }
                         }
                     }
                 }
@@ -103,8 +118,16 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
     private fun gotoMainScreen() {
         if (navigating || isFinishing || isDestroyed) return
-        if (!Utils.isConnected(this)) return
+        pendingNavigation = true
+        if (!Utils.isConnected(this) ||
+            !lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)
+        ) {
+            Log.d("SPLASH_TEST", "Navigation pending: waiting for network and resumed Splash")
+            return
+        }
+        pendingNavigation = false
         navigating = true
+        interWaitJob?.cancel()
         nativeCountdownJob?.cancel()
         progressAnimator?.cancel()
         progressAnimator = null
@@ -123,8 +146,14 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
         super.onPause()
     }
 
+    override fun onPostResume() {
+        super.onPostResume()
+        if (pendingNavigation) gotoMainScreen()
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putInt(KEY_PROGRESS, progress)
+        outState.putBoolean(KEY_PENDING_NAVIGATION, pendingNavigation)
         super.onSaveInstanceState(outState)
     }
 
@@ -133,6 +162,19 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     }
 
     private fun loadInterSplash() {
+        if (interStageFinished || navigating) return
+        Log.d("SPLASH_TEST", "Inter request started")
+        interWaitJob?.cancel()
+        interWaitJob = lifecycleScope.launch {
+            delay(25_000L)
+            if (!interStageFinished && !navigating) {
+                Log.w("SPLASH_TEST", "Inter callback timeout -> continue Splash")
+                interStageFinished = true
+                interAdSplashHelper.cancel()
+                hideInterBackdrop()
+                gotoMainScreen()
+            }
+        }
         //window.setBackgroundDrawable(ColorDrawable(Color.BLACK))
         interAdSplashHelper.holdShow = false
         interAdSplashHelper.requestAds(InterstitialAdParam.Request)
@@ -162,6 +204,9 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
     private val interAdCallBack = object : InterstitialAdCallback {
         override fun onNextAction() {
+            if (interStageFinished) return
+            interStageFinished = true
+            interWaitJob?.cancel()
             hideInterBackdrop()
             Log.d("SPLASH_TEST", "onNextAction -> Chuyển màn")
             if (interClosed) return
@@ -169,6 +214,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
         }
 
         override fun onAdClose() {
+            interStageFinished = true
+            interWaitJob?.cancel()
             hideInterBackdrop()
             Log.d("SPLASH_TEST", "onAdClose -> Hiển thị native fullscreen")
             if (interClosed) return
@@ -177,6 +224,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
         }
 
         override fun onInterstitialShow() {
+            interWaitJob?.cancel()
+            Log.d("SPLASH_TEST", "Inter shown; stop waiting timeout")
             showInterBackdrop()
         }
 
@@ -198,6 +247,11 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
         override fun onAdFailedToShow(adError: AdError) {
             hideInterBackdrop()
+            if (!interStageFinished) {
+                interStageFinished = true
+                interWaitJob?.cancel()
+                gotoMainScreen()
+            }
 
         }
     }
@@ -220,12 +274,18 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
         }
     }
 
+    private fun loadNativeOnboarding(appActivity: AppCompatActivity) {
+            NativeAdsUtils.preLoadNativeFullScreenBetween12(this)
+            //NativeAdsUtils.preLoadNativeOnBoarding1(this)
+    }
+
     private fun hideInterBackdrop() {
         interBackdrop?.let { (it.parent as? android.view.ViewGroup)?.removeView(it) }
         interBackdrop = null
     }
 
     override fun onDestroy() {
+        interWaitJob?.cancel()
         hideInterBackdrop()
         super.onDestroy()
     }
@@ -318,5 +378,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     private companion object {
         const val PROGRESS_DURATION_MS = 7000L
         const val KEY_PROGRESS = "splash_progress"
+        const val KEY_PENDING_NAVIGATION = "splash_pending_navigation"
     }
 }

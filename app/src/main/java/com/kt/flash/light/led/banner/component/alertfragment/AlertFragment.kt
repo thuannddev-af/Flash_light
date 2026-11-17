@@ -13,8 +13,10 @@ import com.kt.flash.light.led.banner.databinding.FragmentAlertBinding
 import com.kt.flash.light.led.banner.utils.setOnClickWithPressEffect
 import com.kt.flash.light.led.banner.utils.setOnSingleClickListener
 import java.util.Locale
+import com.kt.flash.light.led.banner.component.dialog.RateDialog
 
 class AlertFragment : BaseFragment<FragmentAlertBinding>() {
+    private var rateDialog: RateDialog? = null
     override fun provideViewBinding(container: ViewGroup?) =
         FragmentAlertBinding.inflate(layoutInflater, container, false)
 
@@ -33,7 +35,13 @@ class AlertFragment : BaseFragment<FragmentAlertBinding>() {
             }
             startActivity(Intent.createChooser(intent, getString(R.string.settings_share_chooser)))
         }
-        itemRate.setOnSingleClickListener { openStore() }
+        itemRate.setOnSingleClickListener {
+            if (rateDialog?.isShowing != true) {
+                rateDialog = RateDialog(requireContext()) {
+                    if (isAdded) openStore()
+                }.also { it.show() }
+            }
+        }
         itemPrivacy.setOnSingleClickListener { openPrivacyPolicy() }
         itemPolicy.setOnSingleClickListener { showUnconfigured() }
     }
@@ -61,6 +69,12 @@ class AlertFragment : BaseFragment<FragmentAlertBinding>() {
 
     private fun showUnconfigured() {
         Toast.makeText(requireContext(), R.string.settings_unavailable, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onDestroyView() {
+        rateDialog?.dismiss()
+        rateDialog = null
+        super.onDestroyView()
     }
 
     private companion object {

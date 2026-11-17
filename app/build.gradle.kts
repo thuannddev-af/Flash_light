@@ -27,7 +27,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         val formattedDate = SimpleDateFormat("MM.dd.yyyy").format(Date())
-        base.archivesName.set("ProjectBase_v${versionName}(${versionCode})_${formattedDate}")
+        base.archivesName.set("Flashlight_v${versionName}(${versionCode})_${formattedDate}")
     }
 
     buildTypes {

@@ -15,6 +15,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Flashlight">
+        <activity
+            android:name="com.google.android.gms.ads.AdActivity"
+            android:theme="@style/Theme.Flashlight.Ad"
+            tools:replace="android:theme" />
         <activity android:name=".component.permission.PermissionActivity" android:exported="false" />
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"

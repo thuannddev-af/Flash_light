@@ -201,7 +201,7 @@ object NativeAdsUtils {
         if (nativeOnBoarding3 != null) return
 
         val config = NativeAdConfig(
-            idAdsPriority = if(adConfig.enableNativeOnB3){
+            idAdsPriority = if(adConfig.enableNativeOnB32f){
                 BuildConfig.native_obd3_2f
             }else{null},
             idAds = BuildConfig.native_obd3,
@@ -220,7 +220,7 @@ object NativeAdsUtils {
             adVisibility = AdOptionVisibility.GONE
         }
 
-        nativeOnBoarding?.requestAds(NativeAdParam.Request)
+        nativeOnBoarding3?.requestAds(NativeAdParam.Request)
         Logger.e("preloadNativeOnboarding3")
     }
 
