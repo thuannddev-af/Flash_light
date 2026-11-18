@@ -304,22 +304,22 @@ object NativeAdsUtils {
         setNative(activity, config, lifecycleOwner, nativeContentView, shimmerContainerNative)
     }
 
-    fun loadAndShowNativeAll(
-        fragment: Fragment,
-        adUnitId: String,
-        placement: String,
-        container: FrameLayout,
-        shimmer: ShimmerFrameLayout,
-        canShowAds: Boolean,
-        @androidx.annotation.LayoutRes layoutId: Int = R.layout.layout_native_medium
-    ): NativeAdHelper? = loadAndShowNativeAll(
-        fragment.requireActivity(), fragment.viewLifecycleOwner,
-        adUnitId, placement, container, shimmer, canShowAds, layoutId
-    )
+//    fun loadAndShowNativeAll(
+//        fragment: Fragment,
+//        adUnitId: String,
+//        placement: String,
+//        container: FrameLayout,
+//        shimmer: ShimmerFrameLayout,
+//        canShowAds: Boolean,
+//        @androidx.annotation.LayoutRes layoutId: Int = R.layout.layout_native_medium
+//    ): NativeAdHelper? = loadAndShowNativeAll(
+//        fragment.requireActivity(), fragment.viewLifecycleOwner,
+//        adUnitId, placement, container, shimmer, canShowAds, layoutId
+//    )
 
     fun loadAndShowNativeAll(
         activity: FragmentActivity,
-        lifecycleOwner: LifecycleOwner,
+        lifecycleOwner: LifecycleOwner = activity,
         adUnitId: String,
         placement: String,
         container: FrameLayout,
