@@ -53,10 +53,10 @@
                 android:layout_width="@dimen/size38"
                 android:layout_height="@dimen/size38"
                 android:scaleType="fitCenter"
-                android:background="@drawable/bg_avt_ads"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                android:src="@drawable/ic_avt_ads"/>
+                android:src="@drawable/ic_avt_ads"
+                />
 
             <TextView
                 android:id="@+id/tvAdView"
@@ -115,7 +115,7 @@
                 android:translationZ="0dp"
                 android:stateListAnimator="@null"
                 android:layout_width="0dp"
-                android:layout_height="@dimen/size40"
+                android:layout_height="@dimen/size44"
                 android:layout_marginTop="@dimen/size10"
                 android:background="@drawable/bg_button"
                 android:hint="@null"

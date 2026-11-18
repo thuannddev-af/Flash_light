@@ -90,7 +90,7 @@
         app:layout_constraintEnd_toEndOf="parent">
         <include
             android:id="@+id/shimmerContainerNative"
-            layout="@layout/loading_native_ad_view_type1" />
+            layout="@layout/loading_native_ad_view_collapsible" />
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

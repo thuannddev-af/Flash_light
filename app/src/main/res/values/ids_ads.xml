@@ -1,0 +1,4 @@
+<resources>
+    <item name="native_ads_binding" type="id" />
+    <item name="native_ads_all_binding" type="id" />
+</resources>

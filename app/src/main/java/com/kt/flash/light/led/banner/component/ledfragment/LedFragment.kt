@@ -198,7 +198,7 @@ class LedFragment : BaseFragment<FragmentLedBinding>() {
     }
 
     private fun initNativeNew() {
-        NativeAdsUtils.showNative(this, AdPlacement.NATIVE_CUSTOM, viewBaseFragment.frAdsNative, viewBaseFragment.shimmerContainerNative.root)
+        NativeAdsUtils.showNativeCustom(this, AdPlacement.NATIVE_CUSTOM, viewBaseFragment.frAdsNative, viewBaseFragment.shimmerContainerNative.root)
     }
 }
 

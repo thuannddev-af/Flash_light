@@ -18,6 +18,7 @@ import com.kt.flash.light.led.banner.component.lightcontroller.Light
 import com.kt.flash.light.led.banner.component.lightcontroller.LightController
 import com.kt.flash.light.led.banner.databinding.FragmentFlashBinding
 import com.kt.flash.light.led.banner.utils.FirebaseConfigManager
+import com.kt.flash.light.led.banner.utils.ads.AdPlacement
 import com.kt.flash.light.led.banner.utils.ads.NativeAdsUtils
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -90,7 +91,7 @@ class FlashFragment : BaseFragment<FragmentFlashBinding>() {
     override fun onResume() {
         super.onResume()
         torch?.register()
-        initNativeCustom()
+        initNativeNew()
     }
 
     override fun onPause() {
@@ -152,23 +153,26 @@ class FlashFragment : BaseFragment<FragmentFlashBinding>() {
         super.onDestroyView()
     }
 
-    private fun initNativeCustom() {
-        if (nativeCustomHelper != null) return
-        val enabled = FirebaseConfigManager.instance().adConfig.enableNativeCustom
-        viewBaseFragment.frAdsNative.isVisible = enabled
-        if (!enabled) return
+//    private fun initNativeCustom() {
+//        if (nativeCustomHelper != null) return
+//        val enabled = FirebaseConfigManager.instance().adConfig.enableNativeCustom
+//        viewBaseFragment.frAdsNative.isVisible = enabled
+//        if (!enabled) return
+//
+//        val helper = NativeAdsUtils.nativeCustom ?: return
+//        helper.setShimmerLayoutView(viewBaseFragment.shimmerContainerNative.root)
+//        helper.setNativeContentView(viewBaseFragment.frAdsNative)
+//        nativeCustomHelper = helper
+//        helper.getAdNativeState().onEach { state ->
+//            if (state is AdNativeState.Fail || state is AdNativeState.Cancel) {
+//                viewBaseFragment.frAdsNative.isVisible = false
+//            }
+//        }.launchIn(viewLifecycleOwner.lifecycleScope)
+//    }
 
-        val helper = NativeAdsUtils.nativeCustom ?: return
-        helper.setShimmerLayoutView(viewBaseFragment.shimmerContainerNative.root)
-        helper.setNativeContentView(viewBaseFragment.frAdsNative)
-        nativeCustomHelper = helper
-        helper.getAdNativeState().onEach { state ->
-            if (state is AdNativeState.Fail || state is AdNativeState.Cancel) {
-                viewBaseFragment.frAdsNative.isVisible = false
-            }
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+    private fun initNativeNew() {
+        NativeAdsUtils.showNativeCustom(this, AdPlacement.NATIVE_CUSTOM, viewBaseFragment.frAdsNative, viewBaseFragment.shimmerContainerNative.root)
     }
-
     private companion object {
         const val FLASH_MODE = Light.FLASH
         const val SOS_MODE = Light.SOS

@@ -29,7 +29,6 @@ class FirebaseConfigManager {
         get() = remoteSeconds("inter_click", 2L)
             .coerceIn(1L, Int.MAX_VALUE.toLong()).toInt()
 
-    // Seconds from native appearance; auto_skip includes the dismissable period.
     val nativeDismissableSeconds: Long
         get() = remoteSeconds("dismissable", 3L).coerceIn(0L, 3600L)
     val nativeAutoSkipSeconds: Long
@@ -55,6 +54,7 @@ class FirebaseConfigManager {
             onFetchCompplete?.invoke()
             return
         }
+
         onFetchCompplete?.let { pendingAction.add(it) }
         if (fetchStarted) return
         fetchStarted = true
@@ -67,7 +67,9 @@ class FirebaseConfigManager {
                 finishFetch()
             }
         }
+
         handler.postDelayed(fallback, 10_000L)
+
         remote.fetch(15 * 60L).addOnCompleteListener { task ->
             if (isFetchDone) return@addOnCompleteListener
             if (task.isSuccessful) {

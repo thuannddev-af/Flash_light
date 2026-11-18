@@ -28,7 +28,6 @@ object AdWindowUtils {
                     right + cutout.right,
                     bottom + cutout.bottom
                 )
-                // Leave other insets available for the SDK to handle its system bars.
                 insets
             }
         }

@@ -27,53 +27,34 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 object NativeAdsUtils {
-    fun showNative(
-        fragment: Fragment,
-        placement: String,
-        container: FrameLayout,
-        shimmer: ShimmerFrameLayout,
-        preloadedHelper: NativeAdHelper? = null
-    ): NativeAdHelper? {
-        require(placement == AdPlacement.NATIVE_CUSTOM) {
-            "Add native config mapping for placement: $placement"
-        }
-        container.isVisible = adConfig.enableNativeCustom
-        if (!adConfig.enableNativeCustom) return null
 
-        val owner = fragment.viewLifecycleOwner
-        val helper = preloadedHelper ?: NativeAdHelper(
-            fragment.requireActivity(), owner,
-            NativeAdConfig(
-                idAds = BuildConfig.native_custom,
-                canShowAds = true,
-                canReloadAds = false,
-                layoutId = R.layout.layout_native_medium,
-                adPlacement = placement,
-                reloadIfFirstFail = true
-            )
-        ).apply { adVisibility = AdOptionVisibility.GONE }
-
-        helper.setShimmerLayoutView(shimmer)
-        helper.setNativeContentView(container)
-        helper.getAdNativeState().onEach { state ->
-            if (state is AdNativeState.Fail || state is AdNativeState.Cancel) {
-                container.isVisible = false
-            }
-        }.launchIn(owner.lifecycleScope)
-        if (preloadedHelper == null) {
-            owner.lifecycle.addObserver(object : DefaultLifecycleObserver {
-                override fun onDestroy(owner: LifecycleOwner) {
-                    helper.destroy()
-                    owner.lifecycle.removeObserver(this)
-                }
-            })
-            helper.requestAds(NativeAdParam.Request)
-        }
-        return helper
-    }
     var nativeCustom: NativeAdHelper? = null
         private set
     private var nativeCustomOwner: AppCompatActivity? = null
+    private val availableCustom = java.util.ArrayDeque<NativeAdHelper>()
+    private val allCustom = linkedSetOf<NativeAdHelper>()
+    private data class NativeBinding(
+        val helper: NativeAdHelper,
+        val placement: String,
+        var visible: Boolean = true
+    )
+
+    private data class NativeAllBinding(
+        val helper: NativeAdHelper,
+        val owner: LifecycleOwner,
+        val adUnitId: String,
+        val placement: String,
+        val layoutId: Int,
+        var visible: Boolean = true
+    )
+
+    private fun clearNativeCustom() {
+        allCustom.toList().forEach { it.destroy() }
+        allCustom.clear()
+        availableCustom.clear()
+        nativeCustom = null
+        nativeCustomOwner = null
+    }
 
     private val processLifecycleOwner = ProcessLifecycleOwner.get()
     var nativeLanguage: NativeAdHelper? = null
@@ -89,9 +70,7 @@ object NativeAdsUtils {
     val adConfig get() = FirebaseConfigManager.instance().adConfig
 
     fun destroyAll() {
-        nativeCustom?.destroy()
-        nativeCustom = null
-        nativeCustomOwner = null
+        clearNativeCustom()
         nativeLanguage?.destroy()
         nativeOnBoarding?.destroy()
         nativeOnBoarding3?.destroy()
@@ -321,33 +300,163 @@ object NativeAdsUtils {
         setNative(activity, config, lifecycleOwner, nativeContentView, shimmerContainerNative)
     }
 
-    fun preLoadNativeCustom(appActivity: AppCompatActivity) {
-        if (nativeCustomOwner === appActivity && nativeCustom != null) return
-        nativeCustom?.destroy()
-        nativeCustom = null
-        nativeCustomOwner = null
-        if (!adConfig.enableNativeCustom) return
+    fun loadAndShowNativeAll(
+        fragment: Fragment,
+        adUnitId: String,
+        placement: String,
+        container: FrameLayout,
+        shimmer: ShimmerFrameLayout,
+        canShowAds: Boolean,
+        @androidx.annotation.LayoutRes layoutId: Int = R.layout.layout_native_medium
+    ): NativeAdHelper? = loadAndShowNativeAll(
+        fragment.requireActivity(), fragment.viewLifecycleOwner,
+        adUnitId, placement, container, shimmer, canShowAds, layoutId
+    )
 
+    fun loadAndShowNativeAll(
+        activity: FragmentActivity,
+        lifecycleOwner: LifecycleOwner,
+        adUnitId: String,
+        placement: String,
+        container: FrameLayout,
+        shimmer: ShimmerFrameLayout,
+        canShowAds: Boolean,
+        @androidx.annotation.LayoutRes layoutId: Int = R.layout.layout_native_medium
+    ): NativeAdHelper? {
+        check(container.getTag(R.id.native_ads_binding) == null) {
+            "Use only one native binding API for each container"
+        }
+        val existing = container.getTag(R.id.native_ads_all_binding) as? NativeAllBinding
+        if (!canShowAds || lifecycleOwner.lifecycle.currentState == androidx.lifecycle.Lifecycle.State.DESTROYED) {
+            container.isVisible = false
+            return null
+        }
+        if (existing != null) {
+            require(existing.owner === lifecycleOwner && existing.adUnitId == adUnitId &&
+                existing.placement == placement && existing.layoutId == layoutId) {
+                "This container is already bound to another native configuration"
+            }
+            container.isVisible = existing.visible
+            return existing.helper
+        }
+        val config = NativeAdConfig(
+            idAds = adUnitId,
+            canShowAds = canShowAds,
+            canReloadAds = false,
+            layoutId = layoutId,
+            adPlacement = placement,
+            reloadIfFirstFail = true
+        )
+        val helper = NativeAdHelper(activity, lifecycleOwner, config).apply {
+            adVisibility = AdOptionVisibility.GONE
+            setShimmerLayoutView(shimmer)
+            setNativeContentView(container)
+        }
+        val binding = NativeAllBinding(helper, lifecycleOwner, adUnitId, placement, layoutId)
+        container.setTag(R.id.native_ads_all_binding, binding)
+        container.isVisible = true
+        helper.getAdNativeState().onEach { state ->
+            when (state) {
+                is AdNativeState.Fail, is AdNativeState.Cancel -> binding.visible = false
+                is AdNativeState.Loading, is AdNativeState.Loaded -> binding.visible = true
+                else -> Unit
+            }
+            container.isVisible = canShowAds && binding.visible
+        }.launchIn(lifecycleOwner.lifecycleScope)
+        lifecycleOwner.lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onDestroy(owner: LifecycleOwner) {
+                if (container.getTag(R.id.native_ads_all_binding) === binding) {
+                    container.setTag(R.id.native_ads_all_binding, null)
+                }
+                helper.destroy()
+                owner.lifecycle.removeObserver(this)
+            }
+        })
+        helper.requestAds(NativeAdParam.Request)
+        return helper
+    }
+
+    private fun createNativeCustom(activity: AppCompatActivity, owner: LifecycleOwner): NativeAdHelper {
         val config = NativeAdConfig(
             idAds = BuildConfig.native_custom,
             canShowAds = true,
             canReloadAds = false,
             layoutId = R.layout.layout_native_medium,
-            adPlacement = "native_custom",
+            adPlacement = AdPlacement.NATIVE_CUSTOM,
             reloadIfFirstFail = true
         )
-        nativeCustomOwner = appActivity
-        nativeCustom = NativeAdHelper(appActivity, appActivity, config).apply {
+        return NativeAdHelper(activity, owner, config).apply {
             adVisibility = AdOptionVisibility.GONE
-            requestAds(NativeAdParam.Request)
         }
     }
 
-    fun destroyNativeCustom(appActivity: AppCompatActivity) {
-        if (nativeCustomOwner !== appActivity) return
-        nativeCustom?.destroy()
-        nativeCustom = null
-        nativeCustomOwner = null
+    fun preLoadNativeCustom(appActivity: AppCompatActivity, count: Int = 3) {
+        if (nativeCustomOwner === appActivity) return
+        clearNativeCustom()
+        if (!adConfig.enableNativeCustom) return
+        nativeCustomOwner = appActivity
+        repeat(count.coerceIn(1, 3)) {
+            val helper = createNativeCustom(appActivity, appActivity)
+            availableCustom.addLast(helper)
+            allCustom.add(helper)
+            helper.requestAds(NativeAdParam.Request)
+        }
+        nativeCustom = availableCustom.peekFirst()
     }
 
+    fun showNativeCustom(
+        fragment: Fragment,
+        placement: String,
+        container: FrameLayout,
+        shimmer: ShimmerFrameLayout
+    ): NativeAdHelper? {
+        require(placement == AdPlacement.NATIVE_CUSTOM) {
+            "Add native config mapping for placement: $placement"
+        }
+        container.isVisible = adConfig.enableNativeCustom
+        if (!adConfig.enableNativeCustom) return null
+
+        val existing = container.getTag(R.id.native_ads_binding) as? NativeBinding
+        if (existing != null) {
+            require(existing.placement == placement)
+            container.isVisible = existing.visible
+            return existing.helper
+        }
+        val activity = fragment.requireActivity() as AppCompatActivity
+        val owner = fragment.viewLifecycleOwner
+        val preloaded = if (nativeCustomOwner === activity) availableCustom.pollFirst() else null
+        nativeCustom = availableCustom.peekFirst()
+        val helper = preloaded ?: createNativeCustom(activity, owner)
+        if (nativeCustomOwner === activity) allCustom.add(helper)
+        val binding = NativeBinding(helper, placement)
+        container.setTag(R.id.native_ads_binding, binding)
+
+        helper.updateActivity(activity, owner)
+        helper.setShimmerLayoutView(shimmer)
+        helper.setNativeContentView(container)
+        helper.getAdNativeState().onEach { state ->
+            when (state) {
+                is AdNativeState.Fail, is AdNativeState.Cancel -> binding.visible = false
+                is AdNativeState.Loaded, is AdNativeState.Loading -> binding.visible = true
+                else -> Unit
+            }
+            container.isVisible = binding.visible
+        }.launchIn(owner.lifecycleScope)
+        owner.lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onDestroy(owner: LifecycleOwner) {
+                if (container.getTag(R.id.native_ads_binding) === binding) {
+                    container.setTag(R.id.native_ads_binding, null)
+                }
+                allCustom.remove(helper)
+                helper.destroy()
+                owner.lifecycle.removeObserver(this)
+            }
+        })
+        if (preloaded == null) helper.requestAds(NativeAdParam.Request)
+        return helper
+    }
+
+    fun destroyNativeCustom(appActivity: AppCompatActivity) {
+        if (nativeCustomOwner === appActivity) clearNativeCustom()
+    }
 }

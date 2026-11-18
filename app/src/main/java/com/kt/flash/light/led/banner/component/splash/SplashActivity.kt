@@ -86,7 +86,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                                 initNativeFullSplash()
                                 loadInterSplash()
                                 loadLanguageNativeAd()
-                                loadNativeOnboarding(this)
+                                //loadNativeOnboarding(this)
                             }
                         }
                     }
