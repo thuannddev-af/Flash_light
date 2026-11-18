@@ -129,7 +129,11 @@ object NativeAdsUtils {
             } else null,
             canShowAds = true,
             canReloadAds = false,
-            layoutId = R.layout.layout_native_ad_view_type1,
+            layoutId = if (BuildConfig.ADS_FLAVOR == "organic") {
+                R.layout.layout_native_ad_view_type1
+            } else {
+                R.layout.layout_native_ad_view_type_select_lang_2f
+            },
             adPlacement = "native_language_select",
             reloadIfFirstFail = true
         )

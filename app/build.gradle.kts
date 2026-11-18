@@ -51,11 +51,13 @@ android {
     flavorDimensions += "default"
     productFlavors {
         create("appDebug") {
+            applicationIdSuffix = ".organic"
+            buildConfigField("String", "ADS_FLAVOR", "\"organic\"")
 
             buildConfigField(
                 "String",
                 "ADS_CONFIG_KEY",
-                "\"ads_config_debug\""
+                "\"ad_config_organic\""
             )
 
             manifestPlaceholders["ad_app_id"] = "ca-app-pub-3940256099942544~3347511713"
@@ -99,11 +101,12 @@ android {
         }
 
         create("appProduct") {
+            buildConfigField("String", "ADS_FLAVOR", "\"fullads\"")
 
             buildConfigField(
                 "String",
                 "ADS_CONFIG_KEY",
-                "\"ads_config_full\""
+                "\"ad_config_user_paid\""
             )
             manifestPlaceholders["ad_app_id"] = "ca-app-pub-3940256099942544~3347511713"
 
@@ -143,53 +146,6 @@ android {
 
         }
 
-        create("appOrganic") {
-            dimension = "default"
-
-            manifestPlaceholders["ad_app_id"] =
-                "ca-app-pub-3940256099942544~3347511713"
-
-            buildConfigField("String", "banner_splash", "\"ca-app-pub-3940256099942544/2014213617\"")
-            buildConfigField("String", "banner_all", "\"ca-app-pub-3940256099942544/2014213617\"")
-
-
-            buildConfigField("String", "inter_splash", "\"ca-app-pub-3940256099942544/1033173712\"")
-            buildConfigField("String", "inter_splash_2f", "\"ca-app-pub-3940256099942544/1033173712\"")
-            buildConfigField("String", "native_full_splash", "\"ca-app-pub-3940256099942544/2247696110\"")
-            buildConfigField("String", "native_full_splash_2f", "\"ca-app-pub-3940256099942544/2247696110\"")
-            buildConfigField("String", "inter_back", "\"ca-app-pub-3940256099942544/1033173712\"")
-
-            buildConfigField("String", "app_open_resume", "\"ca-app-pub-3940256099942544/9257395921\"")
-            buildConfigField("String", "app_open", "\"ca-app-pub-3940256099942544/9257395921\"")
-
-            buildConfigField("String", "native_language", "\"ca-app-pub-3940256099942544/2247696110\"")
-            buildConfigField("String", "native_language_2f", "\"ca-app-pub-3940256099942544/2247696110\"")
-            buildConfigField("String", "native_language_select", "\"ca-app-pub-3940256099942544/2247696110\"")
-            buildConfigField("String", "native_language_select_2f", "\"ca-app-pub-3940256099942544/2247696110\"")
-
-
-            buildConfigField("String", "native_obd1", "\"ca-app-pub-3940256099942544/2247696110\"")
-            buildConfigField("String", "native_obd1_2f", "\"ca-app-pub-3940256099942544/2247696110\"")
-            buildConfigField("String", "native_obd12_full", "\"ca-app-pub-3940256099942544/2247696110\"")
-            buildConfigField("String", "native_obd34_full", "\"ca-app-pub-3940256099942544/2247696110\"")
-            buildConfigField("String", "native_obd3", "\"ca-app-pub-3940256099942544/2247696110\"")
-            buildConfigField("String", "native_obd3_2f", "\"ca-app-pub-3940256099942544/2247696110\"")
-            buildConfigField("String", "native_permission", "\"ca-app-pub-3940256099942544/2247696110\"")
-
-            buildConfigField("String", "native_custom", "\"ca-app-pub-3940256099942544/2247696110\"")
-
-
-            buildConfigField("String", "inter_home", "\"ca-app-pub-3940256099942544/1033173712\"")
-
-
-            buildConfigField("Boolean", "build_debug", "false")
-
-            buildConfigField(
-                "String",
-                "ADS_CONFIG_KEY",
-                "\"ads_config_organic\""
-            )
-        }
     }
 
 }

@@ -13,7 +13,7 @@
         android:layout_width="@dimen/size48"
         android:layout_height="@dimen/size48"
         android:layout_margin="@dimen/size8"
-        android:src="@drawable/ic_close_2"
+        android:src="@drawable/ic_close"
         android:tint="@color/color_main"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/close"/>

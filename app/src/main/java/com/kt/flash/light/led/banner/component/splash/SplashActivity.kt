@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.withResumed
 import com.ads.admob.data.ContentAd
 import com.ads.admob.helper.AdOptionVisibility
 import com.ads.admob.helper.adnative.NativeAdConfig
@@ -46,6 +47,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     private var progress = 0
     private var navigating = false
     private var pendingNavigation = false
+    private var navigationResumeJob: Job? = null
     private var splashAdsStarted = false
     private var interBackdrop: View? = null
 
@@ -119,10 +121,21 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     private fun gotoMainScreen() {
         if (navigating || isFinishing || isDestroyed) return
         pendingNavigation = true
-        if (!Utils.isConnected(this) ||
-            !lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)
-        ) {
-            Log.d("SPLASH_TEST", "Navigation pending: waiting for network and resumed Splash")
+        if (!Utils.isConnected(this)) {
+            Log.d("SPLASH_TEST", "Navigation pending: waiting for network")
+            return
+        }
+        if (!lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
+            Log.d("SPLASH_TEST", "Navigation pending: waiting for resumed Splash")
+            if (navigationResumeJob?.isActive != true) {
+                navigationResumeJob = lifecycleScope.launch {
+                    // Ad dismissal can arrive before Splash's lifecycle receives ON_RESUME.
+                    // Resume the pending navigation without requiring another app foreground.
+                    lifecycle.withResumed {
+                        if (pendingNavigation) gotoMainScreen()
+                    }
+                }
+            }
             return
         }
         pendingNavigation = false
@@ -148,6 +161,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
     override fun onPostResume() {
         super.onPostResume()
+        // Activity.onPostResume can run before LifecycleRegistry reaches RESUMED.
+        // gotoMainScreen schedules a lifecycle-aware retry in that case.
         if (pendingNavigation) gotoMainScreen()
     }
 
@@ -285,6 +300,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     }
 
     override fun onDestroy() {
+        navigationResumeJob?.cancel()
         interWaitJob?.cancel()
         hideInterBackdrop()
         super.onDestroy()
