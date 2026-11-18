@@ -89,6 +89,9 @@
     <string name="sos_dj_flash"><![CDATA[SOS & DJ Flash]]></string>
     <string name="led_banner">LED Banner</string>
     <string name="turn_your_phone_into_a_powerful_flashlight_anytime">Turn your phone into a powerful flashlight anytime.</string>
+    <string name="onboarding_sos_description">Use SOS mode for emergencies or DJ mode for parties.</string>
+    <string name="onboarding_led_description">Display scrolling LED text with customizable colors and effects.</string>
+    <string name="onboarding_screen_description">Use your display as a bright colored light source</string>
 
     <string name="next">Next</string>
     <string name="try_again">Go to Settings</string>

@@ -51,14 +51,16 @@ class LanguageActivity : BaseActivity<ActivityLanguageBinding>() {
     override fun initViews() {
         val isFromSplash = intent.getBooleanExtra(Constant.KEY_INTENT_FROM_SPLASH, false)
         viewBaseActivity.toolBar.btnBack.isVisible = !isFromSplash
+        viewBaseActivity.toolBar.btnAction.apply {
+            isVisible = false
+            isSelected = true // Allow marquee without taking focus from the language list.
+        }
 
         viewBaseActivity.rclLanguage.adapter = languageAdapter
         languageAdapter.onClick = {
-            viewBaseActivity.toolBar.btnAction.isVisible = true
             languageAdapter.selectLanguage(it.languageCode)
-            languageAdapter.selectedLanguage()?.let { languageModel ->
-                selectLanguageModel = languageModel
-            }
+            selectLanguageModel = languageAdapter.selectedLanguage()
+            viewBaseActivity.toolBar.btnAction.isVisible = selectLanguageModel != null
             loadNativeLanguageSelect()
         }
         viewBaseActivity.toolBar.btnBack.setOnClickListener {
@@ -96,9 +98,12 @@ class LanguageActivity : BaseActivity<ActivityLanguageBinding>() {
 
     override fun initObserver() {
         viewModel.listLanguage.onEach {
-            languageAdapter.setData(ArrayList(it))
-            val savedCode = spManager.getLanguage().languageCode
-            languageAdapter.selectLanguage(selectLanguageModel?.languageCode ?: savedCode)
+            // A saved app locale is not a selection in this visit to the screen.
+            // Copy items so adapter selection does not mutate the ViewModel's list.
+            languageAdapter.setData(ArrayList(it.map { language ->
+                language.copy(selected = language.languageCode == selectLanguageModel?.languageCode)
+            }))
+            viewBaseActivity.toolBar.btnAction.isVisible = selectLanguageModel != null
         }.flowWithLifecycle(lifecycle, Lifecycle.State.CREATED).launchIn(lifecycleScope)
     }
 

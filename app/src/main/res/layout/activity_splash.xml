@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
+    android:background="@color/white"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".component.splash.SplashActivity">
@@ -24,9 +25,10 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="@dimen/size136"
-                android:layout_height="@dimen/size136"
-                android:src="@drawable/ic_splash" />
+                android:layout_width="@dimen/size133"
+                android:layout_height="@dimen/size133"
+                android:clipToOutline="true"
+                android:src="@drawable/logo_fl" />
 
             <TextView
                 android:layout_width="wrap_content"

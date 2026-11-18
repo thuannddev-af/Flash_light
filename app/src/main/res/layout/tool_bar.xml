@@ -40,6 +40,8 @@
         android:gravity="center"
         android:text="@string/save"
         android:singleLine="true"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
         android:maxLines="1"
         android:textSize="@dimen/text_size_14"
         android:fontFamily="@font/plusjakartasans_semibold"

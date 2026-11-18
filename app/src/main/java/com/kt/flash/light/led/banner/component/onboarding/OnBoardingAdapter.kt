@@ -50,7 +50,9 @@ class OnBoardingAdapter : BaseAdapter<OnBoarding, ItemOnBoardingBinding>() {
             viewBinding.clOnboarding.isVisible = true
             viewBinding.imgBoarding.setImageResource(item.imageId)
             viewBinding.tvTitle.text = viewBinding.root.context.resources.getString(item.title)
-            viewBinding.tvDescription.text = item.tag
+            viewBinding.tvDescription.text = if (item.descriptionRes != 0) {
+                viewBinding.root.context.getString(item.descriptionRes)
+            } else ""
         }
     }
 

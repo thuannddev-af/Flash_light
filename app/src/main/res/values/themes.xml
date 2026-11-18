@@ -19,6 +19,10 @@
         <item name="android:windowEnableSplitTouch">false</item>
     </style>
 
+    <style name="Theme.Flashlight.Starting" parent="Theme.Flashlight">
+        <item name="android:windowBackground">@color/white</item>
+    </style>
+
     <style name="Theme.Lovetest" parent="android:Theme.Material.Light.NoActionBar" />
 
 </resources>

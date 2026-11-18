@@ -36,14 +36,10 @@ class LocalDataSource @Inject constructor(private val appDatabase: AppDatabase) 
 
     fun getListOnBoarding(): List<OnBoarding> {
         return listOf(
-            OnBoarding(R.drawable.ob1, R.string.bright_flashlight,"Turn your phone into a powerful \n" +
-                    "flashlight anytime."),
-            OnBoarding(R.drawable.ob2, R.string.sos_dj_flash,"Use SOS mode for emergencies for \n" +
-                    "DJ mode for parties."),
-            OnBoarding(R.drawable.ob3, R.string.led_banner,"Display scrolling LED text with customizable\n" +
-                    "colors and effects."),
-            OnBoarding(R.drawable.ob4, R.string.screen_light, "Use your display as a bright colored\n" +
-                    "light source")
+            OnBoarding(R.drawable.ob1, R.string.bright_flashlight, R.string.turn_your_phone_into_a_powerful_flashlight_anytime),
+            OnBoarding(R.drawable.ob2, R.string.sos_dj_flash, R.string.onboarding_sos_description),
+            OnBoarding(R.drawable.ob3, R.string.led_banner, R.string.onboarding_led_description),
+            OnBoarding(R.drawable.ob4, R.string.screen_light, R.string.onboarding_screen_description)
             )
     }
     fun getList() = appDatabase.tableTestDao().getList()
