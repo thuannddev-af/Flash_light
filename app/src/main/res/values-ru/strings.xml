@@ -65,20 +65,6 @@
     <string name="settings_unavailable">Эта страница ещё не настроена.</string>
     <string name="settings_link_unavailable">Нет приложения для открытия этой ссылки.</string>
 
-    <string name="english">Английский</string>
-    <string name="spanish">Испанский</string>
-    <string name="hindi">Хинди</string>
-    <string name="korea">Корейский</string>
-    <string name="japan">Японский</string>
-    <string name="german">Немецкий</string>
-    <string name="portuguese">Португальский</string>
-    <string name="french">Французский</string>
-    <string name="italian">Итальянский</string>
-    <string name="indonesia">Индонезийский</string>
-    <string name="vi_t_nam">Вьетнамский</string>
-    <string name="russian">Русский</string>
-    <string name="turkish">Турецкий</string>
-    <string name="chinese">Китайский</string>
 
     <string name="splash_progress_initial">0%</string>
     <string name="splash_progress_percent">%1$d%%</string>

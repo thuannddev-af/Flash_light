@@ -63,20 +63,6 @@
     <string name="settings_unavailable">यह पेज अभी कॉन्फ़िगर नहीं किया गया है।</string>
     <string name="settings_link_unavailable">इस लिंक को खोलने के लिए कोई ऐप उपलब्ध नहीं है।</string>
 
-    <string name="english">अंग्रेज़ी</string>
-    <string name="spanish">स्पेनिश</string>
-    <string name="hindi">हिन्दी</string>
-    <string name="korea">कोरियाई</string>
-    <string name="japan">जापानी</string>
-    <string name="german">जर्मन</string>
-    <string name="portuguese">पुर्तगाली</string>
-    <string name="french">फ़्रेंच</string>
-    <string name="italian">इतालवी</string>
-    <string name="indonesia">इंडोनेशियाई</string>
-    <string name="vi_t_nam">वियतनामी</string>
-    <string name="russian">रूसी</string>
-    <string name="turkish">तुर्की</string>
-    <string name="chinese">चीनी</string>
 
     <string name="splash_progress_initial">0%</string>
     <string name="splash_progress_percent">%1$d%%</string>

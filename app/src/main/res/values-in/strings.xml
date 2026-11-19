@@ -63,20 +63,7 @@
     <string name="settings_unavailable">Halaman ini belum dikonfigurasi.</string>
     <string name="settings_link_unavailable">Tidak ada aplikasi yang tersedia untuk membuka tautan ini.</string>
 
-    <string name="english">Inggris</string>
-    <string name="spanish">Spanyol</string>
-    <string name="hindi">Hindi</string>
-    <string name="korea">Korea</string>
-    <string name="japan">Jepang</string>
-    <string name="german">Jerman</string>
-    <string name="portuguese">Portugis</string>
-    <string name="french">Prancis</string>
-    <string name="italian">Italia</string>
-    <string name="indonesia">Indonesia</string>
-    <string name="vi_t_nam">Vietnam</string>
-    <string name="russian">Rusia</string>
-    <string name="turkish">Turki</string>
-    <string name="chinese">Mandarin</string>
+
 
     <string name="splash_progress_initial">0%</string>
     <string name="splash_progress_percent">%1$d%%</string>

@@ -97,12 +97,18 @@ class LanguageActivity : BaseActivity<ActivityLanguageBinding>() {
     }
 
     override fun initObserver() {
-        viewModel.listLanguage.onEach {
-            // A saved app locale is not a selection in this visit to the screen.
+        val currentLanguageCode = if (intent.getBooleanExtra(Constant.KEY_INTENT_FROM_SPLASH, false)) {
+            null
+        } else {
+            spManager.getLanguage().languageCode
+        }
+        viewModel.listLanguage.onEach { languages ->
+            val selectedCode = selectLanguageModel?.languageCode ?: currentLanguageCode
             // Copy items so adapter selection does not mutate the ViewModel's list.
-            languageAdapter.setData(ArrayList(it.map { language ->
-                language.copy(selected = language.languageCode == selectLanguageModel?.languageCode)
+            languageAdapter.setData(ArrayList(languages.map { language ->
+                language.copy(selected = language.languageCode == selectedCode)
             }))
+            selectLanguageModel = languageAdapter.selectedLanguage()
             viewBaseActivity.toolBar.btnAction.isVisible = selectLanguageModel != null
         }.flowWithLifecycle(lifecycle, Lifecycle.State.CREATED).launchIn(lifecycleScope)
     }

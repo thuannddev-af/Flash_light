@@ -65,20 +65,7 @@
     <string name="settings_unavailable">Trang này chưa được thiết lập.</string>
     <string name="settings_link_unavailable">Không có ứng dụng nào để mở liên kết này.</string>
 
-    <string name="english">Tiếng Anh</string>
-    <string name="spanish">Tiếng Tây Ban Nha</string>
-    <string name="hindi">Tiếng Hindi</string>
-    <string name="korea">Tiếng Hàn</string>
-    <string name="japan">Tiếng Nhật</string>
-    <string name="german">Tiếng Đức</string>
-    <string name="portuguese">Tiếng Bồ Đào Nha</string>
-    <string name="french">Tiếng Pháp</string>
-    <string name="italian">Tiếng Ý</string>
-    <string name="indonesia">Tiếng Indonesia</string>
-    <string name="vi_t_nam">Tiếng Việt</string>
-    <string name="russian">Tiếng Nga</string>
-    <string name="turkish">Tiếng Thổ Nhĩ Kỳ</string>
-    <string name="chinese">Tiếng Trung</string>
+
 
     <string name="splash_progress_initial">0%</string>
     <string name="splash_progress_percent">%1$d%%</string>

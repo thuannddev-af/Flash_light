@@ -64,20 +64,7 @@
     <string name="settings_unavailable">Questa pagina non è ancora configurata.</string>
     <string name="settings_link_unavailable">Nessuna app disponibile per aprire questo link.</string>
 
-    <string name="english">Inglese</string>
-    <string name="spanish">Spagnolo</string>
-    <string name="hindi">Hindi</string>
-    <string name="korea">Coreano</string>
-    <string name="japan">Giapponese</string>
-    <string name="german">Tedesco</string>
-    <string name="portuguese">Portoghese</string>
-    <string name="french">Francese</string>
-    <string name="italian">Italiano</string>
-    <string name="indonesia">Indonesiano</string>
-    <string name="vi_t_nam">Vietnamita</string>
-    <string name="russian">Russo</string>
-    <string name="turkish">Turco</string>
-    <string name="chinese">Cinese</string>
+
 
     <string name="splash_progress_initial">0%</string>
     <string name="splash_progress_percent">%1$d%%</string>

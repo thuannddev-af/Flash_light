@@ -64,20 +64,6 @@
     <string name="settings_unavailable">このページはまだ設定されていません。</string>
     <string name="settings_link_unavailable">このリンクを開けるアプリがありません。</string>
 
-    <string name="english">英語</string>
-    <string name="spanish">スペイン語</string>
-    <string name="hindi">ヒンディー語</string>
-    <string name="korea">韓国語</string>
-    <string name="japan">日本語</string>
-    <string name="german">ドイツ語</string>
-    <string name="portuguese">ポルトガル語</string>
-    <string name="french">フランス語</string>
-    <string name="italian">イタリア語</string>
-    <string name="indonesia">インドネシア語</string>
-    <string name="vi_t_nam">ベトナム語</string>
-    <string name="russian">ロシア語</string>
-    <string name="turkish">トルコ語</string>
-    <string name="chinese">中国語</string>
 
     <string name="splash_progress_initial">0%</string>
     <string name="splash_progress_percent">%1$d%%</string>

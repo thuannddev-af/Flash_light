@@ -157,6 +157,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             tabLed.isSelected = position == MainPagerAdapter.LED_PAGE
             screenTitle.isVisible = !tabLed.isSelected
             tabAlert.isSelected = position == MainPagerAdapter.ALERT_PAGE
+            mainBannerSlot.isVisible = !tabAlert.isSelected
             bottomTabs.invalidate()
             screenTitle.setText(
                 when (position) {

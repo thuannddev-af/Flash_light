@@ -64,20 +64,7 @@
     <string name="settings_unavailable">이 페이지는 아직 설정되지 않았습니다.</string>
     <string name="settings_link_unavailable">이 링크를 열 수 있는 앱이 없습니다.</string>
 
-    <string name="english">영어</string>
-    <string name="spanish">스페인어</string>
-    <string name="hindi">힌디어</string>
-    <string name="korea">한국어</string>
-    <string name="japan">일본어</string>
-    <string name="german">독일어</string>
-    <string name="portuguese">포르투갈어</string>
-    <string name="french">프랑스어</string>
-    <string name="italian">이탈리아어</string>
-    <string name="indonesia">인도네시아어</string>
-    <string name="vi_t_nam">베트남어</string>
-    <string name="russian">러시아어</string>
-    <string name="turkish">튀르키예어</string>
-    <string name="chinese">중국어</string>
+
 
     <string name="splash_progress_initial">0%</string>
     <string name="splash_progress_percent">%1$d%%</string>

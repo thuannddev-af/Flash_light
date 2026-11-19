@@ -63,20 +63,7 @@
     <string name="settings_unavailable">Esta página aún no está configurada.</string>
     <string name="settings_link_unavailable">No hay ninguna aplicación disponible para abrir este enlace.</string>
 
-    <string name="english">Inglés</string>
-    <string name="spanish">Español</string>
-    <string name="hindi">Hindi</string>
-    <string name="korea">Coreano</string>
-    <string name="japan">Japonés</string>
-    <string name="german">Alemán</string>
-    <string name="portuguese">Portugués</string>
-    <string name="french">Francés</string>
-    <string name="italian">Italiano</string>
-    <string name="indonesia">Indonesio</string>
-    <string name="vi_t_nam">Vietnamita</string>
-    <string name="russian">Ruso</string>
-    <string name="turkish">Turco</string>
-    <string name="chinese">Chino</string>
+
 
     <string name="splash_progress_initial">0%</string>
     <string name="splash_progress_percent">%1$d%%</string>

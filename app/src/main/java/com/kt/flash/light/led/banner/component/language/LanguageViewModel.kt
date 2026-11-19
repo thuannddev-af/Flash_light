@@ -26,7 +26,6 @@ class LanguageViewModel @Inject constructor(
     fun loadListLanguage() {
         viewModelScope.launch {
             val languages = getListLanguageUseCase.execute(GetListLanguageUseCase.Param())
-            // The app overrides its own locale, so read the device configuration directly.
             val systemLanguage = ConfigurationCompat
                 .getLocales(Resources.getSystem().configuration)[0]?.language
             listLanguageFlow.value = languages.sortedBy { it.languageCode != systemLanguage }

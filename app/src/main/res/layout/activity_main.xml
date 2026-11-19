@@ -217,12 +217,17 @@
         </LinearLayout>
     </com.kt.flash.light.led.banner.customview.GlowTabBar>
     <FrameLayout
-        android:id="@+id/frAdsBanner"
+        android:id="@+id/main_banner_slot"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:layout_height="wrap_content">
 
-        <include layout="@layout/layout_banner_control" />
+        <FrameLayout
+            android:id="@+id/frAdsBanner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <include layout="@layout/layout_banner_control" />
+        </FrameLayout>
     </FrameLayout>
 </LinearLayout>
 

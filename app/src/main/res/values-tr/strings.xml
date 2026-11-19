@@ -65,20 +65,7 @@
     <string name="settings_unavailable">Bu sayfa henüz yapılandırılmadı.</string>
     <string name="settings_link_unavailable">Bu bağlantıyı açabilecek bir uygulama bulunamadı.</string>
 
-    <string name="english">İngilizce</string>
-    <string name="spanish">İspanyolca</string>
-    <string name="hindi">Hintçe</string>
-    <string name="korea">Korece</string>
-    <string name="japan">Japonca</string>
-    <string name="german">Almanca</string>
-    <string name="portuguese">Portekizce</string>
-    <string name="french">Fransızca</string>
-    <string name="italian">İtalyanca</string>
-    <string name="indonesia">Endonezce</string>
-    <string name="vi_t_nam">Vietnamca</string>
-    <string name="russian">Rusça</string>
-    <string name="turkish">Türkçe</string>
-    <string name="chinese">Çince</string>
+
 
     <string name="splash_progress_initial">0%</string>
     <string name="splash_progress_percent">%1$d%%</string>

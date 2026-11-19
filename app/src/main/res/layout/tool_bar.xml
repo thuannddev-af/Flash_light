@@ -21,6 +21,8 @@
         android:id="@+id/tvTitle"
         android:layout_width="0dp"
         android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/size50"
+        android:layout_marginEnd="@dimen/size50"
         android:autoSizeMaxTextSize="@dimen/size17"
         android:autoSizeMinTextSize="@dimen/size13"
         android:autoSizeTextType="uniform"
@@ -30,14 +32,15 @@
         android:gravity="center"
         android:textColor="@color/white"
         android:text="@string/settings_language"
-        app:layout_constraintStart_toEndOf="@id/btnBack"
-        app:layout_constraintEnd_toStartOf="@id/btnAction"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/btnAction"
         android:layout_width="@dimen/size50"
         android:layout_height="match_parent"
         android:gravity="center"
+        android:visibility="gone"
         android:text="@string/save"
         android:singleLine="true"
         android:ellipsize="marquee"

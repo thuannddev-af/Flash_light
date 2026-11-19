@@ -64,20 +64,7 @@
     <string name="settings_unavailable">此页面尚未配置。</string>
     <string name="settings_link_unavailable">没有可用于打开此链接的应用。</string>
 
-    <string name="english">英语</string>
-    <string name="spanish">西班牙语</string>
-    <string name="hindi">印地语</string>
-    <string name="korea">韩语</string>
-    <string name="japan">日语</string>
-    <string name="german">德语</string>
-    <string name="portuguese">葡萄牙语</string>
-    <string name="french">法语</string>
-    <string name="italian">意大利语</string>
-    <string name="indonesia">印度尼西亚语</string>
-    <string name="vi_t_nam">越南语</string>
-    <string name="russian">俄语</string>
-    <string name="turkish">土耳其语</string>
-    <string name="chinese">中文</string>
+
 
     <string name="splash_progress_initial">0%</string>
     <string name="splash_progress_percent">%1$d%%</string>
