@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.CAMERA" />
+
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -19,7 +21,10 @@
             android:name="com.google.android.gms.ads.AdActivity"
             android:theme="@style/Theme.Flashlight.Ad"
             tools:replace="android:theme" />
-        <activity android:name=".component.permission.PermissionActivity" android:exported="false" />
+        <activity
+            android:name=".component.permission.PermissionActivity"
+            android:exported="false" />
+
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="${ad_app_id}" />
@@ -36,14 +41,14 @@
             android:screenOrientation="sensorLandscape" />
         <activity
             android:name=".component.main.MainActivity"
-            android:screenOrientation="portrait"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".component.splash.SplashActivity"
-            android:theme="@style/Theme.Flashlight.Starting"
-            android:screenOrientation="portrait"
             android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Flashlight.Starting"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

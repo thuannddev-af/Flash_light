@@ -165,6 +165,7 @@ class LedFragment : BaseFragment<FragmentLedBinding>() {
         super.onResume();
         viewBaseFragment.ledPreview.running = true
         initNativeNew()
+        showNativeAll()
     }
 
     override fun onPause() {
@@ -199,6 +200,18 @@ class LedFragment : BaseFragment<FragmentLedBinding>() {
 
     private fun initNativeNew() {
         NativeAdsUtils.showNativeCustom(this, AdPlacement.NATIVE_CUSTOM, viewBaseFragment.frAdsNative, viewBaseFragment.shimmerContainerNative.root)
+    }
+
+    private fun showNativeAll() {
+        NativeAdsUtils.loadAndShowNativeAll(
+            requireActivity(),
+            adUnitId = BuildConfig.native_custom,
+            placement = AdPlacement.NATIVE_CUSTOM,
+            container = viewBaseFragment.frAdsNative2,
+            shimmer = viewBaseFragment.shimmerContainerNative1.root,
+            canShowAds = NativeAdsUtils.adConfig.enableNativeCustom,
+            layoutId = R.layout.layout_native_medium
+        )
     }
 }
 

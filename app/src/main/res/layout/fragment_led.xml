@@ -71,8 +71,8 @@
             android:layout_height="match_parent">
 
             <include
-                android:id="@+id/shimmerContainerNative"
-                layout="@layout/loading_native_medium"/>
+                android:id="@+id/shimmerContainerNative1"
+                layout="@layout/loading_native_medium_test2"/>
         </FrameLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -228,6 +228,16 @@
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
+        <FrameLayout
+            android:layout_marginTop="@dimen/size12"
+            android:id="@+id/frAdsNative2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <include
+                android:id="@+id/shimmerContainerNative"
+                layout="@layout/loading_native_medium"/>
+        </FrameLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
