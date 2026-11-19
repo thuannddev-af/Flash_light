@@ -6,7 +6,11 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.SeekBar
+import android.widget.LinearLayout
+import android.widget.ImageView
+import androidx.appcompat.widget.AppCompatImageButton
 import androidx.core.view.isVisible
+import androidx.core.view.ViewCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
 import com.ads.admob.helper.AdOptionVisibility
@@ -19,6 +23,7 @@ import com.kt.flash.light.led.banner.R
 import com.kt.flash.light.led.banner.base.fragment.BaseFragment
 import com.kt.flash.light.led.banner.component.colorpicker.showColorPickerDialog
 import com.kt.flash.light.led.banner.databinding.FragmentLedBinding
+import com.kt.flash.light.led.banner.databinding.ViewLedPaletteBinding
 import com.kt.flash.light.led.banner.utils.FirebaseConfigManager
 import com.kt.flash.light.led.banner.utils.ads.AdPlacement
 import com.kt.flash.light.led.banner.utils.ads.NativeAdsUtils
@@ -33,6 +38,10 @@ class LedFragment : BaseFragment<FragmentLedBinding>() {
     private var color = Color.rgb(255, 213, 79)
     private var direction = 1
     private var effect = 0
+    private var edgeTabSelected = false
+    private var edgeEnabled = false
+    private var edgeColor = 0xFF37C4ED.toInt()
+    private var edgeStyle = 0
     private var picker: Dialog? = null
     private var nativeAdHelper : NativeAdHelper? = null
 
@@ -48,6 +57,10 @@ class LedFragment : BaseFragment<FragmentLedBinding>() {
             color = it.getInt("color", color)
             direction = it.getInt("direction", 1).coerceIn(0, 3)
             effect = it.getInt("effect", 0).coerceIn(0, 2)
+            edgeTabSelected = it.getBoolean("edge_tab")
+            edgeEnabled = it.getBoolean("edge_enabled")
+            edgeColor = it.getInt("edge_color", edgeColor)
+            edgeStyle = it.getInt("edge_style").coerceIn(edgeStyles.indices)
         }
     }
 
@@ -70,25 +83,22 @@ class LedFragment : BaseFragment<FragmentLedBinding>() {
             listOf(effectGlow, effectBlink, effectNeon).forEachIndexed { index, view ->
                 view.setOnClickListener { effect = index; render() }
             }
-            val colors = listOf(
-                0xFF37C4ED.toInt(),
-                Color.WHITE,
-                0xFFFFD54F.toInt(),
-                0xFF81C784.toInt(),
-                0xFFBA68C8.toInt(),
-                0xFFEF7070.toInt()
-            )
-            listOf(
-                colorCyan,
-                colorWhite,
-                colorYellow,
-                colorGreen,
-                colorPurple,
-                colorRed
-            ).forEachIndexed { index, view ->
-                view.setOnClickListener { color = colors[index]; render() }
+            ledTab.setOnClickListener { selectEdgeTab(false) }
+            edgeTab.setOnClickListener { selectEdgeTab(true) }
+            edgeContent.edgeToggle.setOnClickListener {
+                edgeEnabled = !edgeEnabled
+                renderEdge()
             }
-            customColor.setOnClickListener { showColorPicker() }
+            bindPalette(ledPalette, { color }) {
+                color = it
+                render()
+            }
+            bindPalette(edgeContent.edgePalette, { edgeColor }) {
+                edgeColor = it
+                renderEdge()
+            }
+            edgeContent.edgePalette.editColor.isVisible = true
+            bindEdgeStyles()
             ledFullScreen.setOnClickListener {
                 startActivity(
                     Intent(
@@ -99,6 +109,49 @@ class LedFragment : BaseFragment<FragmentLedBinding>() {
             }
         }
         render()
+        renderEdge()
+        selectEdgeTab(edgeTabSelected)
+    }
+
+    private fun selectEdgeTab(selected: Boolean) = with(viewBaseFragment) {
+        edgeTabSelected = selected
+        ledTab.isSelected = !selected
+        edgeTab.isSelected = selected
+        ledContent.isVisible = !selected
+        edgeContent.root.isVisible = selected
+        ledPreview.running = !selected && isResumed
+    }
+
+    private fun renderEdge() = with(viewBaseFragment.edgeContent) {
+        edgeToggleIcon.setImageResource(if (edgeEnabled) R.drawable.ic_on else R.drawable.ic_off)
+        ViewCompat.setStateDescription(edgeToggle, getString(if (edgeEnabled) R.string.on else R.string.off))
+        edgePreview.setStyle(this@LedFragment.edgeStyles[edgeStyle], edgeColor)
+        edgePreview.isVisible = edgeEnabled
+        renderPalette(edgePalette, edgeColor)
+        repeat(edgeStyles.childCount) { index ->
+            edgeStyles.getChildAt(index).isSelected = index == edgeStyle
+        }
+    }
+
+    private fun bindEdgeStyles() {
+        val size = resources.getDimensionPixelSize(R.dimen.size48)
+        val spacing = resources.getDimensionPixelSize(R.dimen.size8)
+        val row = viewBaseFragment.edgeContent.edgeStyles
+        edgeStyles.forEachIndexed { index, icon ->
+            val button = AppCompatImageButton(requireContext()).apply {
+                setBackgroundResource(R.drawable.bg_mode)
+                setImageResource(icon)
+                scaleType = ImageView.ScaleType.CENTER
+                contentDescription = getString(R.string.led_edge_border_option, index + 1)
+                setOnClickListener {
+                    edgeStyle = index
+                    renderEdge()
+                }
+            }
+            row.addView(button, LinearLayout.LayoutParams(size, size).apply {
+                if (index > 0) marginStart = spacing
+            })
+        }
     }
 
     private fun render() = with(viewBaseFragment) {
@@ -113,23 +166,7 @@ class LedFragment : BaseFragment<FragmentLedBinding>() {
         listOf(effectGlow, effectBlink, effectNeon).forEachIndexed { i, view ->
             view.isSelected = i == effect
         }
-        val colors = listOf(
-            0xFF37C4ED.toInt(),
-            Color.WHITE,
-            0xFFFFD54F.toInt(),
-            0xFF81C784.toInt(),
-            0xFFBA68C8.toInt(),
-            0xFFEF7070.toInt()
-        )
-        listOf(
-            colorCyan,
-            colorWhite,
-            colorYellow,
-            colorGreen,
-            colorPurple,
-            colorRed
-        ).forEachIndexed { i, view -> view.isSelected = color == colors[i] }
-        customColor.isSelected = color !in colors
+        renderPalette(ledPalette, color)
         ledPreview.apply {
             message = this@LedFragment.message
             fontPixels = fontSize
@@ -141,14 +178,61 @@ class LedFragment : BaseFragment<FragmentLedBinding>() {
         }
     }
 
-    private fun showColorPicker() {
+    private val paletteColors = listOf(
+        0xFF37C4ED.toInt(),
+        Color.WHITE,
+        0xFFFFD54F.toInt(),
+        0xFF81C784.toInt(),
+        0xFFBA68C8.toInt(),
+        0xFFEF7070.toInt()
+    )
+
+    private val edgeStyles = listOf(
+        R.drawable.ic_led_edge_butterfly,
+        R.drawable.ic_led_edge_style_0,
+        R.drawable.ic_led_edge_style_1,
+        R.drawable.ic_led_edge_style_2,
+        R.drawable.ic_led_edge_style_3,
+        R.drawable.ic_led_edge_style_4,
+        R.drawable.ic_led_edge_style_5,
+        R.drawable.ic_led_edge_style_6,
+        R.drawable.ic_led_edge_style_7,
+        R.drawable.ic_led_edge_style_8,
+        R.drawable.ic_led_edge_style_9,
+        R.drawable.ic_led_edge_style_10
+    )
+
+    private fun ViewLedPaletteBinding.swatches() =
+        listOf(colorCyan, colorWhite, colorYellow, colorGreen, colorPurple, colorRed)
+
+    private fun bindPalette(
+        palette: ViewLedPaletteBinding,
+        currentColor: () -> Int,
+        onColorChanged: (Int) -> Unit
+    ) {
+        palette.swatches().zip(paletteColors).forEach { (swatch, preset) ->
+            swatch.setOnClickListener { onColorChanged(preset) }
+        }
+        palette.customColor.setOnClickListener { showColorPicker(currentColor(), onColorChanged) }
+        palette.editColor.setOnClickListener { showColorPicker(currentColor(), onColorChanged) }
+    }
+
+    private fun renderPalette(palette: ViewLedPaletteBinding, color: Int) {
+        palette.swatches().zip(paletteColors).forEach { (swatch, preset) ->
+            swatch.isSelected = color == preset
+        }
+        palette.customColor.isSelected = color !in paletteColors
+    }
+
+    private fun showColorPicker(color: Int, onColorChanged: (Int) -> Unit) {
         if (picker?.isShowing == true) return
         val hsv = FloatArray(3).apply { Color.colorToHSV(color, this) }
         val opacity = (Color.alpha(color) * 100f / 255).roundToInt()
         picker =
             showColorPickerDialog(requireActivity(), hsv, opacity) { selectedHsv, selectedOpacity ->
-                color = Color.HSVToColor((selectedOpacity * 255f / 100).roundToInt(), selectedHsv)
-                render()
+                onColorChanged(
+                    Color.HSVToColor((selectedOpacity * 255f / 100).roundToInt(), selectedHsv)
+                )
             }
     }
 
@@ -158,12 +242,17 @@ class LedFragment : BaseFragment<FragmentLedBinding>() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putAll(settings()); super.onSaveInstanceState(outState)
+        outState.putAll(settings())
+        outState.putBoolean("edge_tab", edgeTabSelected)
+        outState.putBoolean("edge_enabled", edgeEnabled)
+        outState.putInt("edge_color", edgeColor)
+        outState.putInt("edge_style", edgeStyle)
+        super.onSaveInstanceState(outState)
     }
 
     override fun onResume() {
         super.onResume();
-        viewBaseFragment.ledPreview.running = true
+        viewBaseFragment.ledPreview.running = !edgeTabSelected
         initNativeNew()
         showNativeAll()
     }

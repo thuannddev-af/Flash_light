@@ -17,4 +17,16 @@
         <item name="android:windowMinWidthMajor">90%</item>
         <item name="android:windowMinWidthMinor">90%</item>
     </style>
+    <style name="LedFeatureTab">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@drawable/bg_led_feature_tab</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:fontFamily">@font/plusjakartasans_semibold</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/control_tint</item>
+        <item name="android:textSize">@dimen/text_size_14</item>
+    </style>
 </resources>

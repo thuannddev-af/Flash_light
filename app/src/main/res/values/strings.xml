@@ -59,20 +59,20 @@
     <string name="settings_share_chooser">Share app</string>
     <string name="settings_unavailable">This page is not configured yet.</string>
     <string name="settings_link_unavailable">No app is available to open this link.</string>
-    <string name="english">English</string>
-    <string name="spanish">Spanish</string>
-    <string name="hindi">Hindi</string>
-    <string name="korea">Korea</string>
-    <string name="japan">Japan</string>
-    <string name="german">German</string>
-    <string name="portuguese">Portuguese</string>
-    <string name="french">French</string>
-    <string name="italian">Italian</string>
-    <string name="indonesia">Indonesia</string>
-    <string name="vi_t_nam">Việt Nam</string>
-    <string name="russian">Russian</string>
-    <string name="turkish">Turkish</string>
-    <string name="chinese">Chinese</string>
+    <string name="english" translatable="false">English</string>
+    <string name="spanish" translatable="false">Español</string>
+    <string name="hindi" translatable="false">हिन्दी</string>
+    <string name="korea" translatable="false" >한국어</string>
+    <string name="japan" translatable="false">日本語</string>
+    <string name="german" translatable="false">Deutsch</string>
+    <string name="portuguese" translatable="false">Português</string>
+    <string name="french" translatable="false">Français</string>
+    <string name="italian" translatable="false">Italiano</string>
+    <string name="indonesia" translatable="false">Bahasa Indonesia</string>
+    <string name="vi_t_nam" translatable="false">Tiếng Việt</string>
+    <string name="russian" translatable="false">Русский</string>
+    <string name="turkish" translatable="false">Türkçe</string>
+    <string name="chinese" translatable="false">简体中文</string>
     <string name="splash_progress_initial">0%</string>
     <string name="splash_progress_percent">%1$d%%</string>
     <string name="this_action_may_container_advertisement">This action may container advertisement</string>
@@ -111,4 +111,14 @@
     <string name="camera_permission_required_to_continue">Please allow Camera access before continuing.</string>
     <string name="camera_permission_settings_message">Camera permission is blocked. Open Settings, choose Permissions → Camera, and allow access. Then return here and tap Continue.</string>
     <string name="camera_permission_disable_message">To turn off Camera access, open Settings → Permissions → Camera and choose Don’t allow. Camera access is required to continue into the app.</string>
+    <string name="flash_on_time">On Time</string>
+    <string name="flash_off_time">Off Time</string>
+    <string name="flash_on_description">Duration of the light pulse</string>
+    <string name="flash_off_description">Darkness between pulses</string>
+    <string name="flash_continuous">Continuous</string>
+    <string name="flash_time_seconds">%1$.1f s</string>
+    <string name="enable_led_edge_lighting">Enable Edge Lighting to begin</string>
+    <string name="edit_led_color">Edit</string>
+    <string name="led_edge_border_style">Border Style</string>
+    <string name="led_edge_border_option">Border style %1$d</string>
 </resources>

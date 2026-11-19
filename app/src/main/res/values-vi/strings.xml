@@ -116,4 +116,14 @@
     <string name="camera_permission_required_to_continue">Vui lòng cho phép truy cập máy ảnh trước khi tiếp tục.</string>
     <string name="camera_permission_settings_message">Quyền truy cập máy ảnh đã bị chặn. Mở Cài đặt, chọn Quyền → Máy ảnh và cho phép truy cập. Sau đó quay lại đây và nhấn Tiếp tục.</string>
     <string name="camera_permission_disable_message">Để tắt quyền truy cập máy ảnh, mở Cài đặt → Quyền → Máy ảnh và chọn Không cho phép. Ứng dụng cần quyền truy cập máy ảnh để tiếp tục sử dụng.</string>
+    <string name="flash_on_time">Thời gian sáng</string>
+    <string name="flash_off_time">Thời gian tắt</string>
+    <string name="flash_on_description">Thời gian đèn sáng trong mỗi nhịp</string>
+    <string name="flash_off_description">Khoảng nghỉ giữa hai nhịp chớp</string>
+    <string name="flash_continuous">Sáng liên tục</string>
+    <string name="flash_time_seconds">%1$.1f giây</string>
+    <string name="enable_led_edge_lighting">Bật đèn viền để bắt đầu</string>
+    <string name="edit_led_color">Chỉnh sửa</string>
+    <string name="led_edge_border_style">Kiểu viền</string>
+    <string name="led_edge_border_option">Kiểu viền %1$d</string>
 </resources>

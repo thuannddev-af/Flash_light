@@ -1,6 +1,8 @@
 package com.kt.flash.light.led.banner.component.language
 
 import android.content.Context
+import android.content.res.Resources
+import androidx.core.os.ConfigurationCompat
 import androidx.lifecycle.viewModelScope
 import com.kt.flash.light.led.banner.base.viewmodel.BaseViewModel
 import com.kt.flash.light.led.banner.data.model.Language
@@ -23,7 +25,11 @@ class LanguageViewModel @Inject constructor(
 
     fun loadListLanguage() {
         viewModelScope.launch {
-            listLanguageFlow.value = getListLanguageUseCase.execute(GetListLanguageUseCase.Param())
+            val languages = getListLanguageUseCase.execute(GetListLanguageUseCase.Param())
+            // The app overrides its own locale, so read the device configuration directly.
+            val systemLanguage = ConfigurationCompat
+                .getLocales(Resources.getSystem().configuration)[0]?.language
+            listLanguageFlow.value = languages.sortedBy { it.languageCode != systemLanguage }
         }
     }
 }

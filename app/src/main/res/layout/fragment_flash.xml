@@ -273,6 +273,121 @@
             </LinearLayout>
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/flash_timing"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size16"
+                android:background="@drawable/bg_mode"
+                android:orientation="vertical"
+                android:padding="@dimen/size16">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:labelFor="@id/on_time_slider"
+                        android:text="@string/flash_on_time"
+                        android:fontFamily="@font/plusjakartasans_medium"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/text_size_14" />
+
+                    <TextView
+                        android:id="@+id/on_time_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/yellow"
+                        android:textSize="@dimen/text_size_14" />
+                </LinearLayout>
+
+                <SeekBar
+                    android:id="@+id/on_time_slider"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:max="9"
+                    android:maxHeight="8dp"
+                    android:minHeight="8dp"
+                    android:paddingStart="22dp"
+                    android:paddingEnd="22dp"
+                    android:progressDrawable="@drawable/bg_flash_timing_track"
+                    android:saveEnabled="false"
+                    android:splitTrack="false"
+                    android:thumb="@drawable/bg_flash_timing_thumb" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/flash_on_description"
+                    android:fontFamily="@font/plusjakartasans_regular"
+                    android:textColor="#C4C8D0"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size16"
+                android:background="@drawable/bg_mode"
+                android:orientation="vertical"
+                android:padding="@dimen/size16">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:labelFor="@id/off_time_slider"
+                        android:text="@string/flash_off_time"
+                        android:fontFamily="@font/plusjakartasans_medium"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/text_size_14" />
+
+                    <TextView
+                        android:id="@+id/off_time_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/yellow"
+                        android:textSize="@dimen/text_size_14" />
+                </LinearLayout>
+
+                <SeekBar
+                    android:id="@+id/off_time_slider"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:max="10"
+                    android:maxHeight="8dp"
+                    android:minHeight="8dp"
+                    android:paddingStart="22dp"
+                    android:paddingEnd="22dp"
+                    android:progressDrawable="@drawable/bg_flash_timing_track"
+                    android:saveEnabled="false"
+                    android:splitTrack="false"
+                    android:thumb="@drawable/bg_flash_timing_thumb" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/flash_off_description"
+                    android:fontFamily="@font/plusjakartasans_regular"
+                    android:textColor="#C4C8D0"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
+
         <FrameLayout
             android:id="@+id/frAdsNative"
             android:layout_marginTop="@dimen/size48"

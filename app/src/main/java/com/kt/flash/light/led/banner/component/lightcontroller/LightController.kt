@@ -22,6 +22,8 @@ internal class LightController(context: Context, private val onError: (Int) -> U
     private var active = false
     private var steps = emptyList<LightMode>()
     private var stepIndex = 0
+    private var flashTiming: Pair<Long, Long>? = null
+    private var pendingFlashTiming: Pair<Long, Long>? = null
 
     private val callback = object : CameraManager.TorchCallback() {
         override fun onTorchModeUnavailable(id: String) {
@@ -31,7 +33,14 @@ internal class LightController(context: Context, private val onError: (Int) -> U
 
     private val tick = object : Runnable {
         override fun run() {
-            if (!active || steps.isEmpty()) return
+            if (!active) return
+            if (stepIndex == 0) {
+                pendingFlashTiming?.let { (onMs, offMs) -> applyFlashTiming(onMs, offMs) }
+            }
+            if (steps.isEmpty()) {
+                setTorch(true)
+                return
+            }
             val step = steps[stepIndex]
             if (!setTorch(step.enabled)) return
             stepIndex = (stepIndex + 1) % steps.size
@@ -47,7 +56,7 @@ internal class LightController(context: Context, private val onError: (Int) -> U
         }
     }
 
-    fun start(mode: Int) {
+    fun start(mode: Int, onMs: Long, offMs: Long) {
         stop()
         if (!hasCameraPermission()) {
             onError(R.string.camera_permission_required_to_continue)
@@ -68,14 +77,32 @@ internal class LightController(context: Context, private val onError: (Int) -> U
             }
             active = true
             ownsTorch = true
-            steps = Light.steps(mode)
             stepIndex = 0
-            if (mode == Light.FLASH) setTorch(true) else tick.run()
+            if (mode == Light.FLASH) {
+                applyFlashTiming(onMs, offMs)
+            } else {
+                steps = Light.steps(mode)
+            }
+            tick.run()
         } catch (_: CameraAccessException) {
             fail(R.string.flash_unavailable)
         } catch (_: SecurityException) {
             fail(R.string.camera_permission_required_to_continue)
         }
+    }
+
+    fun updateFlashTiming(onMs: Long, offMs: Long) {
+        val current = flashTiming ?: return
+        val requested = onMs to offMs
+        pendingFlashTiming = requested.takeIf { it != current }
+        if (steps.isEmpty() && pendingFlashTiming != null) tick.run()
+    }
+
+    private fun applyFlashTiming(onMs: Long, offMs: Long) {
+        flashTiming = onMs to offMs
+        pendingFlashTiming = null
+        steps = if (offMs == 0L) emptyList()
+        else listOf(LightMode(true, onMs), LightMode(false, offMs))
     }
 
     private fun setTorch(enabled: Boolean): Boolean {
@@ -116,6 +143,8 @@ internal class LightController(context: Context, private val onError: (Int) -> U
         }
         ownsTorch = false
         steps = emptyList()
+        flashTiming = null
+        pendingFlashTiming = null
     }
 
     fun release() {

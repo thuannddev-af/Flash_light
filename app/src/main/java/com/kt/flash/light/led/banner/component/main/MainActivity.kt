@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.viewpager2.widget.ViewPager2
 import com.kt.flash.light.led.banner.BuildConfig
 import com.kt.flash.light.led.banner.R
@@ -151,8 +152,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     private fun updateTab(position: Int) {
         with(viewBaseActivity) {
             tabFlash.isSelected = position == MainPagerAdapter.FLASH_PAGE
+            flashSettingsButton.isVisible = tabFlash.isSelected
             tabEdge.isSelected = position == MainPagerAdapter.EDGE_PAGE
             tabLed.isSelected = position == MainPagerAdapter.LED_PAGE
+            screenTitle.isVisible = !tabLed.isSelected
             tabAlert.isSelected = position == MainPagerAdapter.ALERT_PAGE
             bottomTabs.invalidate()
             screenTitle.setText(
@@ -160,7 +163,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                     MainPagerAdapter.EDGE_PAGE -> R.string.screen_light
                     MainPagerAdapter.LED_PAGE -> R.string.led
                     MainPagerAdapter.ALERT_PAGE -> R.string.setting
-                    else -> R.string.app_name
+                    else -> R.string.flashlight_tab
                 }
             )
         }

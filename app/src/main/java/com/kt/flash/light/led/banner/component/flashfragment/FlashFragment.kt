@@ -1,6 +1,8 @@
 package com.kt.flash.light.led.banner.component.flashfragment
 
 import android.os.Bundle
+import android.widget.SeekBar
+import android.widget.TextView
 import android.widget.Toast
 import android.view.View
 import android.view.ViewGroup
@@ -26,6 +28,8 @@ import kotlinx.coroutines.flow.onEach
 class FlashFragment : BaseFragment<FragmentFlashBinding>() {
     private var lightOn = false
     private var activeMode = FLASH_MODE
+    private var onSteps = 1
+    private var offSteps = 1
     private var modes: List<View> = emptyList()
     private var torch: LightController? = null
     private var nativeCustomHelper: NativeAdHelper? = null
@@ -38,6 +42,8 @@ class FlashFragment : BaseFragment<FragmentFlashBinding>() {
         activeMode = savedInstanceState?.getInt(KEY_FRAME, FLASH_MODE)
             ?.takeIf { it in FLASH_MODE..DJ_MODE } ?: FLASH_MODE
         lightOn = false
+        onSteps = savedInstanceState?.getInt(KEY_ON_STEPS, 1) ?: 1
+        offSteps = savedInstanceState?.getInt(KEY_OFF_STEPS, 1) ?: 1
     }
 
     override fun initViews() {
@@ -54,8 +60,56 @@ class FlashFragment : BaseFragment<FragmentFlashBinding>() {
             lampButton.setOnClickListener { toggleLight() }
             sosButton.setOnClickListener { toggleLight() }
             djButton.setOnClickListener { toggleLight() }
+            bindTimingSlider(onTimeSlider, onTimeValue, onSteps - 1, minimumSteps = 1) {
+                onSteps = it
+            }
+            bindTimingSlider(offTimeSlider, offTimeValue, offSteps, minimumSteps = 0) {
+                offSteps = it
+            }
         }
         renderState()
+    }
+
+    private fun bindTimingSlider(
+        slider: SeekBar,
+        value: TextView,
+        progress: Int,
+        minimumSteps: Int,
+        setSteps: (Int) -> Unit
+    ) {
+        fun showValue(steps: Int) {
+            value.text = if (steps == 0) getString(R.string.flash_continuous)
+            else getString(R.string.flash_time_seconds, steps / 2.0)
+        }
+
+        slider.progress = progress
+        showValue(progress + minimumSteps)
+        slider.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            private var dragging = false
+
+            override fun onProgressChanged(bar: SeekBar, progress: Int, fromUser: Boolean) {
+                if (!fromUser) return
+                val steps = progress + minimumSteps
+                setSteps(steps)
+                showValue(steps)
+                if (!dragging) applyFlashTiming()
+            }
+
+            override fun onStartTrackingTouch(bar: SeekBar) {
+                dragging = true
+            }
+
+            override fun onStopTrackingTouch(bar: SeekBar) {
+                dragging = false
+                applyFlashTiming()
+            }
+        })
+    }
+
+    private fun applyFlashTiming() {
+        if (lightOn && activeMode == FLASH_MODE) {
+            torch?.updateFlashTiming(onSteps * STEP_MS, offSteps * STEP_MS)
+        }
     }
 
     private fun selectMode(mode: Int) {
@@ -79,7 +133,7 @@ class FlashFragment : BaseFragment<FragmentFlashBinding>() {
         activeMode = mode
         lightOn = true
         renderState()
-        torch?.start(mode)
+        torch?.start(mode, onSteps * STEP_MS, offSteps * STEP_MS)
     }
 
     private fun stopLight() {
@@ -104,6 +158,7 @@ class FlashFragment : BaseFragment<FragmentFlashBinding>() {
         viewBaseFragment.flLight.isVisible = mode == FLASH_MODE
         viewBaseFragment.sosLight.isVisible = mode == SOS_MODE
         viewBaseFragment.djMode.isVisible = mode == DJ_MODE
+        viewBaseFragment.flashTiming.isVisible = mode == FLASH_MODE
     }
 
     private fun renderState() {
@@ -141,6 +196,8 @@ class FlashFragment : BaseFragment<FragmentFlashBinding>() {
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putBoolean(KEY_LIGHT, lightOn)
         outState.putInt(KEY_FRAME, activeMode)
+        outState.putInt(KEY_ON_STEPS, onSteps)
+        outState.putInt(KEY_OFF_STEPS, offSteps)
         super.onSaveInstanceState(outState)
     }
 
@@ -179,5 +236,8 @@ class FlashFragment : BaseFragment<FragmentFlashBinding>() {
         const val DJ_MODE = Light.DJ
         const val KEY_LIGHT = "light_on"
         const val KEY_FRAME = "active_frame"
+        const val KEY_ON_STEPS = "flash_on_steps"
+        const val KEY_OFF_STEPS = "flash_off_steps"
+        const val STEP_MS = 500L
     }
 }
