@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.gms.ads.nativead.NativeAdView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/native_ad_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/size10">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/medium_column"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.43" />
+
+        <com.google.android.gms.ads.nativead.MediaView
+            android:id="@+id/ad_media"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/size140"
+            android:layout_marginTop="@dimen/size10"
+            android:background="@drawable/bg_native_medium_media"
+            android:clipToOutline="true"
+            app:layout_constraintStart_toStartOf="@id/medium_column"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ad_call_to_action" />
+
+        <LinearLayout
+            android:id="@+id/medium_info"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/size8"
+            android:orientation="vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/medium_column"
+            app:layout_constraintTop_toTopOf="@id/ad_media"
+            app:layout_constraintBottom_toBottomOf="@id/ad_media">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical">
+                <TextView
+                    android:id="@+id/tvAdView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/shape_ad_view"
+                    android:paddingHorizontal="@dimen/size4"
+                    android:text="Ad"
+                    android:textColor="#FFFFFF"
+                    android:textSize="10sp" />
+                <TextView
+                    android:id="@+id/ad_headline"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/size6"
+                    android:fontFamily="@font/roboto_medium"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    tools:text="Test Ad: Floof-It!!!" />
+            </LinearLayout>
+
+            <RatingBar
+                android:id="@+id/ad_stars"
+                style="?android:attr/ratingBarStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size4"
+                android:isIndicator="true"
+                android:numStars="5"
+                android:progressTint="#FFFFFF"
+                android:secondaryProgressTint="#FFFFFF"
+                android:progressBackgroundTint="#70757D"
+                android:stepSize="0.5"
+                tools:rating="5" />
+
+            <TextView
+                android:id="@+id/ad_body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size4"
+                android:fontFamily="@font/roboto_regular"
+                android:ellipsize="end"
+                android:maxLines="3"
+                android:textColor="#FFFFFF"
+                android:textSize="11sp"
+                tools:text="Install Floof-It app for free! Free popular Casual Game" />
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/ad_call_to_action"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/size44"
+            android:background="@drawable/bg_button"
+            android:fontFamily="@font/plusjakartasans_medium"
+            android:backgroundTint="@null"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:maxLines="1"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            app:backgroundTint="@null"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="Install" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.gms.ads.nativead.NativeAdView>
