@@ -106,6 +106,14 @@ class App : Application(), Application.ActivityLifecycleCallbacks {
 
         val main = Handler(Looper.getMainLooper())
         val fallback = Runnable { config.fetch(spManager.getPaidUser()) }
+        fun finishAttribution(paid: Boolean? = null) {
+            main.post {
+                if (paid != null) spManager.setPaidUser(paid)
+                main.removeCallbacks(fallback)
+                fallback.run()
+            }
+        }
+
         if (cachedPaid == null) {
             main.postDelayed(fallback, 2_000L)
         } else {
@@ -115,28 +123,20 @@ class App : Application(), Application.ActivityLifecycleCallbacks {
         val listener = object : AppsFlyerConversionListener {
             override fun onConversionDataSuccess(conversionData: MutableMap<String, Any>?) {
                 val status = conversionData?.get("af_status")?.toString()
-                val source = conversionData?.get("media_source")?.toString()
-                val paid = when (status) {
+                if (BuildConfig.DEBUG) {
+                    val source = conversionData?.get("media_source") ?: "unavailable"
+                    Log.i("INSTALL_SOURCE", "AppsFlyer af_status=$status, media_source=$source")
+                }
+                finishAttribution(when (status) {
                     "Organic" -> false
                     "Non-organic" -> true
                     else -> null
-                }
-                main.post {
-                    if (paid != null) spManager.setPaidUser(paid)
-                    if (BuildConfig.DEBUG) {
-                        Log.i("INSTALL_SOURCE", "AppsFlyer af_status=$status, media_source=${source ?: "unavailable"}")
-                    }
-                    main.removeCallbacks(fallback)
-                    config.fetch(spManager.getPaidUser())
-                }
+                })
             }
 
             override fun onConversionDataFail(errorMessage: String?) {
-                main.post {
-                    if (BuildConfig.DEBUG) Log.w("INSTALL_SOURCE", "AppsFlyer conversion failed: $errorMessage")
-                    main.removeCallbacks(fallback)
-                    config.fetch(spManager.getPaidUser())
-                }
+                if (BuildConfig.DEBUG) Log.w("INSTALL_SOURCE", "AppsFlyer conversion failed: $errorMessage")
+                finishAttribution()
             }
 
             override fun onAppOpenAttribution(attributionData: MutableMap<String, String>?) = Unit
@@ -152,9 +152,8 @@ class App : Application(), Application.ActivityLifecycleCallbacks {
                 start(this@App)
             }
         } catch (error: Exception) {
-            main.removeCallbacks(fallback)
             Logger.e("AppsFlyer initialization failed: ${error.message}")
-            config.fetch(spManager.getPaidUser())
+            finishAttribution()
         }
     }
 
