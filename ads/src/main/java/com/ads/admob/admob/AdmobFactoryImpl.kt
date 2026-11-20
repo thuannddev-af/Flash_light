@@ -109,6 +109,7 @@ class AdmobFactoryImpl : AdmobFactory {
     }
 
     private fun setupAdjust(application: Application, adjustConfig: AfAdjustConfig) {
+        if (adjustConfig.adjustToken.isBlank()) return
         val environment = if (adjustConfig.environmentProduct) {
             AdjustConfig.ENVIRONMENT_PRODUCTION
         } else {
@@ -118,10 +119,6 @@ class AdmobFactoryImpl : AdmobFactory {
 
         // Change the log level.
         config.setLogLevel(LogLevel.VERBOSE)
-        config.setOnAttributionChangedListener { attribution ->
-            Log.d(TAG, "Attribution callback called!")
-            Log.d(TAG, "Attribution: $attribution")
-        }
 
         // Set event success tracking delegate.
         config.setOnEventTrackingSucceededListener { eventSuccessResponseData ->

@@ -26,12 +26,30 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     private var interTabClickCount = 0L
     private var interClickStep = 2L
     private var clicksUntilNextInter = 2L
+    private var swipeStartPage: Int? = null
     override fun provideViewBinding() = ActivityMainBinding.inflate(layoutInflater)
 
     private val pageCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
             tabHistory.visit(position)
             updateTab(position)
+        }
+
+        override fun onPageScrollStateChanged(state: Int) {
+            when (state) {
+                ViewPager2.SCROLL_STATE_DRAGGING -> {
+                    swipeStartPage = viewBaseActivity.mainPager.currentItem
+                }
+                ViewPager2.SCROLL_STATE_IDLE -> {
+                    val startPage = swipeStartPage
+                    swipeStartPage = null
+                    val destination = viewBaseActivity.mainPager.currentItem
+                    if (startPage != null && destination != startPage) {
+
+                        openInterTab(destination)
+                    }
+                }
+            }
         }
     }
 
@@ -85,6 +103,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     private var switchingTab = false
     private fun openInterTab(possion: Int) {
         if (switchingTab) return
+        swipeStartPage = null
         interTabClickCount++
         android.util.Log.d("INTER_HOME_CLICKS", "click=$interTabClickCount / $clicksUntilNextInter")
         if (interTabClickCount < clicksUntilNextInter ||

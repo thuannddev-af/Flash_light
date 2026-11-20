@@ -153,7 +153,7 @@
                             android:layout_height="@dimen/size70"
                             android:duplicateParentState="true"
                             android:importantForAccessibility="no"
-                            android:src="@drawable/ic_sos"
+                            android:src="@drawable/ic_dj"
                             app:tint="@color/white" />
 
                         <TextView
@@ -333,6 +333,15 @@
                     android:textSize="12sp" />
             </LinearLayout>
 
+            <FrameLayout
+                android:id="@+id/frAdsNative2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <include android:id="@+id/shimmerContainerNative2"
+                    layout="@layout/loading_native_medium_test2"/>
+
+            </FrameLayout>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

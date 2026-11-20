@@ -17,7 +17,19 @@ android {
     namespace = "com.kt.flash.light.led.banner"
     compileSdk = 36
 
+    sourceSets.named("main") {
+        // Both defaults are needed because AppsFlyer chooses the ads mode at runtime.
+        res.srcDirs("src/appRel/ads-config", "src/appdebug/ads-config")
+    }
+
     defaultConfig {
+        val appsFlyerDevKey = providers.gradleProperty("APPSFLYER_DEV_KEY")
+            .orElse(providers.environmentVariable("APPSFLYER_DEV_KEY"))
+            .orElse("")
+            .get()
+            .trim()
+        val escapedDevKey = appsFlyerDevKey.replace("\\", "\\\\").replace("\"", "\\\"")
+        buildConfigField("String", "APPSFLYER_DEV_KEY", "\"$escapedDevKey\"")
         applicationId = "com.kt.flash.light.led.banner"
         minSdk = 23
         targetSdk = 36
@@ -52,13 +64,6 @@ android {
     productFlavors {
         create("appDebug") {
             applicationIdSuffix = ".organic"
-            buildConfigField("String", "ADS_FLAVOR", "\"organic\"")
-
-            buildConfigField(
-                "String",
-                "ADS_CONFIG_KEY",
-                "\"ad_config_organic\""
-            )
 
             manifestPlaceholders["ad_app_id"] = "ca-app-pub-3940256099942544~3347511713"
 
@@ -101,13 +106,6 @@ android {
         }
 
         create("appProduct") {
-            buildConfigField("String", "ADS_FLAVOR", "\"fullads\"")
-
-            buildConfigField(
-                "String",
-                "ADS_CONFIG_KEY",
-                "\"ad_config_user_paid\""
-            )
             manifestPlaceholders["ad_app_id"] = "ca-app-pub-3940256099942544~3347511713"
 
             buildConfigField("String", "banner_splash", "\"ca-app-pub-3940256099942544/2014213617\"")
@@ -152,6 +150,7 @@ android {
 
 dependencies {
     implementation(project(":ads"))
+    implementation("com.appsflyer:af-android-sdk:6.17.1")
 
     implementation("androidx.viewpager2:viewpager2:1.1.0")
     // Compose BOM
@@ -211,7 +210,6 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
 
     implementation("com.google.dagger:hilt-android:2.60.1")
-    ksp("com.google.dagger:hilt-compiler:2.60.1")
     implementation("androidx.room:room-runtime:2.8.4")
     ksp("androidx.room:room-compiler:2.8.4")
     implementation("androidx.fragment:fragment-ktx:1.8.9")
@@ -221,6 +219,8 @@ dependencies {
 
     // hilt
     implementation("com.google.dagger:hilt-android:2.57.2")
+    ksp("com.google.dagger:hilt-compiler:2.60.1")
+
     //Firebase
     implementation(platform("com.google.firebase:firebase-bom:34.7.0"))
     implementation("com.google.firebase:firebase-config")

@@ -3,7 +3,7 @@
     <string name="flash_light">Flash Light</string>
     <string name="sos_light">SOS Light</string>
     <string name="dj_mode">DJ Mode</string>
-    <string name="flashlight_tab">Flashlight</string>
+    <string name="flashlight_tab">Flash Light</string>
     <string name="edge_lighting">Edge Lighting</string>
     <string name="led">LED</string>
     <string name="flash_alert">Flash Alert</string>
@@ -121,4 +121,45 @@
     <string name="edit_led_color">Edit</string>
     <string name="led_edge_border_style">Border Style</string>
     <string name="led_edge_border_option">Border style %1$d</string>
+    <string name="led_edge_border_arrow" translatable="false">Arrow</string>
+    <string name="led_edge_border_commerce" translatable="false">Commerce</string>
+    <string name="led_edge_border_games" translatable="false">Games</string>
+    <string name="led_edge_border_weather_nature" translatable="false">Weather &amp; Nature</string>
+    <string name="edge_run_style">Run Style</string>
+    <string name="edge_border_settings">Border</string>
+    <string name="edge_notch_style">Notch Style</string>
+    <string name="edge_apply">Apply</string>
+    <string name="edge_run_none">None</string>
+    <string name="edge_run_rotation">Rotation</string>
+    <string name="edge_run_forward">Run</string>
+    <string name="edge_run_reverse">R Run</string>
+    <string name="edge_run_crawler">Crawler</string>
+    <string name="edge_run_reverse_crawler">R Crawler</string>
+    <string name="edge_run_snake">Snake</string>
+    <string name="edge_run_reverse_snake">R Snake</string>
+    <string name="edge_notch_full">Full</string>
+    <string name="edge_notch_water">Water</string>
+    <string name="edge_notch_full_left">Full (left)</string>
+    <string name="edge_notch_full_center">Full (center)</string>
+    <string name="edge_top_radius">Top Radius</string>
+    <string name="edge_bottom_radius">Bottom Radius</string>
+    <string name="edge_border_width">Width</string>
+    <string name="edge_color_speed">Color Speed</string>
+    <string name="edit_border_colors_title">Edit Border Color</string>
+    <string name="edit_border_colors_description">Choose colors to personalize your edge lighting effect</string>
+    <string name="edit_border_colors_choose">Choose</string>
+    <string name="edit_border_colors_cancel">Cancel</string>
+    <string name="edge_add_color">Add color</string>
+    <string name="edge_remove_color">Remove color %1$s</string>
+    <string name="edge_select_color">Select color %1$s</string>
+    <string name="edge_mode_title">Choose Display Mode</string>
+    <string name="edge_mode_description">Select where your edge lighting effect should appear on your device,</string>
+    <string name="edge_mode_home">Home Screen</string>
+    <string name="edge_mode_lock">Lock Screen</string>
+    <string name="edge_mode_lock_unavailable">Android restricts overlays on the system lock screen.</string>
+    <string name="edge_mode_usage_access">Allow Usage Access so Edge Lighting can distinguish the home screen from other apps.</string>
+    <string name="edge_mode_overlay">Overlay All Apps</string>
+    <string name="edge_mode_overlay_unavailable">Please allow display over other apps to enable the overlay.</string>
+    <string name="edge_mode_overlay_notification">Edge Lighting overlay is active</string>
+    <string name="edge_mode_stop_overlay">Stop overlay</string>
 </resources>

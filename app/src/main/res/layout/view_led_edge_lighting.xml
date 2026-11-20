@@ -64,15 +64,169 @@
                 <HorizontalScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:scrollbars="none"
                     android:layout_marginTop="@dimen/size12">
 
                     <LinearLayout
-                        android:id="@+id/edge_styles"
+                        android:id="@+id/edge_style_groups"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal" />
                 </HorizontalScrollView>
+
+                <LinearLayout
+                    android:id="@+id/edge_styles"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size8"
+                    android:orientation="vertical" />
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size16"
+                android:background="@drawable/bg_mode"
+                android:orientation="vertical"
+                android:padding="@dimen/size16">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/edge_run_style"
+                    android:textColor="@color/white" />
+
+                <LinearLayout
+                    android:id="@+id/edge_run_options"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size16"
+                android:background="@drawable/bg_mode"
+                android:orientation="vertical"
+                android:padding="@dimen/size16">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/edge_border_settings"
+                    android:textColor="@color/white" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/edge_top_radius"
+                    android:textColor="@color/white" />
+                <SeekBar
+                    android:id="@+id/edge_top_radius"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:contentDescription="@string/edge_top_radius"
+                    android:max="48"
+                    android:maxHeight="8dp"
+                    android:minHeight="8dp"
+                    android:paddingHorizontal="22dp"
+                    android:progress="16"
+                    android:progressDrawable="@drawable/bg_flash_timing_track"
+                    android:saveEnabled="false"
+                    android:splitTrack="false"
+                    android:thumb="@drawable/bg_flash_timing_thumb" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/edge_bottom_radius"
+                    android:textColor="@color/white" />
+                <SeekBar
+                    android:id="@+id/edge_bottom_radius"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:contentDescription="@string/edge_bottom_radius"
+                    android:max="48"
+                    android:maxHeight="8dp"
+                    android:minHeight="8dp"
+                    android:paddingHorizontal="22dp"
+                    android:progress="16"
+                    android:progressDrawable="@drawable/bg_flash_timing_track"
+                    android:saveEnabled="false"
+                    android:splitTrack="false"
+                    android:thumb="@drawable/bg_flash_timing_thumb" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/edge_border_width"
+                    android:textColor="@color/white" />
+                <SeekBar
+                    android:id="@+id/edge_border_width"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:contentDescription="@string/edge_border_width"
+                    android:max="20"
+                    android:maxHeight="8dp"
+                    android:minHeight="8dp"
+                    android:paddingHorizontal="22dp"
+                    android:progress="8"
+                    android:progressDrawable="@drawable/bg_flash_timing_track"
+                    android:saveEnabled="false"
+                    android:splitTrack="false"
+                    android:thumb="@drawable/bg_flash_timing_thumb" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/edge_color_speed"
+                    android:textColor="@color/white" />
+                <SeekBar
+                    android:id="@+id/edge_color_speed"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:contentDescription="@string/edge_color_speed"
+                    android:max="10"
+                    android:maxHeight="8dp"
+                    android:minHeight="8dp"
+                    android:paddingHorizontal="22dp"
+                    android:progress="4"
+                    android:progressDrawable="@drawable/bg_flash_timing_track"
+                    android:saveEnabled="false"
+                    android:splitTrack="false"
+                    android:thumb="@drawable/bg_flash_timing_thumb" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size16"
+                android:background="@drawable/bg_mode"
+                android:orientation="vertical"
+                android:padding="@dimen/size16">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/edge_notch_style"
+                    android:textColor="@color/white" />
+
+                <LinearLayout
+                    android:id="@+id/edge_notch_options"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/edge_apply"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size16"
+                android:backgroundTint="@color/yellow"
+                android:text="@string/edge_apply"
+                android:textColor="@color/black" />
         </LinearLayout>
     </ScrollView>
 

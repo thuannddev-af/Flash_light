@@ -69,6 +69,22 @@ object NativeAdsUtils {
 
     val adConfig get() = FirebaseConfigManager.instance().adConfig
 
+    private val nativeCustomLayout: Int
+        get() = if (FirebaseConfigManager.instance().useFullAds) {
+            R.layout.layout_native_medium_full_ads
+        } else {
+            R.layout.layout_native_medium
+        }
+
+    @androidx.annotation.LayoutRes
+    private fun nativeType1Layout(
+        @androidx.annotation.LayoutRes fullAdsLayout: Int = R.layout.layout_native_ad_view_type1
+    ): Int = if (FirebaseConfigManager.instance().useFullAds) {
+        fullAdsLayout
+    } else {
+        R.layout.layout_native_ad_view_type1_reload
+    }
+
     fun destroyAll() {
         clearNativeCustom()
         nativeLanguage?.destroy()
@@ -102,7 +118,7 @@ object NativeAdsUtils {
             idAds = BuildConfig.native_language,
             canShowAds = true,
             canReloadAds = false,
-            layoutId = R.layout.layout_native_ad_view_type1,
+            layoutId = nativeType1Layout(),
             adPlacement = "native_language",
             reloadIfFirstFail = true
         )
@@ -129,11 +145,7 @@ object NativeAdsUtils {
             } else null,
             canShowAds = true,
             canReloadAds = false,
-            layoutId = if (BuildConfig.ADS_FLAVOR == "organic") {
-                R.layout.layout_native_ad_view_type1
-            } else {
-                R.layout.layout_native_ad_view_type_select_lang_2f
-            },
+            layoutId = nativeType1Layout(R.layout.layout_native_ad_view_type_select_lang_2f),
             adPlacement = "native_language_select",
             reloadIfFirstFail = true
         )
@@ -158,7 +170,7 @@ object NativeAdsUtils {
             idAds = BuildConfig.native_obd1,
             canShowAds = true,
             canReloadAds = false,
-            layoutId = R.layout.layout_native_ad_view_type1,
+            layoutId = nativeType1Layout(),
             adPlacement = "native_onboarding",
             reloadIfFirstFail = true
         )
@@ -190,7 +202,7 @@ object NativeAdsUtils {
             idAds = BuildConfig.native_obd3,
             canShowAds = true,
             canReloadAds = false,
-            layoutId = R.layout.layout_native_ad_view_type1,
+            layoutId = nativeType1Layout(),
             adPlacement = "native_onboarding3",
             reloadIfFirstFail = true
         )
@@ -298,7 +310,7 @@ object NativeAdsUtils {
             BuildConfig.native_permission,
             canShowAds = FirebaseConfigManager.instance().adConfig.enableNativePermission,
             canReloadAds = false,
-            layoutId = com.ads.admob.R.layout.layout_native_ad_view_type1,
+            layoutId = nativeType1Layout(com.ads.admob.R.layout.layout_native_ad_view_type1),
             adPlacement = "native_permission"
         )
         setNative(activity, config, lifecycleOwner, nativeContentView, shimmerContainerNative)
@@ -330,6 +342,9 @@ object NativeAdsUtils {
         check(container.getTag(R.id.native_ads_binding) == null) {
             "Use only one native binding API for each container"
         }
+        val resolvedLayoutId = if (
+            placement == AdPlacement.NATIVE_CUSTOM && layoutId == R.layout.layout_native_medium
+        ) nativeCustomLayout else layoutId
         val existing = container.getTag(R.id.native_ads_all_binding) as? NativeAllBinding
         if (!canShowAds || lifecycleOwner.lifecycle.currentState == androidx.lifecycle.Lifecycle.State.DESTROYED) {
             container.isVisible = false
@@ -337,7 +352,7 @@ object NativeAdsUtils {
         }
         if (existing != null) {
             require(existing.owner === lifecycleOwner && existing.adUnitId == adUnitId &&
-                existing.placement == placement && existing.layoutId == layoutId) {
+                existing.placement == placement && existing.layoutId == resolvedLayoutId) {
                 "This container is already bound to another native configuration"
             }
             container.isVisible = existing.visible
@@ -347,7 +362,7 @@ object NativeAdsUtils {
             idAds = adUnitId,
             canShowAds = canShowAds,
             canReloadAds = false,
-            layoutId = layoutId,
+            layoutId = resolvedLayoutId,
             adPlacement = placement,
             reloadIfFirstFail = true
         )
@@ -356,7 +371,7 @@ object NativeAdsUtils {
             setShimmerLayoutView(shimmer)
             setNativeContentView(container)
         }
-        val binding = NativeAllBinding(helper, lifecycleOwner, adUnitId, placement, layoutId)
+        val binding = NativeAllBinding(helper, lifecycleOwner, adUnitId, placement, resolvedLayoutId)
         container.setTag(R.id.native_ads_all_binding, binding)
         container.isVisible = true
         helper.getAdNativeState().onEach { state ->
@@ -385,7 +400,7 @@ object NativeAdsUtils {
             idAds = BuildConfig.native_custom,
             canShowAds = true,
             canReloadAds = false,
-            layoutId = R.layout.layout_native_medium,
+            layoutId = nativeCustomLayout,
             adPlacement = AdPlacement.NATIVE_CUSTOM,
             reloadIfFirstFail = true
         )

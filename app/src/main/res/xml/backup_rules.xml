@@ -6,6 +6,10 @@
    See https://developer.android.com/about/versions/12/backup-restore
 -->
 <full-backup-content>
+    <exclude domain="sharedpref" path="appsflyer-data" />
+    <exclude domain="sharedpref" path="appsflyer-purchase-data" />
+    <exclude domain="database" path="afpurchases.db" />
+    <exclude domain="sharedpref" path="install_attribution.xml" />
     <!--
    <include domain="sharedpref" path="."/>
    <exclude domain="sharedpref" path="device.xml"/>

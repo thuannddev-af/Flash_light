@@ -8,8 +8,8 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="com.kt.flash.light.led.banner" />
-                  <option name="mobileSdkAppId" value="1:32434319806:android:a25213ea4adae37d7e49ef" />
+                  <option name="appId" value="com.kt.flash.light.led.banner.organic" />
+                  <option name="mobileSdkAppId" value="1:32434319806:android:e536f7689a55f8fc7e49ef" />
                   <option name="projectId" value="flashlight-d2ad5" />
                   <option name="projectNumber" value="32434319806" />
                 </ConnectionSetting>

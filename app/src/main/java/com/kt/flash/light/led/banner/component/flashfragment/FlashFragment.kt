@@ -1,29 +1,21 @@
 package com.kt.flash.light.led.banner.component.flashfragment
 
 import android.os.Bundle
+import android.view.View
+import android.view.ViewGroup
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
-import android.view.View
-import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.lifecycle.lifecycleScope
-import com.ads.admob.helper.AdOptionVisibility
-import com.ads.admob.helper.adnative.NativeAdConfig
 import com.ads.admob.helper.adnative.NativeAdHelper
-import com.ads.admob.helper.adnative.params.AdNativeState
-import com.ads.admob.helper.adnative.params.NativeAdParam
 import com.kt.flash.light.led.banner.BuildConfig
 import com.kt.flash.light.led.banner.R
 import com.kt.flash.light.led.banner.base.fragment.BaseFragment
 import com.kt.flash.light.led.banner.component.lightcontroller.Light
 import com.kt.flash.light.led.banner.component.lightcontroller.LightController
 import com.kt.flash.light.led.banner.databinding.FragmentFlashBinding
-import com.kt.flash.light.led.banner.utils.FirebaseConfigManager
 import com.kt.flash.light.led.banner.utils.ads.AdPlacement
 import com.kt.flash.light.led.banner.utils.ads.NativeAdsUtils
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 
 class FlashFragment : BaseFragment<FragmentFlashBinding>() {
     private var lightOn = false
@@ -146,6 +138,7 @@ class FlashFragment : BaseFragment<FragmentFlashBinding>() {
         super.onResume()
         torch?.register()
         initNativeNew()
+        initNativeNew2()
     }
 
     override fun onPause() {
@@ -228,8 +221,26 @@ class FlashFragment : BaseFragment<FragmentFlashBinding>() {
 //    }
 
     private fun initNativeNew() {
-        NativeAdsUtils.showNativeCustom(this, AdPlacement.NATIVE_CUSTOM, viewBaseFragment.frAdsNative, viewBaseFragment.shimmerContainerNative.root)
+        NativeAdsUtils.showNativeCustom(
+            this,
+            AdPlacement.NATIVE_CUSTOM,
+            viewBaseFragment.frAdsNative,
+            viewBaseFragment.shimmerContainerNative.root
+        )
     }
+
+    private fun initNativeNew2() { //test
+        NativeAdsUtils.loadAndShowNativeAll(
+            requireActivity(),
+            adUnitId = BuildConfig.native_custom,
+            placement = AdPlacement.NATIVE_CUSTOM,
+            container =  viewBaseFragment.frAdsNative2,
+            shimmer =  viewBaseFragment.shimmerContainerNative2.root,
+            canShowAds =  NativeAdsUtils.adConfig.enableNativeCustom,
+            layoutId =  R.layout.layout_native_medium
+        )
+    }
+
     private companion object {
         const val FLASH_MODE = Light.FLASH
         const val SOS_MODE = Light.SOS

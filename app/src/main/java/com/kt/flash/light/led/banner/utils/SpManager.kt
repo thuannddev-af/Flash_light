@@ -11,6 +11,7 @@ import com.kt.flash.light.led.banner.data.model.Language
 
 class SpManager(private val preferences: SharedPreferences) {
     companion object {
+        private const val KEY_APPS_FLYER_PAID = "apps_flyer_paid_install"
         private var instance: SpManager? = null
 
         fun getInstance(context: Context): SpManager {
@@ -40,6 +41,18 @@ class SpManager(private val preferences: SharedPreferences) {
 
     fun getBoolean(key: String, defaultValue: Boolean): Boolean =
         preferences.getBoolean(key, defaultValue)
+
+    private val attributionPreferences by lazy {
+        requireNotNull(App.context).getSharedPreferences("install_attribution", Context.MODE_PRIVATE)
+    }
+
+    fun getPaidUser(): Boolean? = attributionPreferences
+        .takeIf { it.contains(KEY_APPS_FLYER_PAID) }
+        ?.getBoolean(KEY_APPS_FLYER_PAID, false)
+
+    fun setPaidUser(isPaid: Boolean) {
+        attributionPreferences.edit { putBoolean(KEY_APPS_FLYER_PAID, isPaid) }
+    }
 
     fun getInt(key: String, defaultValue: Int): Int = preferences.getInt(key, defaultValue)
 

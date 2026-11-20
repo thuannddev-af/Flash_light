@@ -1,5 +1,7 @@
 package com.kt.flash.light.led.banner.utils
 
+import android.util.Log
+
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.CustomSignals
 import com.google.gson.Gson
@@ -11,7 +13,8 @@ import com.kt.flash.light.led.banner.domain.layer.AdConfig
 
 class FirebaseConfigManager {
     companion object {
-        val KEY_ADS_STATUS_ENABLE = BuildConfig.ADS_CONFIG_KEY
+        private const val ORGANIC_CONFIG_KEY = "ad_config_organic"
+        private const val FULL_ADS_CONFIG_KEY = "ad_config_user_paid"
         const val KEY_VERSION_FORCE = "version_force"
         const val KEY_IS_FORCE_UPDATE = "is_force_update"
         private var mInstance: FirebaseConfigManager = FirebaseConfigManager()
@@ -22,23 +25,23 @@ class FirebaseConfigManager {
     }
 
     private var isFetchDone = false
+    var useFullAds = false
+        private set
+    val adsConfigKey: String get() = if (useFullAds) FULL_ADS_CONFIG_KEY else ORGANIC_CONFIG_KEY
+    private val adsFlavor: String get() = if (useFullAds) "fullads" else "organic"
     var versionForce = "1.0.0"
     var isForceUpdate = false
     private val pendingAction: MutableList<() -> Unit> = mutableListOf()
     var adConfig: AdConfig = readLocalAdConfig()
 
     private fun readLocalAdConfig(): AdConfig {
-        val resource = if (BuildConfig.ADS_FLAVOR == "organic") {
-            R.raw.ad_config_organic
-        } else {
-            R.raw.ad_config_user_paid
-        }
+        val resource = if (useFullAds) R.raw.ad_config_user_paid else R.raw.ad_config_organic
         return try {
             val context = requireNotNull(App.context)
             val json = context.resources.openRawResource(resource).bufferedReader().use { it.readText() }
             mergeAdConfig(AdConfig(), json)
         } catch (error: Exception) {
-            Logger.e("Cannot read local ${BuildConfig.ADS_CONFIG_KEY}: ${error.message}")
+            Logger.e("Cannot read local $adsConfigKey: ${error.message}")
             AdConfig()
         }
     }
@@ -85,7 +88,7 @@ class FirebaseConfigManager {
     }
     private var fetchStarted = false
 
-    fun fetch(onFetchCompplete: (() -> Unit)? = null) {
+    fun fetch(paid: Boolean?, onFetchCompplete: (() -> Unit)? = null) {
         if (isFetchDone) {
             onFetchCompplete?.invoke()
             return
@@ -94,6 +97,13 @@ class FirebaseConfigManager {
         onFetchCompplete?.let { pendingAction.add(it) }
         if (fetchStarted) return
         fetchStarted = true
+        useFullAds = paid == true
+
+        //if (BuildConfig.DEBUG) useFullAds = false
+
+
+        adConfig = readLocalAdConfig()
+        if (BuildConfig.DEBUG) Log.i("INSTALL_SOURCE", "Selected key=$adsConfigKey, paid=$paid")
         val handler = android.os.Handler(android.os.Looper.getMainLooper())
         val remote = FirebaseRemoteConfig.getInstance()
         val fallback = Runnable {
@@ -107,20 +117,19 @@ class FirebaseConfigManager {
         handler.postDelayed(fallback, 10_000L)
 
         val signals = CustomSignals.Builder()
-            .put("ads_flavor", BuildConfig.ADS_FLAVOR)
+            .put("ads_flavor", adsFlavor)
             .build()
         remote.setCustomSignals(signals).addOnCompleteListener { signalTask ->
             if (isFetchDone) return@addOnCompleteListener
             if (!signalTask.isSuccessful) {
                 handler.removeCallbacks(fallback)
-                Logger.e("Remote Config: failed to set ads_flavor=${BuildConfig.ADS_FLAVOR}")
+                Logger.e("Remote Config: failed to set ads_flavor=$adsFlavor")
                 readActivatedConfig()
                 finishFetch()
                 return@addOnCompleteListener
             }
-            Logger.e("Remote Config: ads_flavor=${BuildConfig.ADS_FLAVOR}")
-            // Fetch a fresh response so installing another flavor over the same package
-            // cannot reuse a response fetched with the previous flavor's signal.
+            Logger.e("Remote Config: ads_flavor=$adsFlavor")
+            // Fetch fresh values after changing the targeting signal.
             remote.fetch(0L).addOnCompleteListener fetchComplete@{ task ->
                 if (isFetchDone) return@fetchComplete
                 if (task.isSuccessful) {
@@ -145,14 +154,14 @@ class FirebaseConfigManager {
         val remote = FirebaseRemoteConfig.getInstance()
         versionForce = remote.getString(KEY_VERSION_FORCE)
         isForceUpdate = remote.getBoolean(KEY_IS_FORCE_UPDATE)
-        val json = remote.getString(KEY_ADS_STATUS_ENABLE)
+        val json = remote.getString(adsConfigKey)
         adConfig = readLocalAdConfig()
         if (json.isNotBlank()) try {
             adConfig = mergeAdConfig(adConfig, json)
         } catch (error: Exception) {
-            Logger.e("Invalid $KEY_ADS_STATUS_ENABLE; using local config: ${error.message}")
+                Logger.e("Invalid $adsConfigKey; using local config: ${error.message}")
         }
-        Logger.e("Remote Config applied: key=$KEY_ADS_STATUS_ENABLE, ads_flavor=${BuildConfig.ADS_FLAVOR}, native_full_splash=${adConfig.enableNativeFullSplash}")
+        Logger.e("Remote Config applied: key=$adsConfigKey, ads_flavor=$adsFlavor, native_full_splash=${adConfig.enableNativeFullSplash}")
     }
 
     private fun finishFetch() {

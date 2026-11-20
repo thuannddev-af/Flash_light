@@ -5,6 +5,9 @@ import android.app.Application
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import androidx.compose.ui.text.intl.Locale
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.ads.admob.cmp.ConsentManager
@@ -23,6 +26,8 @@ import com.google.android.gms.ads.AdActivity
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.LoadAdError
 import com.google.firebase.FirebaseApp
+import com.appsflyer.AppsFlyerConversionListener
+import com.appsflyer.AppsFlyerLib
 import com.kt.flash.light.led.banner.component.main.MainActivity
 import com.kt.flash.light.led.banner.component.splash.SplashActivity
 import com.kt.flash.light.led.banner.utils.Constant
@@ -85,9 +90,74 @@ class App : Application(), Application.ActivityLifecycleCallbacks {
         FirebaseTrackingManager.initialize(this)
         initAdmob()
 
-        FirebaseConfigManager.instance().fetch()
+        initAppsFlyer()
         registerActivityLifecycleCallbacks(this)
     }
+
+    private fun initAppsFlyer() {
+        val config = FirebaseConfigManager.instance()
+        val cachedPaid = spManager.getPaidUser()
+        val devKey = BuildConfig.APPSFLYER_DEV_KEY
+        if (devKey.isBlank()) {
+            if (BuildConfig.DEBUG) Log.i("INSTALL_SOURCE", "AppsFlyer skipped: APPSFLYER_DEV_KEY is empty")
+            config.fetch(cachedPaid)
+            return
+        }
+
+        val main = Handler(Looper.getMainLooper())
+        val fallback = Runnable { config.fetch(spManager.getPaidUser()) }
+        if (cachedPaid == null) {
+            main.postDelayed(fallback, 2_000L)
+        } else {
+            config.fetch(cachedPaid)
+        }
+
+        val listener = object : AppsFlyerConversionListener {
+            override fun onConversionDataSuccess(conversionData: MutableMap<String, Any>?) {
+                val status = conversionData?.get("af_status")?.toString()
+                val source = conversionData?.get("media_source")?.toString()
+                val paid = when (status) {
+                    "Organic" -> false
+                    "Non-organic" -> true
+                    else -> null
+                }
+                main.post {
+                    if (paid != null) spManager.setPaidUser(paid)
+                    if (BuildConfig.DEBUG) {
+                        Log.i("INSTALL_SOURCE", "AppsFlyer af_status=$status, media_source=${source ?: "unavailable"}")
+                    }
+                    main.removeCallbacks(fallback)
+                    config.fetch(spManager.getPaidUser())
+                }
+            }
+
+            override fun onConversionDataFail(errorMessage: String?) {
+                main.post {
+                    if (BuildConfig.DEBUG) Log.w("INSTALL_SOURCE", "AppsFlyer conversion failed: $errorMessage")
+                    main.removeCallbacks(fallback)
+                    config.fetch(spManager.getPaidUser())
+                }
+            }
+
+            override fun onAppOpenAttribution(attributionData: MutableMap<String, String>?) = Unit
+
+            override fun onAttributionFailure(errorMessage: String?) {
+                Logger.e("AppsFlyer app-open attribution failed: $errorMessage")
+            }
+        }
+
+        try {
+            AppsFlyerLib.getInstance().apply {
+                init(devKey, listener, this@App)
+                start(this@App)
+            }
+        } catch (error: Exception) {
+            main.removeCallbacks(fallback)
+            Logger.e("AppsFlyer initialization failed: ${error.message}")
+            config.fetch(spManager.getPaidUser())
+        }
+    }
+
     private fun initAdmob() {
         val config = AfAdConfig.Builder(
             afAdjustConfig = AfAdjustConfig.Build(adjustToken = "").build()
@@ -115,7 +185,7 @@ class App : Application(), Application.ActivityLifecycleCallbacks {
         consentManager.initReleaseConsent(onConsentResponse = object : OnConsentResponse {
             override fun onResponse(errorMessage: String?) {
                 Logger.e("onResponse: $errorMessage -- ${consentManager.canRequestAds} ")
-                initOpenResume()
+                FirebaseConfigManager.instance().doAfterFetch { initOpenResume() }
                 action.invoke()
             }
 

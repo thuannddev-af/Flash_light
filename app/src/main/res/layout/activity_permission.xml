@@ -66,7 +66,7 @@
         android:layout_height="@dimen/size48"
         android:layout_marginHorizontal="@dimen/size16"
         android:layout_marginBottom="12dp"
-        android:background="@drawable/bg_button"
+        android:background="@drawable/bg_permission_continue"
         android:fontFamily="@font/plusjakartasans_semibold"
         android:gravity="center"
         android:text="@string/continue_1"

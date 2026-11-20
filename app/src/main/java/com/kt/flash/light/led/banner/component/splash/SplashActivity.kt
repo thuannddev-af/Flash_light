@@ -14,6 +14,7 @@ import com.ads.admob.data.ContentAd
 import com.ads.admob.helper.AdOptionVisibility
 import com.ads.admob.helper.adnative.NativeAdConfig
 import com.ads.admob.helper.adnative.NativeAdHelper
+import com.ads.admob.helper.adnative.params.NativeAdParam
 import com.ads.admob.helper.interstitial.InterstitialAdSplashConfig
 import com.ads.admob.helper.interstitial.InterstitialAdSplashHelper
 import com.ads.admob.helper.interstitial.params.InterstitialAdParam
@@ -27,6 +28,7 @@ import com.kt.flash.light.led.banner.base.activity.BaseActivity
 import com.kt.flash.light.led.banner.component.language.LanguageActivity
 import com.kt.flash.light.led.banner.component.onboarding.OnboardingActivity
 import com.kt.flash.light.led.banner.databinding.ActivitySplashBinding
+import com.kt.flash.light.led.banner.domain.layer.AdConfig
 import com.kt.flash.light.led.banner.utils.FirebaseConfigManager
 import com.kt.flash.light.led.banner.utils.SpManager
 import com.kt.flash.light.led.banner.utils.Utils
@@ -67,7 +69,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
         super.onCreate(savedInstanceState)
         pendingNavigation = savedInstanceState?.getBoolean(KEY_PENDING_NAVIGATION) ?: false
         updateProgress(savedInstanceState?.getInt(KEY_PROGRESS) ?: 0)
-        showBanner()
     }
 
     override fun onConnectivityChanged(connected: Boolean) {
@@ -85,10 +86,11 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                         FirebaseConfigManager.instance().doAfterFetch {
                             Log.d("SPLASH_TEST", "Remote Config ready; starting Splash ads")
                             if (!navigating && !isFinishing && !isDestroyed) {
+                                showBanner()
                                 initNativeFullSplash()
                                 loadInterSplash()
                                 loadLanguageNativeAd()
-                                loadNativeOnboarding(this)
+                                //loadNativeOnboarding(this)
                             }
                         }
                     }
@@ -197,10 +199,20 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
     private val interAdSplashHelper by lazy { initInterAdSplash() }
     private fun initInterAdSplash(): InterstitialAdSplashHelper {
+        val adConfig = FirebaseConfigManager.instance().adConfig
+        val standardEnabled = adConfig.enableInterSplash
+        val priorityEnabled = adConfig.enableInterSplash2
+        Log.d(
+            "SPLASH_TEST",
+            "${FirebaseConfigManager.instance().adsConfigKey}: inter_splash=$standardEnabled, inter_splash_2f=$priorityEnabled"
+        )
         val config = InterstitialAdSplashConfig(
-            idAds = BuildConfig.inter_splash,
-            idAdsPriority = BuildConfig.inter_splash_2f,
-            canShowAds = FirebaseConfigManager.instance().adConfig.enableInterSplash,
+            idAds = if (priorityEnabled && !standardEnabled) BuildConfig.inter_splash_2f
+            else BuildConfig.inter_splash,
+            idAdsPriority = if (standardEnabled && priorityEnabled) {
+                BuildConfig.inter_splash_2f
+            } else null,
+            canShowAds = standardEnabled || priorityEnabled,
             canReloadAds = false,
             timeDelay = 2000L,
             timeOut = 25000L,
@@ -324,13 +336,13 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
             },
             canShowAds = true,
             canReloadAds = false,
-            layoutId = com.ads.admob.R.layout.layout_native_fullscreen_view,
+            layoutId = R.layout.layout_native_fullscreen_view,
             adPlacement = "native_full_splash",
             reloadIfFirstFail = true
         )
         nativeFullSplashHelper = NativeAdHelper(this, this, config).apply {
             adVisibility = AdOptionVisibility.GONE
-            requestAds(com.ads.admob.helper.adnative.params.NativeAdParam.Request)
+            requestAds(NativeAdParam.Request)
         }
     }
 

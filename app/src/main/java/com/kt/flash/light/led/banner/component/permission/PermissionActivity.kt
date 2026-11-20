@@ -39,6 +39,7 @@ class PermissionActivity : BaseActivity<ActivityPermissionBinding>() {
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
             requestingPermission = false
             permissionViewModel.refreshPermissionState()
+            updateContinueBackground()
             if (!granted) {
                 if (!shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
                     showCameraSettingsDialog()
@@ -55,6 +56,7 @@ class PermissionActivity : BaseActivity<ActivityPermissionBinding>() {
     override fun provideViewBinding() = ActivityPermissionBinding.inflate(layoutInflater)
 
     override fun initViews() = with(viewBaseActivity) {
+        updateContinueBackground()
         rvPermission.adapter = permissionAdapter
         permissionAdapter.onAllowClick = { _, _ -> requestCameraPermission() }
         btnNext.setOnClickWithPressEffect {
@@ -162,6 +164,13 @@ class PermissionActivity : BaseActivity<ActivityPermissionBinding>() {
     override fun onResume() {
         super.onResume()
         permissionViewModel.refreshPermissionState()
+        updateContinueBackground()
+    }
+
+    private fun updateContinueBackground() {
+        viewBaseActivity.btnNext.isSelected = ContextCompat.checkSelfPermission(
+            this, Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
     override fun onDestroy() {

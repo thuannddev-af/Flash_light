@@ -38,7 +38,7 @@ class ScreenLightActivity : BaseActivity<ActivityScreenLightBinding>() {
         viewBaseActivity.closeScreen.setOnClickListener {
             onBack()
         }
-        showBannerAll()
+        //showBannerAll()
     }
 
     override fun onBack() {

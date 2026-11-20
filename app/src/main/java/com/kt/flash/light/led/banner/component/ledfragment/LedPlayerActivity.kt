@@ -46,7 +46,7 @@ class LedPlayerActivity : BaseActivity<ActivityLedPlayerBinding>() {
         viewBaseActivity.closePlayer.setOnClickListener {
             onBack()
         }
-        showBannerAll()
+        //showBannerAll()
     }
     override fun onResume() {
         super.onResume()
