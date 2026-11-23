@@ -58,9 +58,9 @@ class LedPlayerActivity : BaseActivity<ActivityLedPlayerBinding>() {
         if (closing) viewBaseActivity.root.post { showPortraitInterBack() }
     }
     override fun onPause() { viewBaseActivity.ledBanner.running = false; super.onPause() }
-    private fun showBannerAll() {
-        BannerAdsUtils.initBannerAll(this, this, viewBaseActivity.frAdsBanner)
-    }
+//    private fun showBannerAll() {
+//        BannerAdsUtils.initBannerAll(this, this, viewBaseActivity.frAdsBanner)
+//    }
     override fun onBack() {
         if (closing || isFinishing || isDestroyed) return
         closing = true

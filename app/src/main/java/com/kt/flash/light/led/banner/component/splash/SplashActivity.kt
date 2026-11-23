@@ -204,7 +204,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
         val priorityEnabled = adConfig.enableInterSplash2
         Log.d(
             "SPLASH_TEST",
-            "${FirebaseConfigManager.instance().adsConfigKey}: inter_splash=$standardEnabled, inter_splash_2f=$priorityEnabled"
+            "inter_splash=$standardEnabled, inter_splash_2f=$priorityEnabled"
         )
         val config = InterstitialAdSplashConfig(
             idAds = if (priorityEnabled && !standardEnabled) BuildConfig.inter_splash_2f

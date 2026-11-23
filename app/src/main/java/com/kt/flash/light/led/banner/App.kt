@@ -5,40 +5,32 @@ import android.app.Application
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
-import androidx.compose.ui.text.intl.Locale
-import androidx.lifecycle.ProcessLifecycleOwner
-import com.ads.admob.cmp.ConsentManager
+import com.ads.admob.AdmobManager
 import com.ads.admob.admob.AdmobFactory
+import com.ads.admob.cmp.ConsentManager
+import com.ads.admob.cmp.interfaces.OnConsentResponse
 import com.ads.admob.config.AfAdConfig
 import com.ads.admob.config.AfAdjustConfig
-import com.ads.admob.listener.AdmobCallBack
-import com.ads.admob.cmp.interfaces.OnConsentResponse
-import com.ads.admob.config.NetworkProvider
 import com.ads.admob.data.ContentAd
 import com.ads.admob.event.FirebaseTrackingManager
-import com.ads.admob.helper.appoppen.AppResumeAdConfig
 import com.ads.admob.helper.appoppen.AppResumeAdHelper
+import com.ads.admob.listener.AdmobCallBack
 import com.ads.admob.listener.AppOpenAdCallBack
+import com.appsflyer.AppsFlyerConversionListener
+import com.appsflyer.AppsFlyerLib
 import com.google.android.gms.ads.AdActivity
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.LoadAdError
 import com.google.firebase.FirebaseApp
-import com.appsflyer.AppsFlyerConversionListener
-import com.appsflyer.AppsFlyerLib
-import com.kt.flash.light.led.banner.component.main.MainActivity
-import com.kt.flash.light.led.banner.component.splash.SplashActivity
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.kt.flash.light.led.banner.utils.Constant
 import com.kt.flash.light.led.banner.utils.FirebaseConfigManager
 import com.kt.flash.light.led.banner.utils.LocaleHelper
 import com.kt.flash.light.led.banner.utils.Logger
 import com.kt.flash.light.led.banner.utils.SpManager
-import com.kt.flash.light.led.banner.utils.ads.AdPlacement
-import com.kt.flash.light.led.banner.utils.ads.AppOpenAdsUtils
 import com.kt.flash.light.led.banner.utils.ads.AdWindowUtils
-import com.ads.admob.AdmobManager
+import com.kt.flash.light.led.banner.utils.ads.AppOpenAdsUtils
 import com.kt.flash.light.led.banner.utils.getDeviceLanguage
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
@@ -49,6 +41,7 @@ import javax.inject.Singleton
 @Singleton
 class App : Application(), Application.ActivityLifecycleCallbacks {
     private var resumeHost = java.lang.ref.WeakReference<Activity>(null)
+
     @Inject
     lateinit var spManager: SpManager
     private var isColdStart = true
@@ -91,33 +84,18 @@ class App : Application(), Application.ActivityLifecycleCallbacks {
         initAdmob()
 
         initAppsFlyer()
+        FirebaseConfigManager.instance().fetch()
         registerActivityLifecycleCallbacks(this)
     }
 
     private fun initAppsFlyer() {
-        val config = FirebaseConfigManager.instance()
-        val cachedPaid = spManager.getPaidUser()
         val devKey = BuildConfig.APPSFLYER_DEV_KEY
         if (devKey.isBlank()) {
-            if (BuildConfig.DEBUG) Log.i("INSTALL_SOURCE", "AppsFlyer skipped: APPSFLYER_DEV_KEY is empty")
-            config.fetch(cachedPaid)
+            if (BuildConfig.DEBUG)
+                Log.i(
+                "INSTALL_SOURCE",
+                "AppsFlyer skipped: APPSFLYER_DEV_KEY is empty")
             return
-        }
-
-        val main = Handler(Looper.getMainLooper())
-        val fallback = Runnable { config.fetch(spManager.getPaidUser()) }
-        fun finishAttribution(paid: Boolean? = null) {
-            main.post {
-                if (paid != null) spManager.setPaidUser(paid)
-                main.removeCallbacks(fallback)
-                fallback.run()
-            }
-        }
-
-        if (cachedPaid == null) {
-            main.postDelayed(fallback, 2_000L)
-        } else {
-            config.fetch(cachedPaid)
         }
 
         val listener = object : AppsFlyerConversionListener {
@@ -127,19 +105,25 @@ class App : Application(), Application.ActivityLifecycleCallbacks {
                     val source = conversionData?.get("media_source") ?: "unavailable"
                     Log.i("INSTALL_SOURCE", "AppsFlyer af_status=$status, media_source=$source")
                 }
-                finishAttribution(when (status) {
-                    "Organic" -> false
-                    "Non-organic" -> true
-                    else -> null
-                })
+                //////////////////////////////////////
+                val isPaid = status == "Non-organic"
+                spManager. setPaidUser(isPaid)
+                runCatching {
+                    FirebaseAnalytics.getInstance(applicationContext)
+                        .setUserProperty("user_source", if (isPaid) "paid" else "organic")
+                }
             }
 
             override fun onConversionDataFail(errorMessage: String?) {
-                if (BuildConfig.DEBUG) Log.w("INSTALL_SOURCE", "AppsFlyer conversion failed: $errorMessage")
-                finishAttribution()
+                if (BuildConfig.DEBUG) Log.w(
+                    "INSTALL_SOURCE",
+                    "AppsFlyer conversion failed: $errorMessage"
+                )
             }
 
-            override fun onAppOpenAttribution(attributionData: MutableMap<String, String>?) = Unit
+            override fun onAppOpenAttribution(attributionData: MutableMap<String, String>?) {
+                Logger.e("AppsFlyer onAppOpenAttribution")
+            }
 
             override fun onAttributionFailure(errorMessage: String?) {
                 Logger.e("AppsFlyer app-open attribution failed: $errorMessage")
@@ -153,7 +137,6 @@ class App : Application(), Application.ActivityLifecycleCallbacks {
             }
         } catch (error: Exception) {
             Logger.e("AppsFlyer initialization failed: ${error.message}")
-            finishAttribution()
         }
     }
 
@@ -174,11 +157,12 @@ class App : Application(), Application.ActivityLifecycleCallbacks {
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
-    val locale = getDeviceLanguage()
-    val language = spManager.getLanguage()
-    LocaleHelper.onAttach(this, language.languageCode)
-    super.onConfigurationChanged(newConfig)
-}
+        val locale = getDeviceLanguage()
+        val language = spManager.getLanguage()
+        LocaleHelper.onAttach(this, language.languageCode)
+        super.onConfigurationChanged(newConfig)
+    }
+
     fun initConsentManager(activity: Activity, action: () -> Unit) {
         val consentManager = ConsentManager.getInstance(activity)
         consentManager.initReleaseConsent(onConsentResponse = object : OnConsentResponse {
@@ -238,6 +222,7 @@ class App : Application(), Application.ActivityLifecycleCallbacks {
         val context = LocaleHelper.onAttach(base, java.util.Locale.getDefault().language)
         super.attachBaseContext(context)
     }
+
     fun destroyAppOpenAd() {
         AppOpenAdsUtils.hideResumeBackdrop()
         appResumeAdHelper?.unregisterAllAdListener()
@@ -248,10 +233,12 @@ class App : Application(), Application.ActivityLifecycleCallbacks {
     override fun onActivityStarted(activity: Activity) {
         if (activity !is AdActivity) resumeHost = java.lang.ref.WeakReference(activity)
     }
+
     override fun onActivityResumed(activity: Activity) {
         AdWindowUtils.applyCutoutSafeArea(activity)
         if (activity !is AdActivity) resumeHost = java.lang.ref.WeakReference(activity)
     }
+
     override fun onActivityPaused(activity: Activity) {}
     override fun onActivityStopped(activity: Activity) {}
     override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}

@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import androidx.core.content.edit
 import com.kt.flash.light.led.banner.App
+import com.kt.flash.light.led.banner.BuildConfig
 import com.kt.flash.light.led.banner.R
 import com.kt.flash.light.led.banner.data.model.Language
 
@@ -12,6 +13,10 @@ import com.kt.flash.light.led.banner.data.model.Language
 class SpManager(private val preferences: SharedPreferences) {
     companion object {
         private const val KEY_APPS_FLYER_PAID = "apps_flyer_paid_install"
+        private const val KEY_CACHED_AD_CONFIG_ORGANIC = "cached_ad_config_organic"
+        private const val KEY_CACHED_AD_CONFIG_PAID = "cached_ad_config_paid"
+
+
         private var instance: SpManager? = null
 
         fun getInstance(context: Context): SpManager {
@@ -46,13 +51,24 @@ class SpManager(private val preferences: SharedPreferences) {
         requireNotNull(App.context).getSharedPreferences("install_attribution", Context.MODE_PRIVATE)
     }
 
-    fun getPaidUser(): Boolean? = attributionPreferences
-        .takeIf { it.contains(KEY_APPS_FLYER_PAID) }
-        ?.getBoolean(KEY_APPS_FLYER_PAID, false)
+    fun getPaidUser(): Boolean? {
+        if (BuildConfig.DEBUG) return true
+        return preferences
+            .takeIf { it.contains(KEY_APPS_FLYER_PAID) }
+            ?.getBoolean(KEY_APPS_FLYER_PAID, false)
+    }
 
     fun setPaidUser(isPaid: Boolean) {
-        attributionPreferences.edit { putBoolean(KEY_APPS_FLYER_PAID, isPaid) }
+        preferences.edit { putBoolean(KEY_APPS_FLYER_PAID, isPaid) }
     }
+
+    fun getCachedAdConfigOrganic(): String? = preferences.getString(KEY_CACHED_AD_CONFIG_ORGANIC, null)
+
+    fun setCachedAdConfigOrganic(json: String) = putString(KEY_CACHED_AD_CONFIG_ORGANIC, json)
+
+    fun getCachedAdConfigPaid(): String? = getString(KEY_CACHED_AD_CONFIG_PAID, "")
+
+    fun setCachedAdConfigPaid(json: String) = putString(KEY_CACHED_AD_CONFIG_PAID, json)
 
     fun getInt(key: String, defaultValue: Int): Int = preferences.getInt(key, defaultValue)
 

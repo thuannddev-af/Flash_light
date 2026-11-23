@@ -17,19 +17,14 @@ android {
     namespace = "com.kt.flash.light.led.banner"
     compileSdk = 36
 
-    sourceSets.named("main") {
-        // Both defaults are needed because AppsFlyer chooses the ads mode at runtime.
-        res.srcDirs("src/appRel/ads-config", "src/appdebug/ads-config")
-    }
-
     defaultConfig {
-        val appsFlyerDevKey = providers.gradleProperty("APPSFLYER_DEV_KEY")
-            .orElse(providers.environmentVariable("APPSFLYER_DEV_KEY"))
-            .orElse("")
-            .get()
-            .trim()
-        val escapedDevKey = appsFlyerDevKey.replace("\\", "\\\\").replace("\"", "\\\"")
-        buildConfigField("String", "APPSFLYER_DEV_KEY", "\"$escapedDevKey\"")
+//        val appsFlyerDevKey = providers.gradleProperty("APPSFLYER_DEV_KEY")
+//            .orElse(providers.environmentVariable("APPSFLYER_DEV_KEY"))
+//            .orElse("")
+//            .get()
+//            .trim()
+//        val escapedDevKey = appsFlyerDevKey.replace("\\", "\\\\").replace("\"", "\\\"")
+//        buildConfigField("String", "APPSFLYER_DEV_KEY", "\"$escapedDevKey\"")
         applicationId = "com.kt.flash.light.led.banner"
         minSdk = 23
         targetSdk = 36
@@ -63,9 +58,9 @@ android {
     flavorDimensions += "default"
     productFlavors {
         create("appDebug") {
-            applicationIdSuffix = ".organic"
 
             manifestPlaceholders["ad_app_id"] = "ca-app-pub-3940256099942544~3347511713"
+            buildConfigField("String", "APPSFLYER_DEV_KEY", "\"\"")
 
             buildConfigField("String", "banner_splash", "\"ca-app-pub-3940256099942544/2014213617\"")
             buildConfigField("String", "banner_all", "\"ca-app-pub-3940256099942544/2014213617\"")
@@ -107,6 +102,7 @@ android {
 
         create("appProduct") {
             manifestPlaceholders["ad_app_id"] = "ca-app-pub-3940256099942544~3347511713"
+            buildConfigField("String", "APPSFLYER_DEV_KEY", "\"\"")
 
             buildConfigField("String", "banner_splash", "\"ca-app-pub-3940256099942544/2014213617\"")
             buildConfigField("String", "banner_all", "\"ca-app-pub-3940256099942544/2014213617\"")

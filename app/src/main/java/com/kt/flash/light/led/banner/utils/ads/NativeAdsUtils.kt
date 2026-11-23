@@ -2,28 +2,27 @@ package com.kt.flash.light.led.banner.utils.ads
 
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentActivity
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.core.view.isVisible
-import com.ads.admob.helper.adnative.params.AdNativeState
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.ads.admob.helper.AdOptionVisibility
 import com.ads.admob.helper.adnative.NativeAdConfig
 import com.ads.admob.helper.adnative.NativeAdHelper
+import com.ads.admob.helper.adnative.params.AdNativeState
 import com.ads.admob.helper.adnative.params.NativeAdParam
-import com.facebook.shimmer.Shimmer
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.kt.flash.light.led.banner.BuildConfig
 import com.kt.flash.light.led.banner.R
-import com.kt.flash.light.led.banner.domain.layer.AdConfig
 import com.kt.flash.light.led.banner.utils.FirebaseConfigManager
 import com.kt.flash.light.led.banner.utils.Logger
+import com.kt.flash.light.led.banner.utils.SpManager
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 object NativeAdsUtils {
@@ -33,6 +32,7 @@ object NativeAdsUtils {
     private var nativeCustomOwner: AppCompatActivity? = null
     private val availableCustom = java.util.ArrayDeque<NativeAdHelper>()
     private val allCustom = linkedSetOf<NativeAdHelper>()
+
     private data class NativeBinding(
         val helper: NativeAdHelper,
         val placement: String,
@@ -70,7 +70,7 @@ object NativeAdsUtils {
     val adConfig get() = FirebaseConfigManager.instance().adConfig
 
     private val nativeCustomLayout: Int
-        get() = if (FirebaseConfigManager.instance().useFullAds) {
+        get() = if (SpManager.getInstance().getPaidUser() == true) {
             R.layout.layout_native_medium_full_ads
         } else {
             R.layout.layout_native_medium
@@ -79,7 +79,7 @@ object NativeAdsUtils {
     @androidx.annotation.LayoutRes
     private fun nativeType1Layout(
         @androidx.annotation.LayoutRes fullAdsLayout: Int = R.layout.layout_native_ad_view_type1
-    ): Int = if (FirebaseConfigManager.instance().useFullAds) {
+    ): Int = if (SpManager.getInstance().getPaidUser() == true) {
         fullAdsLayout
     } else {
         R.layout.layout_native_ad_view_type1_reload
@@ -110,7 +110,7 @@ object NativeAdsUtils {
         val adConfig = FirebaseConfigManager.instance().adConfig
 
         val config = NativeAdConfig(
-            idAdsPriority = if(adConfig.enableNativeLanguage2f) {
+            idAdsPriority = if (adConfig.enableNativeLanguage2f) {
                 BuildConfig.native_language_2f
             } else {
                 null
@@ -164,9 +164,11 @@ object NativeAdsUtils {
         if (nativeOnBoarding != null) return
 
         val config = NativeAdConfig(
-            idAdsPriority = if(adConfig.enableNativeOnB12f){
+            idAdsPriority = if (adConfig.enableNativeOnB12f) {
                 BuildConfig.native_obd1_2f
-            }else{null},
+            } else {
+                null
+            },
             idAds = BuildConfig.native_obd1,
             canShowAds = true,
             canReloadAds = false,
@@ -196,9 +198,11 @@ object NativeAdsUtils {
         if (nativeOnBoarding3 != null) return
 
         val config = NativeAdConfig(
-            idAdsPriority = if(adConfig.enableNativeOnB32f){
+            idAdsPriority = if (adConfig.enableNativeOnB32f) {
                 BuildConfig.native_obd3_2f
-            }else{null},
+            } else {
+                null
+            },
             idAds = BuildConfig.native_obd3,
             canShowAds = true,
             canReloadAds = false,
@@ -351,8 +355,10 @@ object NativeAdsUtils {
             return null
         }
         if (existing != null) {
-            require(existing.owner === lifecycleOwner && existing.adUnitId == adUnitId &&
-                existing.placement == placement && existing.layoutId == resolvedLayoutId) {
+            require(
+                existing.owner === lifecycleOwner && existing.adUnitId == adUnitId &&
+                        existing.placement == placement && existing.layoutId == resolvedLayoutId
+            ) {
                 "This container is already bound to another native configuration"
             }
             container.isVisible = existing.visible
@@ -371,7 +377,8 @@ object NativeAdsUtils {
             setShimmerLayoutView(shimmer)
             setNativeContentView(container)
         }
-        val binding = NativeAllBinding(helper, lifecycleOwner, adUnitId, placement, resolvedLayoutId)
+        val binding =
+            NativeAllBinding(helper, lifecycleOwner, adUnitId, placement, resolvedLayoutId)
         container.setTag(R.id.native_ads_all_binding, binding)
         container.isVisible = true
         helper.getAdNativeState().onEach { state ->
@@ -395,7 +402,10 @@ object NativeAdsUtils {
         return helper
     }
 
-    private fun createNativeCustom(activity: AppCompatActivity, owner: LifecycleOwner): NativeAdHelper {
+    private fun createNativeCustom(
+        activity: AppCompatActivity,
+        owner: LifecycleOwner
+    ): NativeAdHelper {
         val config = NativeAdConfig(
             idAds = BuildConfig.native_custom,
             canShowAds = true,

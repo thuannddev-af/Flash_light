@@ -78,7 +78,7 @@ class ScreenLightActivity : BaseActivity<ActivityScreenLightBinding>() {
         overridePendingTransition(0, 0)
     }
 
-    private fun showBannerAll() {
-        BannerAdsUtils.initBannerAll(this, this, viewBaseActivity.frAdsBanner)
-    }
+//    private fun showBannerAll() {
+//        BannerAdsUtils.initBannerAll(this, this, viewBaseActivity.frAdsBanner)
+//    }
 }
