@@ -51,11 +51,9 @@ class SpManager(private val preferences: SharedPreferences) {
         requireNotNull(App.context).getSharedPreferences("install_attribution", Context.MODE_PRIVATE)
     }
 
-    fun getPaidUser(): Boolean? {
-        if (BuildConfig.DEBUG) return true
-        return preferences
-            .takeIf { it.contains(KEY_APPS_FLYER_PAID) }
-            ?.getBoolean(KEY_APPS_FLYER_PAID, false)
+    fun getPaidUser(): Boolean {
+//        if (BuildConfig.DEBUG) return true
+        return preferences.getBoolean(KEY_APPS_FLYER_PAID, false)
     }
 
     fun setPaidUser(isPaid: Boolean) {

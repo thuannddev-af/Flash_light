@@ -145,7 +145,7 @@ class LanguageActivity : BaseActivity<ActivityLanguageBinding>() {
         if(isFromSplash) {
             NativeAdsUtils.preLoadNativeFullScreenBetween12(this)
             NativeAdsUtils.preloadNativeFullscreenBetween34(this)
-            NativeAdsUtils.preLoadNativeOnBoarding1(this)
+            //NativeAdsUtils.preLoadNativeOnBoarding1(this)
             NativeAdsUtils.preLoadNativeOnBoarding3(this)
         }
     }

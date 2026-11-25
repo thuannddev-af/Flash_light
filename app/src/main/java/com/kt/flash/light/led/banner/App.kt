@@ -6,29 +6,34 @@ import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
+import androidx.lifecycle.ProcessLifecycleOwner
+import com.adjust.sdk.Adjust
 import com.ads.admob.AdmobManager
 import com.ads.admob.admob.AdmobFactory
 import com.ads.admob.cmp.ConsentManager
 import com.ads.admob.cmp.interfaces.OnConsentResponse
 import com.ads.admob.config.AfAdConfig
 import com.ads.admob.config.AfAdjustConfig
+import com.ads.admob.config.NetworkProvider
 import com.ads.admob.data.ContentAd
 import com.ads.admob.event.FirebaseTrackingManager
+import com.ads.admob.helper.appoppen.AppResumeAdConfig
 import com.ads.admob.helper.appoppen.AppResumeAdHelper
 import com.ads.admob.listener.AdmobCallBack
 import com.ads.admob.listener.AppOpenAdCallBack
-import com.appsflyer.AppsFlyerConversionListener
-import com.appsflyer.AppsFlyerLib
 import com.google.android.gms.ads.AdActivity
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.LoadAdError
 import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.kt.flash.light.led.banner.component.splash.SplashActivity
 import com.kt.flash.light.led.banner.utils.Constant
 import com.kt.flash.light.led.banner.utils.FirebaseConfigManager
 import com.kt.flash.light.led.banner.utils.LocaleHelper
 import com.kt.flash.light.led.banner.utils.Logger
 import com.kt.flash.light.led.banner.utils.SpManager
+import com.kt.flash.light.led.banner.utils.UserSource
+import com.kt.flash.light.led.banner.utils.ads.AdPlacement
 import com.kt.flash.light.led.banner.utils.ads.AdWindowUtils
 import com.kt.flash.light.led.banner.utils.ads.AppOpenAdsUtils
 import com.kt.flash.light.led.banner.utils.getDeviceLanguage
@@ -61,7 +66,7 @@ class App : Application(), Application.ActivityLifecycleCallbacks {
 //        listClassInValid.add(AdActivity::class.java)
 //        listClassInValid.add(SplashActivity::class.java)
 //        val config = AppResumeAdConfig(
-//            idAds = BuildConfig.appopen_resume,
+//            idAds = BuildConfig.app_open_resume,
 //            listClassInValid = listClassInValid,
 //            canShowAds = true,
 //            networkProvider = NetworkProvider.ADMOB,
@@ -83,75 +88,65 @@ class App : Application(), Application.ActivityLifecycleCallbacks {
         FirebaseTrackingManager.initialize(this)
         initAdmob()
 
-        initAppsFlyer()
         FirebaseConfigManager.instance().fetch()
         registerActivityLifecycleCallbacks(this)
     }
 
-    private fun initAppsFlyer() {
-        val devKey = BuildConfig.APPSFLYER_DEV_KEY
-        if (devKey.isBlank()) {
-            if (BuildConfig.DEBUG)
-                Log.i(
-                "INSTALL_SOURCE",
-                "AppsFlyer skipped: APPSFLYER_DEV_KEY is empty")
+    private fun initAdjust(adjustToken: String) {
+        if (adjustToken.isBlank()) {
+            if (BuildConfig.DEBUG) {
+                Log.i("INSTALL_SOURCE", "Adjust skipped: app token is empty")
+            }
             return
         }
 
-        val listener = object : AppsFlyerConversionListener {
-            override fun onConversionDataSuccess(conversionData: MutableMap<String, Any>?) {
-                val status = conversionData?.get("af_status")?.toString()
-                if (BuildConfig.DEBUG) {
-                    val source = conversionData?.get("media_source") ?: "unavailable"
-                    Log.i("INSTALL_SOURCE", "AppsFlyer af_status=$status, media_source=$source")
-                }
-                //////////////////////////////////////
-                val isPaid = status == "Non-organic"
-                spManager. setPaidUser(isPaid)
+        val paidTrackers = setOf("tokentoken") // Add paid campaign tracker tokens here. =setOf("token")
+        Adjust.getAttributionWithTimeout(applicationContext, 5_000L) { attribution ->      //chờ nguồn cài 5 giây
+
+            val network = attribution?.network.orEmpty().trim()
+            val tracker = attribution?.trackerToken.orEmpty().trim()
+            val isPaid = when {
+                network.equals("Organic", ignoreCase = true) -> false
+                tracker.isNotEmpty() && tracker in paidTrackers -> true
+                else -> null
+            }
+
+            if (isPaid != null) {
+                spManager.setPaidUser(isPaid)
                 runCatching {
                     FirebaseAnalytics.getInstance(applicationContext)
                         .setUserProperty("user_source", if (isPaid) "paid" else "organic")
                 }
             }
-
-            override fun onConversionDataFail(errorMessage: String?) {
-                if (BuildConfig.DEBUG) Log.w(
-                    "INSTALL_SOURCE",
-                    "AppsFlyer conversion failed: $errorMessage"
-                )
+            if (BuildConfig.DEBUG) {
+                Log.i("INSTALL_SOURCE", "Adjust network=$network, tracker=$tracker, paid=$isPaid")
             }
-
-            override fun onAppOpenAttribution(attributionData: MutableMap<String, String>?) {
-                Logger.e("AppsFlyer onAppOpenAttribution")
-            }
-
-            override fun onAttributionFailure(errorMessage: String?) {
-                Logger.e("AppsFlyer app-open attribution failed: $errorMessage")
-            }
-        }
-
-        try {
-            AppsFlyerLib.getInstance().apply {
-                init(devKey, listener, this@App)
-                start(this@App)
-            }
-        } catch (error: Exception) {
-            Logger.e("AppsFlyer initialization failed: ${error.message}")
         }
     }
 
     private fun initAdmob() {
-        val config = AfAdConfig.Builder(
-            afAdjustConfig = AfAdjustConfig.Build(adjustToken = "").build()
+        val adjustConfig = AfAdjustConfig.Build(
+            adjustToken = "bzmujs6ffegw",
+            adRevenueKey = "",
+            environmentProduct = true
         )
+            .onAttributionChanged { network, _ ->
+                UserSource.onAttribution(this, network)
+            }
+            .build()
+
+        val afAdjustConfig = AfAdConfig.Builder(afAdjustConfig = adjustConfig)
             .application(this)
             .intervalBetweenInterstitial(0L)
             .buildVariantProduce(!BuildConfig.DEBUG)
+            .mediationProvider(NetworkProvider.ADMOB)
+
             .build()
 
-        AdmobFactory.INSTANCE.initAdmob(this, config, object : AdmobCallBack {
+        AdmobFactory.INSTANCE.initAdmob(this, afAdjustConfig, object : AdmobCallBack {
             override fun initialized() {
                 Logger.e("Admob initialized")
+                initAdjust(adjustConfig.adjustToken)
             }
         })
     }

@@ -18,13 +18,6 @@ android {
     compileSdk = 36
 
     defaultConfig {
-//        val appsFlyerDevKey = providers.gradleProperty("APPSFLYER_DEV_KEY")
-//            .orElse(providers.environmentVariable("APPSFLYER_DEV_KEY"))
-//            .orElse("")
-//            .get()
-//            .trim()
-//        val escapedDevKey = appsFlyerDevKey.replace("\\", "\\\\").replace("\"", "\\\"")
-//        buildConfigField("String", "APPSFLYER_DEV_KEY", "\"$escapedDevKey\"")
         applicationId = "com.kt.flash.light.led.banner"
         minSdk = 23
         targetSdk = 36
@@ -60,7 +53,6 @@ android {
         create("appDebug") {
 
             manifestPlaceholders["ad_app_id"] = "ca-app-pub-3940256099942544~3347511713"
-            buildConfigField("String", "APPSFLYER_DEV_KEY", "\"\"")
 
             buildConfigField("String", "banner_splash", "\"ca-app-pub-3940256099942544/2014213617\"")
             buildConfigField("String", "banner_all", "\"ca-app-pub-3940256099942544/2014213617\"")
@@ -102,7 +94,6 @@ android {
 
         create("appProduct") {
             manifestPlaceholders["ad_app_id"] = "ca-app-pub-3940256099942544~3347511713"
-            buildConfigField("String", "APPSFLYER_DEV_KEY", "\"\"")
 
             buildConfigField("String", "banner_splash", "\"ca-app-pub-3940256099942544/2014213617\"")
             buildConfigField("String", "banner_all", "\"ca-app-pub-3940256099942544/2014213617\"")
@@ -146,7 +137,6 @@ android {
 
 dependencies {
     implementation(project(":ads"))
-    implementation("com.appsflyer:af-android-sdk:6.17.1")
 
     implementation("androidx.viewpager2:viewpager2:1.1.0")
     // Compose BOM
@@ -190,6 +180,8 @@ dependencies {
     implementation("com.google.code.gson:gson:2.13.2")
     //AdMob
     implementation("com.google.android.gms:play-services-ads:24.9.0")
+    //Adjust
+    implementation("com.adjust.sdk:adjust-android:5.5.0")
 
     // Android Test
     androidTestImplementation(platform("androidx.compose:compose-bom:2026.02.01"))

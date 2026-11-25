@@ -7,4 +7,7 @@ object Constant {
     const val KEY_SP_IS_APPLICATION_STOP = "KEY_SP_IS_APPLICATION_STOP"
 
     const val KEY_INTENT_FROM_SPLASH = "KEY_INTENT_FROM_SPLASH"
+
+    // Nguồn cài đặt theo Adjust: "organic" | "paid", chưa có = chưa xác định (xem UserSource)
+    const val KEY_SP_USER_SOURCE = "KEY_SP_USER_SOURCE"
 }
