@@ -31,7 +31,7 @@ jobs:
           "$sdkmanager_path" --sdk_root="$ANDROID_HOME" "platforms;android-36" "build-tools;36.0.0"
 
       - name: Build appProduct Release APK
-        run: bash ./gradlew :app:assembleAppProductRelease --no-daemon
+        run: bash ./gradlew :app:assembleAppProductRelease --no-daemon --info
 
       - name: Sign APK
         id: sign
