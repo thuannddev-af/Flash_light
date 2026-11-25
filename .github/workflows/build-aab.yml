@@ -1,0 +1,117 @@
+name: Build Flight Release AAB
+
+on:
+  workflow_dispatch:
+    inputs:
+      aabFileName:
+        description: "Tên AAB, để trống thì giữ tên mặc định"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: gradle
+
+      - name: Install Android SDK
+        run: sdkmanager "platforms;android-36"
+
+      - name: Build appProduct Release AAB
+        run: bash ./gradlew :app:bundleAppProductRelease --no-daemon
+
+      - name: Sign AAB
+        id: sign
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          AAB_FILE_NAME: ${{ inputs.aabFileName }}
+        run: |
+          for name in KEYSTORE_BASE64 KEYSTORE_PASSWORD KEY_ALIAS KEY_PASSWORD; do
+            if [[ -z "${!name}" ]]; then
+              echo "::error::Missing signing secret ANDROID_$name"
+              exit 1
+            fi
+          done
+          shopt -s nullglob
+          aabs=(app/build/outputs/bundle/appProductRelease/*.aab)
+          if [[ ${#aabs[@]} -ne 1 ]]; then
+            echo "::error::Expected exactly one appProduct Release AAB"
+            exit 1
+          fi
+          name=$(basename "${aabs[0]}")
+          if [[ -n "$AAB_FILE_NAME" ]]; then
+            if [[ ! "$AAB_FILE_NAME" =~ ^[a-zA-Z0-9][a-zA-Z0-9._-]*$ ]]; then
+              echo "::error::Use only letters, numbers, dots, underscores or hyphens in the AAB name"
+              exit 1
+            fi
+            name="${AAB_FILE_NAME%.aab}.aab"
+          fi
+
+          signing_dir=$(mktemp -d "$RUNNER_TEMP/flight-signing.XXXXXX")
+          trap 'rm -f "$signing_dir/upload.jks"; rmdir "$signing_dir"' EXIT
+          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$signing_dir/upload.jks"
+          mkdir -p signed
+          jarsigner -keystore "$signing_dir/upload.jks" \
+            -storepass:env KEYSTORE_PASSWORD -keypass:env KEY_PASSWORD \
+            -signedjar "signed/$name" "${aabs[0]}" "$KEY_ALIAS"
+          jarsigner -J-Duser.language=en -verify "signed/$name" | tee "$RUNNER_TEMP/flight-aab-signature.txt"
+          grep -q '^jar verified\.$' "$RUNNER_TEMP/flight-aab-signature.txt"
+          echo "aab=signed/$name" >> "$GITHUB_OUTPUT"
+
+      - name: Publish GitHub prerelease
+        id: publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+          AAB_PATH: ${{ steps.sign.outputs.aab }}
+        run: |
+          version=$(sed -nE 's/^[[:space:]]*versionName[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/p' app/build.gradle.kts | head -n 1)
+          code=$(sed -nE 's/^[[:space:]]*versionCode[[:space:]]*=[[:space:]]*([0-9]+).*/\1/p' app/build.gradle.kts | head -n 1)
+          tag="flight-aab-build-$GITHUB_RUN_NUMBER.$GITHUB_RUN_ATTEMPT"
+          url=$(gh release create "$tag" "$AAB_PATH" --target "$GITHUB_SHA" \
+            --title "Flight AAB #$GITHUB_RUN_NUMBER - v$version ($code)" \
+            --notes "Build từ commit $GITHUB_SHA" --prerelease)
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+
+      - name: Prune Flight AAB prereleases older than 3 days
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cutoff=$(date -u -d '3 days ago' +'%Y-%m-%dT%H:%M:%SZ')
+          gh api --paginate "repos/$GITHUB_REPOSITORY/releases?per_page=100" \
+            --jq ".[] | select(.prerelease and (.tag_name | startswith(\"flight-aab-build-\")) and .created_at < \"$cutoff\") | .tag_name" |
+          while IFS= read -r tag; do
+            gh release delete "$tag" --cleanup-tag --yes
+          done
+
+      - name: Notify Discord
+        if: always()
+        continue-on-error: true
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          RELEASE_URL: ${{ steps.publish.outputs.url }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          JOB_STATUS: ${{ job.status }}
+        run: |
+          [[ -n "$DISCORD_WEBHOOK_URL" ]] || exit 0
+          if [[ "$JOB_STATUS" == "success" ]]; then
+            message="Flight build thành công. AAB: $RELEASE_URL"
+          else
+            message="Flight build $JOB_STATUS. Chi tiết: $RUN_URL"
+          fi
+          jq -n --arg text "$message" '{content: $text}' |
+            curl --fail --silent --show-error \
+              -H 'Content-Type: application/json' --data-binary @- "$DISCORD_WEBHOOK_URL"
