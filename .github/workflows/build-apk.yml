@@ -5,7 +5,6 @@ on:
     inputs:
       apkFileName:
         description: Tên APK, để trống thì giữ tên mặc định
-        required: false
         type: string
 
 permissions:
@@ -25,10 +24,9 @@ jobs:
           cache: gradle
 
       - name: Install Android SDK and signing tools
-        run: |
-          sdkmanager_path="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
-          test -x "$sdkmanager_path"
-          "$sdkmanager_path" --sdk_root="$ANDROID_HOME" "platforms;android-36" "build-tools;36.0.0"
+        run: >
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          --sdk_root="$ANDROID_HOME" "platforms;android-36" "build-tools;36.0.0"
 
       - name: Build appProduct Release APK
         run: bash ./gradlew :app:assembleAppProductRelease --no-daemon --info
@@ -43,10 +41,7 @@ jobs:
           APK_FILE_NAME: ${{ inputs.apkFileName }}
         run: |
           for name in KEYSTORE_BASE64 KEYSTORE_PASSWORD KEY_ALIAS KEY_PASSWORD; do
-            if [[ -z "${!name}" ]]; then
-              echo "::error::Missing signing secret ANDROID_$name"
-              exit 1
-            fi
+            [[ -n "${!name}" ]] || { echo "::error::Missing signing secret ANDROID_$name"; exit 1; }
           done
           shopt -s nullglob
           apks=(app/build/outputs/apk/appProduct/release/*.apk)
@@ -54,7 +49,7 @@ jobs:
             echo "::error::Expected exactly one appProduct Release APK"
             exit 1
           fi
-          name=$(basename "${apks[0]}")
+          name="${apks[0]##*/}"
           if [[ -n "$APK_FILE_NAME" ]]; then
             if [[ ! "$APK_FILE_NAME" =~ ^[a-zA-Z0-9][a-zA-Z0-9._-]*$ ]]; then
               echo "::error::Use only letters, numbers, dots, underscores or hyphens in the APK name"
